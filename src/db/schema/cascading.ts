@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { InferSelectModel, sql } from 'drizzle-orm';
 import {
   AnyPgColumn,
   check,
@@ -58,3 +58,9 @@ export const indikatorSasaran = pgTable('indikator_sasaran', {
     .notNull()
     .references(() => sasaran.id, { onDelete: 'cascade' }),
 });
+
+export type Cascading = InferSelectModel<typeof cascading>;
+export type Tujuan = InferSelectModel<typeof tujuan>;
+export type IndikatorTujuan = InferSelectModel<typeof indikatorTujuan>;
+export type Sasaran = InferSelectModel<typeof sasaran>;
+export type IndikatorSasaran = InferSelectModel<typeof indikatorSasaran>;
