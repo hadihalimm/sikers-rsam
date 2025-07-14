@@ -40,13 +40,15 @@ export const sasaran = pgTable(
     id: serial('id').primaryKey(),
     judul: text('judul').notNull(),
     pengampu: text('pengampu').notNull(),
-    level: integer('level'),
-    cascadingId: integer('cascading_id')
+    level: integer('level').notNull(),
+    tujuanId: integer('tujuan_id')
       .notNull()
-      .references(() => cascading.id, { onDelete: 'cascade' }),
-    parentId: integer('parent_id').references((): AnyPgColumn => sasaran.id, {
-      onDelete: 'cascade',
-    }),
+      .references(() => tujuan.id, { onDelete: 'cascade' }),
+    parentId: integer('parent_id')
+      .notNull()
+      .references((): AnyPgColumn => sasaran.id, {
+        onDelete: 'cascade',
+      }),
   },
   (table) => [check('level_sasaran_check', sql`${table.level} > 0`)],
 );
@@ -69,6 +71,7 @@ export const tujuanRelations = relations(tujuan, ({ one, many }) => ({
     references: [cascading.id],
   }),
   indikatorTujuanList: many(indikatorTujuan),
+  sasaranList: many(sasaran),
 }));
 
 export const indikatorTujuanRelations = relations(
@@ -77,6 +80,32 @@ export const indikatorTujuanRelations = relations(
     tujuan: one(tujuan, {
       fields: [indikatorTujuan.tujuanId],
       references: [tujuan.id],
+    }),
+  }),
+);
+
+export const sasaranRelations = relations(sasaran, ({ one, many }) => ({
+  tujuan: one(tujuan, {
+    fields: [sasaran.tujuanId],
+    references: [tujuan.id],
+  }),
+  parent: one(sasaran, {
+    fields: [sasaran.parentId],
+    references: [sasaran.id],
+    relationName: 'parent_children',
+  }),
+  children: many(sasaran, {
+    relationName: 'parent_children',
+  }),
+  indikatorSasaranList: many(indikatorSasaran),
+}));
+
+export const indikatorSasaranRelations = relations(
+  indikatorSasaran,
+  ({ one }) => ({
+    sasaran: one(sasaran, {
+      fields: [indikatorSasaran.sasaranId],
+      references: [sasaran.id],
     }),
   }),
 );
