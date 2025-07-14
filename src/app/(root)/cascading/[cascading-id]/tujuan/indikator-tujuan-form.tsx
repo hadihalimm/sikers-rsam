@@ -65,7 +65,7 @@ const IndikatorTujuanForm = ({
       }}>
       <div className="flex flex-col gap-y-4">
         <form.AppField name="nama">
-          {(field) => <field.TextField label="Nama indikator tujuan" />}
+          {(field) => <field.TextField label="Nama" />}
         </form.AppField>
         <form.AppForm>
           <form.SubmitButton className="mt-4">Submit</form.SubmitButton>
