@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Cascading } from '@/db/schema';
 import {
   useDeleteCascading,
   useGetAllCascading,
@@ -33,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
+import { Cascading } from '@/types/database';
 
 const CascadingTable = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
