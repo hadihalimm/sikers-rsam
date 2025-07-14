@@ -46,7 +46,6 @@ const IndikatorTujuanForm = ({
           toast.success('Indikator tujuan berhasil di-update');
         } else {
           await createIndikatorTujuan.mutateAsync({
-            tujuanId: tujuanId,
             ...payload,
           });
           toast.success('Indikator tujuan berhasil dibuat');
