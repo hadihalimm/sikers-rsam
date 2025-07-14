@@ -25,10 +25,7 @@ export const useCreateIndikatorTujuan = (
 ) => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (newIndikatorTujuan: {
-      nama: string;
-      tujuanId: number;
-    }) => {
+    mutationFn: async (newIndikatorTujuan: { nama: string }) => {
       const { data } = await api.post(
         `/cascading/${cascadingId}/tujuan/${tujuanId}/indikator-tujuan`,
         newIndikatorTujuan,
