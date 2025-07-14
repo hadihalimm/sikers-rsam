@@ -71,7 +71,9 @@ export function HomeSidebar() {
             <SidebarMenu>
               {aplikasiGroup.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.includes(item.url)}>
                     <a href={item.url}>
                       <span className="font-semibold text-[15px]">
                         {item.title}
@@ -90,7 +92,9 @@ export function HomeSidebar() {
             <SidebarMenu>
               {dokumenGroup.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={pathname.includes(item.url)}>
                     <a href={item.url}>
                       <span className="font-semibold text-[15px]">
                         {item.title}
