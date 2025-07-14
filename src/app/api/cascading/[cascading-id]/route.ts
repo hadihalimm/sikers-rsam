@@ -1,23 +1,22 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { eq } from 'drizzle-orm';
 import db from '@/db';
 import { cascading } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
   params: Promise<{
-    id: string;
+    'cascading-id': string;
   }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = await params;
-    const recordId = parseInt(id);
+    const { 'cascading-id': cascadingId } = await params;
 
     const record = await db
       .select()
       .from(cascading)
-      .where(eq(cascading.id, recordId));
+      .where(eq(cascading.id, parseInt(cascadingId)));
 
     if (record.length === 0) {
       return NextResponse.json(
@@ -37,8 +36,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = await params;
-    const recordId = parseInt(id);
+    const { 'cascading-id': cascadingId } = await params;
+    const recordId = parseInt(cascadingId);
     const body = await request.json();
     const { judul, tahunMulai, tahunBerakhir } = body;
 
@@ -71,8 +70,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
-    const { id } = await params;
-    const recordId = parseInt(id);
+    const { 'cascading-id': cascadingId } = await params;
+    const recordId = parseInt(cascadingId);
 
     const deletedRecord = await db
       .delete(cascading)
@@ -88,11 +87,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       message: "'cascading' record deleted successfully",
     });
   } catch (error) {
+    console.error("Error deleting 'cascading' record: ", error);
     if (error instanceof Error && error.message.includes('foreign key')) {
       return NextResponse.json(
         {
           error:
-            "Cannot delete 'cascading' record because it is referenced by other records",
+            "Cannot delete 'cascading' record because it is still referenced by other records",
         },
         { status: 409 },
       );
