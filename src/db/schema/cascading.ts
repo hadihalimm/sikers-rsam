@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
   AnyPgColumn,
   check,
@@ -58,3 +58,25 @@ export const indikatorSasaran = pgTable('indikator_sasaran', {
     .notNull()
     .references(() => sasaran.id, { onDelete: 'cascade' }),
 });
+
+export const cascadingRelations = relations(cascading, ({ many }) => ({
+  tujuanList: many(tujuan),
+}));
+
+export const tujuanRelations = relations(tujuan, ({ one, many }) => ({
+  cascading: one(cascading, {
+    fields: [tujuan.cascadingId],
+    references: [cascading.id],
+  }),
+  indikatorTujuanList: many(indikatorTujuan),
+}));
+
+export const indikatorTujuanRelations = relations(
+  indikatorTujuan,
+  ({ one }) => ({
+    tujuan: one(tujuan, {
+      fields: [indikatorTujuan.tujuanId],
+      references: [tujuan.id],
+    }),
+  }),
+);
