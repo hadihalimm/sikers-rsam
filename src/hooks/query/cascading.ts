@@ -1,6 +1,7 @@
-import { Cascading } from '@/db/schema';
 import api from '@/lib/axios';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getQueryClient } from '@/lib/get-query-client';
+import { Cascading } from '@/types/database';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllCascading = () => {
   return useQuery<Cascading[]>({
@@ -13,7 +14,7 @@ export const useGetAllCascading = () => {
 };
 
 export const useGetCascading = (id: number) => {
-  return useQuery({
+  return useQuery<Cascading>({
     queryKey: ['cascading', id],
     queryFn: async () => {
       const { data } = await api.get(`/cascading/${id}`);
@@ -23,7 +24,7 @@ export const useGetCascading = (id: number) => {
 };
 
 export const useCreateCascading = () => {
-  const queryClient = useQueryClient();
+  const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (newCascading: {
       judul: string;
@@ -40,7 +41,7 @@ export const useCreateCascading = () => {
 };
 
 export const useUpdateCascading = () => {
-  const queryClient = useQueryClient();
+  const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (updateCascading: {
       id: number;
@@ -62,7 +63,7 @@ export const useUpdateCascading = () => {
 };
 
 export const useDeleteCascading = () => {
-  const queryClient = useQueryClient();
+  const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
       await api.delete(`/cascading/${id}`);
