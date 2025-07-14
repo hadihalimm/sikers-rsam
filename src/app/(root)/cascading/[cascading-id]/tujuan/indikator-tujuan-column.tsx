@@ -1,11 +1,17 @@
 import FormDialog from '@/components/form-dialog';
 import { Button } from '@/components/ui/button';
 import { IndikatorTujuan } from '@/types/database';
-import { Plus, SquarePen, Trash } from 'lucide-react';
+import { MoreHorizontal, Plus } from 'lucide-react';
 import IndikatorTujuanForm from './indikator-tujuan-form';
 import { useState } from 'react';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import { useDeleteIndikatorTujuan } from '@/hooks/query/indikator-tujuan';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface IndikatorTujuanColumnProps {
   tujuanId: number;
@@ -26,40 +32,44 @@ const IndikatorTujuanColumn = ({
   return (
     <div className="flex flex-col gap-y-4">
       {data.map((item) => (
-        <div key={item.id} className="flex items-center justify-between">
+        <div key={item.id} className="flex items-center justify-between mr-8">
           <p className="">{item.nama}</p>
-          <div className="flex gap-x-2 mr-8">
-            <FormDialog
-              title="Edit Indikator Tujuan"
-              trigger={
-                <Button variant="outline" className="size-7">
-                  <SquarePen />
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal />
                 </Button>
-              }
-              open={updateDialogOpen}
-              onOpenChange={setUpdateDialogOpen}>
-              <IndikatorTujuanForm
-                tujuanId={tujuanId}
-                initialData={item}
-                onSuccess={() => setUpdateDialogOpen(false)}
-              />
-            </FormDialog>
-
-            <Button
-              variant="destructive"
-              className="size-7"
-              onClick={() => setDeleteDialogOpen(true)}>
-              <Trash />
-            </Button>
-            <DeleteAlertDialog
-              open={deleteDialogOpen}
-              onOpenChange={setDeleteDialogOpen}
-              onSuccess={() => {
-                deleteIndikatorTujuan.mutateAsync(item.id);
-                setDeleteDialogOpen(false);
-              }}
-            />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onClick={() => setUpdateDialogOpen(true)}>
+                  Update
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+          <FormDialog
+            title="Edit Indikator Tujuan"
+            open={updateDialogOpen}
+            onOpenChange={setUpdateDialogOpen}>
+            <IndikatorTujuanForm
+              tujuanId={tujuanId}
+              initialData={item}
+              onSuccess={() => setUpdateDialogOpen(false)}
+            />
+          </FormDialog>
+          <DeleteAlertDialog
+            open={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+            onSuccess={() => {
+              deleteIndikatorTujuan.mutateAsync(item.id);
+              setDeleteDialogOpen(false);
+            }}
+          />
         </div>
       ))}
       <FormDialog
