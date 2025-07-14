@@ -11,15 +11,15 @@ interface RouteParams {
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
-    // const { 'cascading-id': cascadingId, 'tujuan-id': tujuanId } = await params;
+    const { 'tujuan-id': tujuanId } = await params;
     const body = await request.json();
-    const { nama, tujuanId } = body;
+    const { nama } = body;
 
     const newRecord = await db
       .insert(indikatorTujuan)
       .values({
         nama,
-        tujuanId,
+        tujuanId: parseInt(tujuanId),
       })
       .returning();
     return NextResponse.json(newRecord[0], { status: 201 });
