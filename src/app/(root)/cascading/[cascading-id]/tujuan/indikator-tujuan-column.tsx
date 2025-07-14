@@ -30,14 +30,14 @@ const IndikatorTujuanColumn = ({
 
   const deleteIndikatorTujuan = useDeleteIndikatorTujuan(tujuanId, cascadingId);
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className="flex flex-col gap-y-6">
       {data.map((item) => (
         <div key={item.id} className="flex items-center justify-between mr-8">
           <p className="">{item.nama}</p>
           <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost">
+                <Button variant="ghost" size="sm">
                   <span className="sr-only">Open menu</span>
                   <MoreHorizontal />
                 </Button>
@@ -72,20 +72,23 @@ const IndikatorTujuanColumn = ({
           />
         </div>
       ))}
-      <FormDialog
-        title="Tambah Indikator Tujuan"
-        trigger={
-          <Button variant="secondary" className="size-7">
-            <Plus />
-          </Button>
-        }
-        open={createDialogOpen}
-        onOpenChange={setCreateDialogOpen}>
-        <IndikatorTujuanForm
-          tujuanId={tujuanId}
-          onSuccess={() => setCreateDialogOpen(false)}
-        />
-      </FormDialog>
+      <div className="flex justify-end mr-8">
+        <FormDialog
+          title="Tambah Indikator Tujuan"
+          trigger={
+            <Button variant="secondary" size="sm">
+              <Plus className="size-4" />
+              <p className="font-medium text-xs">Indikator</p>
+            </Button>
+          }
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}>
+          <IndikatorTujuanForm
+            tujuanId={tujuanId}
+            onSuccess={() => setCreateDialogOpen(false)}
+          />
+        </FormDialog>
+      </div>
     </div>
   );
 };
