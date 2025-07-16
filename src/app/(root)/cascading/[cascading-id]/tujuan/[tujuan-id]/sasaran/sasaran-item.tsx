@@ -51,7 +51,7 @@ const SasaranItem = ({
                 />
               </Button>
               <p
-                className="whitespace-normal hover:text-primary hover:cursor-pointer"
+                className="whitespace-normal hover:text-primary hover:cursor-pointer hover:underline"
                 onClick={() => onSelectSasaranForIndikator(sasaran)}>
                 {sasaran.judul}
               </p>

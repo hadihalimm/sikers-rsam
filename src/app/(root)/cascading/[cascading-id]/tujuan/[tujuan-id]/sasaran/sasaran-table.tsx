@@ -47,7 +47,7 @@ const SasaranTable = ({ tujuanId, cascadingId }: SasaranTableProps) => {
       </Button>
 
       <div className="flex gap-x-4">
-        <div className="border rounded-lg w-2/3">
+        <div className="border rounded-lg w-2/3 h-fit">
           <Table className="table-fixed">
             <TableHeader>
               <TableRow>
