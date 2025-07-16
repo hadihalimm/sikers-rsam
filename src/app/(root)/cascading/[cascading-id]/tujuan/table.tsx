@@ -20,7 +20,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Plus } from 'lucide-react';
+import { LayoutList, Plus } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import React, { useState } from 'react';
 import CreateOrUpdateTujuanForm from './tujuan-form';
@@ -55,6 +55,16 @@ const TujuanTable = () => {
           cascadingId={cascadingId}
           data={info.getValue()}
         />
+      ),
+    }),
+    columnHelper.display({
+      id: 'sasaranList',
+      header: 'Sasaran',
+      cell: () => (
+        <Button>
+          <LayoutList />
+          Daftar Sasaran
+        </Button>
       ),
     }),
   ];
