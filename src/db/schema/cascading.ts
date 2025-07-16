@@ -44,18 +44,16 @@ export const sasaran = pgTable(
     tujuanId: integer('tujuan_id')
       .notNull()
       .references(() => tujuan.id, { onDelete: 'cascade' }),
-    parentId: integer('parent_id')
-      .notNull()
-      .references((): AnyPgColumn => sasaran.id, {
-        onDelete: 'cascade',
-      }),
+    parentId: integer('parent_id').references((): AnyPgColumn => sasaran.id, {
+      onDelete: 'cascade',
+    }),
   },
   (table) => [check('level_sasaran_check', sql`${table.level} > 0`)],
 );
 
 export const indikatorSasaran = pgTable('indikator_sasaran', {
   id: serial('id').primaryKey(),
-  judul: text('judul').notNull(),
+  nama: text('nama').notNull(),
   sasaranId: integer('sasaran_id')
     .notNull()
     .references(() => sasaran.id, { onDelete: 'cascade' }),
