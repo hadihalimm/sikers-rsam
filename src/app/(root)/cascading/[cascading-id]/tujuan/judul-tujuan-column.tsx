@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tujuan } from '@/types/database';
 import { MoreHorizontal } from 'lucide-react';
+import Link from 'next/link';
 
 interface JudulTujuanColumnProps {
   tujuan: Tujuan;
@@ -19,10 +20,15 @@ const JudulTujuanColumn = ({
   tujuan,
   onEdit,
   onDelete,
+  cascadingId,
 }: JudulTujuanColumnProps) => {
   return (
     <div className="flex gap-x-4 items-center justify-between mr-8">
-      <p>{tujuan.judul}</p>
+      <Link
+        href={`/cascading/${cascadingId}/tujuan/${tujuan.id}/sasaran`}
+        className="font-medium hover:cursor-pointer text-primary hover:font-semibold hover:underline">
+        {tujuan.judul}
+      </Link>
       <div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

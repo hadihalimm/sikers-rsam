@@ -33,6 +33,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import { Cascading } from '@/types/database';
+import Link from 'next/link';
 
 const CascadingTable = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -44,7 +45,13 @@ const CascadingTable = () => {
     columnHelper.accessor('judul', {
       id: 'judul',
       header: 'Judul',
-      cell: (info) => info.getValue(),
+      cell: (info) => (
+        <Link
+          href={`/cascading/${info.row.original.id}/tujuan`}
+          className="font-medium hover:cursor-pointer text-primary hover:font-semibold hover:underline">
+          {info.getValue()}
+        </Link>
+      ),
     }),
     columnHelper.accessor('tahunMulai', {
       id: 'tahunMulai',
