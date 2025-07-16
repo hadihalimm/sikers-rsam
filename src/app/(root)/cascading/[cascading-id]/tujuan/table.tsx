@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useGetAllTujuan } from '@/hooks/query/tujuan';
+import { useDeleteTujuan, useGetAllTujuan } from '@/hooks/query/tujuan';
 import { Tujuan, TujuanWithIndikator } from '@/types/database';
 import {
   createColumnHelper,
@@ -26,12 +26,16 @@ import React, { useState } from 'react';
 import CreateOrUpdateTujuanForm from './tujuan-form';
 import IndikatorTujuanColumn from './indikator-tujuan-column';
 import JudulTujuanColumn from './judul-tujuan-column';
+import DeleteAlertDialog from '@/components/delete-alert-dialog';
+import { toast } from 'sonner';
 
 const TujuanTable = () => {
   const params = useParams();
   const cascadingId = Number(params['cascading-id']);
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Tujuan>();
 
   const columnHelper = createColumnHelper<TujuanWithIndikator>();
@@ -43,6 +47,14 @@ const TujuanTable = () => {
         <JudulTujuanColumn
           tujuan={info.row.original}
           cascadingId={cascadingId}
+          onEdit={(tujuan) => {
+            setEditingItem(tujuan);
+            setEditDialogOpen(true);
+          }}
+          onDelete={(tujuan) => {
+            setEditingItem(tujuan);
+            setDeleteDialogOpen(true);
+          }}
         />
       ),
     }),
@@ -70,6 +82,7 @@ const TujuanTable = () => {
   ];
 
   const { data = [] } = useGetAllTujuan(cascadingId);
+  const deleteTujuan = useDeleteTujuan(cascadingId);
   const table = useReactTable({
     data,
     columns,
@@ -90,14 +103,11 @@ const TujuanTable = () => {
               Tambah Tujuan
             </Button>
           }
-          open={dialogOpen}
-          onOpenChange={(open) => {
-            setDialogOpen(open);
-            if (!open) setEditingItem(undefined);
-          }}>
+          open={createDialogOpen}
+          onOpenChange={setCreateDialogOpen}>
           <CreateOrUpdateTujuanForm
             onSuccess={() => {
-              setDialogOpen(false);
+              setCreateDialogOpen(false);
               setEditingItem(undefined);
             }}
           />
@@ -146,6 +156,25 @@ const TujuanTable = () => {
           </TableBody>
         </Table>
       </div>
+
+      <FormDialog
+        title="Edit Tujuan"
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}>
+        <CreateOrUpdateTujuanForm
+          initialData={editingItem}
+          onSuccess={() => setEditDialogOpen(false)}
+        />
+      </FormDialog>
+      <DeleteAlertDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onSuccess={() => {
+          deleteTujuan.mutateAsync(editingItem!.id);
+          setDeleteDialogOpen(false);
+          toast.info('Tujuan berhasil dihapus');
+        }}
+      />
     </div>
   );
 };

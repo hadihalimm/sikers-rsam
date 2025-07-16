@@ -14,21 +14,19 @@ interface SasaranItemProps {
   sasaran: Sasaran;
   level: number;
   sasaranList: Sasaran[];
-  setCreateDialogOpen: (open: boolean) => void;
-  setUpdateDialogOpen: (open: boolean) => void;
-  setDeleteDialogOpen: (open: boolean) => void;
-  setSelectedSasaran: (sasaran: Sasaran) => void;
-  setSelectedSasaranForIndikator: (sasaran: Sasaran) => void;
+  onCreateSubSasaran: (sasaran: Sasaran) => void;
+  onUpdateSasaran: (sasaran: Sasaran) => void;
+  onDeleteSasaran: (sasaran: Sasaran) => void;
+  onSelectSasaranForIndikator: (sasaran: Sasaran) => void;
 }
 const SasaranItem = ({
   sasaran,
   level,
   sasaranList,
-  setCreateDialogOpen,
-  setUpdateDialogOpen,
-  setDeleteDialogOpen,
-  setSelectedSasaran,
-  setSelectedSasaranForIndikator,
+  onCreateSubSasaran,
+  onUpdateSasaran,
+  onDeleteSasaran,
+  onSelectSasaranForIndikator,
 }: SasaranItemProps) => {
   const children = sasaranList.filter((item) => item.parentId === sasaran.id);
   const hasChildren = children.length > 0;
@@ -54,7 +52,7 @@ const SasaranItem = ({
               </Button>
               <p
                 className="whitespace-normal hover:text-primary hover:cursor-pointer"
-                onClick={() => setSelectedSasaranForIndikator(sasaran)}>
+                onClick={() => onSelectSasaranForIndikator(sasaran)}>
                 {sasaran.judul}
               </p>
             </div>
@@ -71,23 +69,20 @@ const SasaranItem = ({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem
                   onClick={() => {
-                    setSelectedSasaran(sasaran);
-                    setCreateDialogOpen(true);
+                    onCreateSubSasaran(sasaran);
                   }}>
                   <Plus />
                   Sub-sasaran
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    setSelectedSasaran(sasaran);
-                    setUpdateDialogOpen(true);
+                    onUpdateSasaran(sasaran);
                   }}>
                   Update
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    setSelectedSasaran(sasaran);
-                    setDeleteDialogOpen(true);
+                    onDeleteSasaran(sasaran);
                   }}>
                   Delete
                 </DropdownMenuItem>
@@ -103,11 +98,10 @@ const SasaranItem = ({
               sasaran={item}
               level={level + 1}
               sasaranList={sasaranList}
-              setCreateDialogOpen={setCreateDialogOpen}
-              setUpdateDialogOpen={setUpdateDialogOpen}
-              setDeleteDialogOpen={setDeleteDialogOpen}
-              setSelectedSasaran={setSelectedSasaran}
-              setSelectedSasaranForIndikator={setSelectedSasaranForIndikator}
+              onCreateSubSasaran={onCreateSubSasaran}
+              onUpdateSasaran={onUpdateSasaran}
+              onDeleteSasaran={onDeleteSasaran}
+              onSelectSasaranForIndikator={onSelectSasaranForIndikator}
             />
           ))}
       </>
@@ -121,7 +115,7 @@ const SasaranItem = ({
             <div className="w-4" />
             <p
               className="whitespace-normal hover:text-primary hover:cursor-pointer"
-              onClick={() => setSelectedSasaranForIndikator(sasaran)}>
+              onClick={() => onSelectSasaranForIndikator(sasaran)}>
               {sasaran.judul}
             </p>
           </div>
@@ -138,23 +132,20 @@ const SasaranItem = ({
             <DropdownMenuContent align="start">
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedSasaran(sasaran);
-                  setCreateDialogOpen(true);
+                  onCreateSubSasaran(sasaran);
                 }}>
                 <Plus />
                 Sub-sasaran
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedSasaran(sasaran);
-                  setUpdateDialogOpen(true);
+                  onUpdateSasaran(sasaran);
                 }}>
                 Update
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedSasaran(sasaran);
-                  setDeleteDialogOpen(true);
+                  onDeleteSasaran(sasaran);
                 }}>
                 Delete
               </DropdownMenuItem>
@@ -170,11 +161,10 @@ const SasaranItem = ({
             sasaran={item}
             level={level + 1}
             sasaranList={sasaranList}
-            setCreateDialogOpen={setCreateDialogOpen}
-            setUpdateDialogOpen={setUpdateDialogOpen}
-            setDeleteDialogOpen={setDeleteDialogOpen}
-            setSelectedSasaran={setSelectedSasaran}
-            setSelectedSasaranForIndikator={setSelectedSasaranForIndikator}
+            onCreateSubSasaran={onCreateSubSasaran}
+            onUpdateSasaran={onUpdateSasaran}
+            onDeleteSasaran={onDeleteSasaran}
+            onSelectSasaranForIndikator={onSelectSasaranForIndikator}
           />
         ))}
     </>
