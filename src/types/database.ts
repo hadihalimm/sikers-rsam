@@ -16,3 +16,7 @@ export type IndikatorSasaran = InferSelectModel<typeof indikatorSasaran>;
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };
+
+export type SasaranWithIndikator = Sasaran & {
+  indikatorSasaranList: IndikatorSasaran[];
+};
