@@ -12,7 +12,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+
+interface HomeSidebarProps {
+  className?: string;
+}
 
 export const aplikasiGroup = [
   {
@@ -56,10 +61,10 @@ export const dokumenGroup = [
   },
 ];
 
-export function HomeSidebar() {
+export function HomeSidebar({ className }: HomeSidebarProps) {
   const pathname = usePathname();
   return (
-    <Sidebar variant="floating">
+    <Sidebar variant="floating" className={cn('', className)}>
       <SidebarHeader className="flex justify-center items-center mt-4">
         <p className="font-bold text-2xl">SIKeRS</p>
       </SidebarHeader>
