@@ -7,14 +7,16 @@ export default function HomeLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <SidebarProvider>
-      <HomeSidebar />
-      <main className="rounded-lg px-4 py-2 border m-2 w-full">
-        <div className="flex gap-x-2 items-center h-[35px] border-b mb-4 py-1">
-          <SidebarTrigger />
-          <Separator orientation="vertical" className="min-h-full" />
-        </div>
-        {children}
-      </main>
+      <div className="flex w-full">
+        <HomeSidebar />
+        <main className="w-full rounded-lg px-4 py-2 border m-2">
+          <div className="flex gap-x-2 items-center h-[35px] border-b mb-4 py-1">
+            <SidebarTrigger />
+            <Separator orientation="vertical" className="min-h-full" />
+          </div>
+          {children}
+        </main>
+      </div>
     </SidebarProvider>
   );
 }
