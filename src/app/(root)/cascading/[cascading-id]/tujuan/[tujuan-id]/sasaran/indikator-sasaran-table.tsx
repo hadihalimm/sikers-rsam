@@ -54,7 +54,7 @@ const IndikatorSasaranTable = ({
 
   if (sasaranId === 0) {
     return (
-      <div className="w-1/3">
+      <div className="w-1/3 border-l border-t border-b rounded-lg p-2">
         <h1 className="font-semibold text-lg">Daftar Indikator Sasaran</h1>
         <Table className="table-fixed">
           <TableHeader>
@@ -76,7 +76,7 @@ const IndikatorSasaranTable = ({
   }
 
   return (
-    <div className="w-1/3 flex flex-col gap-y-3">
+    <div className="w-1/3 flex flex-col gap-y-3 border-l border-t border-b rounded-lg p-2">
       <div>
         <h1 className="font-semibold text-lg">Daftar Indikator Sasaran</h1>
         <p>{sasaran?.judul}</p>
