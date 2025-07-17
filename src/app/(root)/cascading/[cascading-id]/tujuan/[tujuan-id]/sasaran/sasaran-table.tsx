@@ -43,7 +43,7 @@ const SasaranTable = ({ tujuanId, cascadingId }: SasaranTableProps) => {
           setCreateDialogOpen(true);
         }}>
         <Plus />
-        Tambah sasaran
+        Sasaran baru
       </Button>
 
       <div className="flex gap-x-4">
@@ -63,19 +63,21 @@ const SasaranTable = ({ tujuanId, cascadingId }: SasaranTableProps) => {
                   sasaran={item}
                   level={0}
                   sasaranList={sasaranList}
-                  onCreateSubSasaran={() => {
-                    setSelectedSasaran(item);
+                  onCreateSubSasaran={(sasaran) => {
+                    setSelectedSasaran(sasaran);
                     setCreateDialogOpen(true);
                   }}
-                  onUpdateSasaran={() => {
-                    setSelectedSasaran(item);
+                  onUpdateSasaran={(sasaran) => {
+                    setSelectedSasaran(sasaran);
                     setUpdateDialogOpen(true);
                   }}
-                  onDeleteSasaran={() => {
-                    setSelectedSasaran(item);
+                  onDeleteSasaran={(sasaran) => {
+                    setSelectedSasaran(sasaran);
                     setDeleteDialogOpen(true);
                   }}
-                  onSelectSasaranForIndikator={setSelectedSasaranForIndikator}
+                  onSelectSasaranForIndikator={(sasaran) => {
+                    setSelectedSasaranForIndikator(sasaran);
+                  }}
                 />
               ))}
             </TableBody>

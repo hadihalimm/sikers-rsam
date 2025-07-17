@@ -51,13 +51,16 @@ const SasaranItem = ({
                 />
               </Button>
               <p
-                className="whitespace-normal hover:text-primary hover:cursor-pointer hover:underline"
+                className="whitespace-normal break-words hover:text-primary hover:cursor-pointer hover:underline"
                 onClick={() => onSelectSasaranForIndikator(sasaran)}>
                 {sasaran.judul}
               </p>
             </div>
           </TableCell>
-          <TableCell>{sasaran.pengampu}</TableCell>
+          <TableCell>
+            {' '}
+            <p className="whitespace-normal break-words">{sasaran.pengampu}</p>
+          </TableCell>
           <TableCell>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -70,6 +73,7 @@ const SasaranItem = ({
                 <DropdownMenuItem
                   onClick={() => {
                     onCreateSubSasaran(sasaran);
+                    setIsOpen(true);
                   }}>
                   <Plus />
                   Sub-sasaran
@@ -114,13 +118,15 @@ const SasaranItem = ({
           <div className="flex gap-x-2 items-center" style={indentationStyle}>
             <div className="w-4" />
             <p
-              className="whitespace-normal hover:text-primary hover:cursor-pointer"
+              className="whitespace-normal break-words hover:text-primary hover:cursor-pointer hover:underline"
               onClick={() => onSelectSasaranForIndikator(sasaran)}>
               {sasaran.judul}
             </p>
           </div>
         </TableCell>
-        <TableCell>{sasaran.pengampu}</TableCell>
+        <TableCell>
+          <p className="whitespace-normal break-words">{sasaran.pengampu}</p>
+        </TableCell>
         <TableCell>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -133,6 +139,7 @@ const SasaranItem = ({
               <DropdownMenuItem
                 onClick={() => {
                   onCreateSubSasaran(sasaran);
+                  setIsOpen(true);
                 }}>
                 <Plus />
                 Sub-sasaran

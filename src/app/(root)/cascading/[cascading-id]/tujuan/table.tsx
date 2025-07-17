@@ -28,6 +28,7 @@ import IndikatorTujuanColumn from './indikator-tujuan-column';
 import JudulTujuanColumn from './judul-tujuan-column';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import { toast } from 'sonner';
+import Link from 'next/link';
 
 const TujuanTable = () => {
   const params = useParams();
@@ -43,6 +44,7 @@ const TujuanTable = () => {
     columnHelper.accessor('judul', {
       id: 'judul',
       header: 'Judul',
+      size: 100,
       cell: (info) => (
         <JudulTujuanColumn
           tujuan={info.row.original}
@@ -61,6 +63,7 @@ const TujuanTable = () => {
     columnHelper.accessor('indikatorTujuanList', {
       id: 'indikatorTujuanList',
       header: 'Indikator tujuan',
+      size: 70,
       cell: (info) => (
         <IndikatorTujuanColumn
           tujuanId={info.row.original.id}
@@ -72,11 +75,15 @@ const TujuanTable = () => {
     columnHelper.display({
       id: 'sasaranList',
       header: 'Sasaran',
-      cell: () => (
-        <Button>
-          <LayoutList />
-          Daftar Sasaran
-        </Button>
+      size: 40,
+      cell: (info) => (
+        <Link
+          href={`/cascading/${cascadingId}/tujuan/${info.row.original.id}/sasaran`}>
+          <Button>
+            <LayoutList />
+            Daftar Sasaran
+          </Button>
+        </Link>
       ),
     }),
   ];
@@ -100,7 +107,7 @@ const TujuanTable = () => {
           trigger={
             <Button>
               <Plus />
-              Tambah Tujuan
+              Tujuan baru
             </Button>
           }
           open={createDialogOpen}
@@ -120,7 +127,11 @@ const TujuanTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),

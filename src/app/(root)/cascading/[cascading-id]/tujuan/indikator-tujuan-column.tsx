@@ -33,7 +33,7 @@ const IndikatorTujuanColumn = ({
     <div className="flex flex-col gap-y-6">
       {data.map((item) => (
         <div key={item.id} className="flex items-center justify-between mr-8">
-          <p className="">{item.nama}</p>
+          <p className="whitespace-normal break-words">{item.nama}</p>
           <div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
