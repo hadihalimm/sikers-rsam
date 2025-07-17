@@ -14,8 +14,12 @@ export const cascading = pgTable('cascading', {
   judul: text('judul').notNull(),
   tahunMulai: integer('tahun_mulai').notNull(),
   tahunBerakhir: integer('tahun_berakhir').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
 });
 
 export const tujuan = pgTable('tujuan', {
