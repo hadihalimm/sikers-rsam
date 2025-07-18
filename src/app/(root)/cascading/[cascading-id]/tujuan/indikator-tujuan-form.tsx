@@ -2,7 +2,7 @@ import { useAppForm } from '@/components/form';
 import {
   useCreateIndikatorTujuan,
   useUpdateIndikatorTujuan,
-} from '@/hooks/query/indikator-tujuan';
+} from '@/hooks/query/cascading/indikator-tujuan';
 import { IndikatorTujuan } from '@/types/database';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';

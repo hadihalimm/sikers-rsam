@@ -9,7 +9,7 @@ import {
 import {
   useDeleteCascading,
   useGetAllCascading,
-} from '@/hooks/query/cascading';
+} from '@/hooks/query/cascading/cascading';
 import {
   Table,
   TableBody,

@@ -1,5 +1,8 @@
 import { useAppForm } from '@/components/form';
-import { useCreateTujuan, useUpdateTujuan } from '@/hooks/query/tujuan';
+import {
+  useCreateTujuan,
+  useUpdateTujuan,
+} from '@/hooks/query/cascading/tujuan';
 import { Tujuan } from '@/types/database';
 import { useParams } from 'next/navigation';
 import React from 'react';

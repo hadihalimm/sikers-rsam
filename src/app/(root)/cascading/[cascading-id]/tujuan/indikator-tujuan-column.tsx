@@ -5,7 +5,7 @@ import { MoreHorizontal, Plus } from 'lucide-react';
 import IndikatorTujuanForm from './indikator-tujuan-form';
 import { useState } from 'react';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
-import { useDeleteIndikatorTujuan } from '@/hooks/query/indikator-tujuan';
+import { useDeleteIndikatorTujuan } from '@/hooks/query/cascading/indikator-tujuan';
 import {
   DropdownMenu,
   DropdownMenuContent,

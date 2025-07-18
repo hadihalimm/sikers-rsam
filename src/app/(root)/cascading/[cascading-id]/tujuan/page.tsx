@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetCascading } from '@/hooks/query/cascading';
+import { useGetCascading } from '@/hooks/query/cascading/cascading';
 import { useParams, useRouter } from 'next/navigation';
 import TujuanTable from './table';
 import { MoveLeft } from 'lucide-react';

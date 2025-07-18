@@ -4,7 +4,7 @@ import { useAppForm } from '@/components/form';
 import {
   useCreateCascading,
   useUpdateCascading,
-} from '@/hooks/query/cascading';
+} from '@/hooks/query/cascading/cascading';
 import { Cascading } from '@/types/database';
 import { toast } from 'sonner';
 import { z } from 'zod';

@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetTujuan } from '@/hooks/query/tujuan';
+import { useGetTujuan } from '@/hooks/query/cascading/tujuan';
 import { useParams, useRouter } from 'next/navigation';
 import SasaranTable from './sasaran-table';
 import { Button } from '@/components/ui/button';

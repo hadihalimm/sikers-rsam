@@ -2,7 +2,7 @@ import { useAppForm } from '@/components/form';
 import {
   useCreateIndikatorSasaran,
   useUpdateIndikatorSasaran,
-} from '@/hooks/query/indikator-sasaran';
+} from '@/hooks/query/cascading/indikator-sasaran';
 import { IndikatorSasaran } from '@/types/database';
 import { toast } from 'sonner';
 import z from 'zod';

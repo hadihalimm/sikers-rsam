@@ -1,5 +1,8 @@
 import { useAppForm } from '@/components/form';
-import { useCreateSasaran, useUpdateSasaran } from '@/hooks/query/sasaran';
+import {
+  useCreateSasaran,
+  useUpdateSasaran,
+} from '@/hooks/query/cascading/sasaran';
 import { Sasaran } from '@/types/database';
 import { toast } from 'sonner';
 import z from 'zod';

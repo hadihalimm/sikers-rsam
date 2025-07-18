@@ -12,7 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useDeleteTujuan, useGetAllTujuan } from '@/hooks/query/tujuan';
+import {
+  useDeleteTujuan,
+  useGetAllTujuan,
+} from '@/hooks/query/cascading/tujuan';
 import { Tujuan, TujuanWithIndikator } from '@/types/database';
 import {
   createColumnHelper,

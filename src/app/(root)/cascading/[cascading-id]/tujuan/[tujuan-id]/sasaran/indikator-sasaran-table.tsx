@@ -17,7 +17,7 @@ import {
 import {
   useDeleteIndikatorSasaran,
   useGetAllIndikatorSasaran,
-} from '@/hooks/query/indikator-sasaran';
+} from '@/hooks/query/cascading/indikator-sasaran';
 import { IndikatorSasaran, Sasaran } from '@/types/database';
 import { MoreHorizontal, Plus } from 'lucide-react';
 import { useState } from 'react';

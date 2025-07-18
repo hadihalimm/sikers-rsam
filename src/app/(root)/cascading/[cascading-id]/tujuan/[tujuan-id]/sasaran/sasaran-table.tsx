@@ -7,7 +7,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useDeleteSasaran, useGetAllSasaran } from '@/hooks/query/sasaran';
+import {
+  useDeleteSasaran,
+  useGetAllSasaran,
+} from '@/hooks/query/cascading/sasaran';
 import { Sasaran } from '@/types/database';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
