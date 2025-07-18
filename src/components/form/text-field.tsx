@@ -3,25 +3,26 @@ import { useFieldContext } from '.';
 import { Input } from '../ui/input';
 import { AlertCircle } from 'lucide-react';
 import { Label } from '../ui/label';
+import { InputHTMLAttributes } from 'react';
 
-interface TextFieldProps {
+interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   className?: string;
 }
 
-const TextField = ({ label, className }: TextFieldProps) => {
+const TextField = ({ label, className, ...inputProps }: TextFieldProps) => {
   const field = useFieldContext<string>();
   return (
     <div className="flex flex-col gap-y-1">
       <Label className="ml-1">{label}</Label>
       <Input
-        type="text"
         id={field.name}
         value={field.state.value}
         onChange={(e) => field.handleChange(e.target.value)}
         onBlur={field.handleBlur}
         className={cn('', className)}
         autoComplete="off"
+        {...inputProps}
       />
       {field.state.meta.isTouched &&
         field.state.meta.errors.map(({ message }, index) => (
