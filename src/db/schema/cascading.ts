@@ -8,6 +8,12 @@ import {
   text,
   timestamp,
 } from 'drizzle-orm/pg-core';
+import {
+  indikatorSasaranTarget,
+  indikatorTujuanTarget,
+  programSasaran,
+  renstra,
+} from './renstra';
 
 export const cascading = pgTable('cascading', {
   id: serial('id').primaryKey(),
@@ -65,6 +71,7 @@ export const indikatorSasaran = pgTable('indikator_sasaran', {
 
 export const cascadingRelations = relations(cascading, ({ many }) => ({
   tujuanList: many(tujuan),
+  renstraList: many(renstra),
 }));
 
 export const tujuanRelations = relations(tujuan, ({ one, many }) => ({
@@ -78,11 +85,12 @@ export const tujuanRelations = relations(tujuan, ({ one, many }) => ({
 
 export const indikatorTujuanRelations = relations(
   indikatorTujuan,
-  ({ one }) => ({
+  ({ one, many }) => ({
     tujuan: one(tujuan, {
       fields: [indikatorTujuan.tujuanId],
       references: [tujuan.id],
     }),
+    indikatorTujuanTargetList: many(indikatorTujuanTarget),
   }),
 );
 
@@ -100,14 +108,16 @@ export const sasaranRelations = relations(sasaran, ({ one, many }) => ({
     relationName: 'parent_children',
   }),
   indikatorSasaranList: many(indikatorSasaran),
+  programSasaranList: many(programSasaran),
 }));
 
 export const indikatorSasaranRelations = relations(
   indikatorSasaran,
-  ({ one }) => ({
+  ({ one, many }) => ({
     sasaran: one(sasaran, {
       fields: [indikatorSasaran.sasaranId],
       references: [sasaran.id],
     }),
+    indikatorSasaranTargetList: many(indikatorSasaranTarget),
   }),
 );
