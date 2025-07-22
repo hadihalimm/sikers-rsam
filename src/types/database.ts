@@ -1,26 +1,28 @@
-import {
-  account,
-  cascading,
-  indikatorSasaran,
-  indikatorTujuan,
-  sasaran,
-  session,
-  tujuan,
-  user,
-  verification,
-} from '@/db/schema';
+import * as schema from '@/db/schema';
 import { InferSelectModel } from 'drizzle-orm';
 
-export type User = InferSelectModel<typeof user>;
-export type Session = InferSelectModel<typeof session>;
-export type Account = InferSelectModel<typeof account>;
-export type Verification = InferSelectModel<typeof verification>;
+export type User = InferSelectModel<typeof schema.user>;
+export type Session = InferSelectModel<typeof schema.session>;
+export type Account = InferSelectModel<typeof schema.account>;
+export type Verification = InferSelectModel<typeof schema.verification>;
 
-export type Cascading = InferSelectModel<typeof cascading>;
-export type Tujuan = InferSelectModel<typeof tujuan>;
-export type IndikatorTujuan = InferSelectModel<typeof indikatorTujuan>;
-export type Sasaran = InferSelectModel<typeof sasaran>;
-export type IndikatorSasaran = InferSelectModel<typeof indikatorSasaran>;
+export type Cascading = InferSelectModel<typeof schema.cascading>;
+export type Tujuan = InferSelectModel<typeof schema.tujuan>;
+export type IndikatorTujuan = InferSelectModel<typeof schema.indikatorTujuan>;
+export type Sasaran = InferSelectModel<typeof schema.sasaran>;
+export type IndikatorSasaran = InferSelectModel<typeof schema.indikatorSasaran>;
+
+export type Renstra = InferSelectModel<typeof schema.renstra>;
+export type IndikatorTujuanTarget = InferSelectModel<
+  typeof schema.indikatorTujuanTarget
+>;
+export type ProgramSasaran = InferSelectModel<typeof schema.programSasaran>;
+export type IndikatorSasaranTarget = InferSelectModel<
+  typeof schema.indikatorSasaranTarget
+>;
+export type Program = InferSelectModel<typeof schema.program>;
+export type Kegiatan = InferSelectModel<typeof schema.kegiatan>;
+export type SubKegiatan = InferSelectModel<typeof schema.subKegiatan>;
 
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
@@ -28,4 +30,8 @@ export type TujuanWithIndikator = Tujuan & {
 
 export type SasaranWithIndikator = Sasaran & {
   indikatorSasaranList: IndikatorSasaran[];
+};
+
+export type RenstraWithCascading = Renstra & {
+  cascading: Cascading;
 };
