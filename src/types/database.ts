@@ -35,3 +35,21 @@ export type SasaranWithIndikator = Sasaran & {
 export type RenstraWithCascading = Renstra & {
   cascading: Cascading;
 };
+
+export type RenstraDetail = Tujuan & {
+  indikatorTujuanList: (IndikatorTujuan & {
+    indikatorTujuanTargetList: IndikatorTujuanTarget[];
+  })[];
+  sasaranList: (Sasaran & {
+    indikatorSasaranList: (IndikatorSasaran & {
+      indikatorSasaranTargetList: IndikatorSasaranTarget[];
+    })[];
+    programSasaranList: (ProgramSasaran & {
+      program: Program & {
+        kegiatanList: (Kegiatan & {
+          subKegiatanList: SubKegiatan[];
+        })[];
+      };
+    })[];
+  })[];
+};

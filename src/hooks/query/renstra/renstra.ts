@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import { getQueryClient } from '@/lib/get-query-client';
-import { Renstra, RenstraWithCascading } from '@/types/database';
+import { Renstra, RenstraDetail, RenstraWithCascading } from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllRenstra = () => {
@@ -14,7 +14,7 @@ export const useGetAllRenstra = () => {
 };
 
 export const useGetRenstra = (id: number) => {
-  return useQuery<Renstra>({
+  return useQuery<RenstraDetail[]>({
     queryKey: ['renstra', id],
     queryFn: async () => {
       const { data } = await api.get(`/renstra/${id}`);
