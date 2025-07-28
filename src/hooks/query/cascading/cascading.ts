@@ -20,6 +20,7 @@ export const useGetCascading = (id: number) => {
       const { data } = await api.get(`/cascading/${id}`);
       return data;
     },
+    enabled: !!id,
   });
 };
 
