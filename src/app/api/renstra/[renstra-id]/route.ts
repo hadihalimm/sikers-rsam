@@ -1,5 +1,5 @@
 import db from '@/db';
-import { renstra } from '@/db/schema';
+import { renstra, tujuan } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,20 +12,55 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'renstra-id': renstraId } = await params;
-    const record = await db.query.renstra.findFirst({
-      where: eq(renstra.id, parseInt(renstraId)),
-      with: {
-        indikatorTujuanTargetList: true,
-        indikatorSasaranTargetList: true,
-        programSasaranList: true,
+    const cascadingRecord = await db.query.renstra.findFirst({
+      columns: {
+        cascadingId: true,
       },
+      where: eq(renstra.id, parseInt(renstraId)),
     });
-    if (!record) {
+    if (!cascadingRecord) {
       return NextResponse.json(
-        { error: "'renstra' record not found" },
+        { error: "related 'cascading' record not found" },
         { status: 404 },
       );
     }
+
+    const record = await db.query.tujuan.findMany({
+      where: eq(tujuan.cascadingId, cascadingRecord.cascadingId),
+      with: {
+        indikatorTujuanList: {
+          with: {
+            indikatorTujuanTargetList: {
+              where: (target) => eq(target.renstraId, parseInt(renstraId)),
+            },
+          },
+        },
+        sasaranList: {
+          with: {
+            indikatorSasaranList: {
+              with: {
+                indikatorSasaranTargetList: {
+                  where: (target) => eq(target.renstraId, parseInt(renstraId)),
+                  orderBy: (target, { asc }) => [asc(target.tahun)],
+                },
+              },
+            },
+            programSasaranList: {
+              with: {
+                program: {
+                  with: {
+                    kegiatanList: {
+                      with: { subKegiatanList: true },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
     return NextResponse.json(record);
   } catch (error) {
     console.error("Error fetching 'renstra' record: ", error);
