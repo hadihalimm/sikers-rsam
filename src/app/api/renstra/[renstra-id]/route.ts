@@ -1,6 +1,7 @@
 import db from '@/db';
-import { renstra, tujuan } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { refSubKegiatan, renstra, tujuan } from '@/db/schema';
+import { RefSubKegiatan, SubKegiatan } from '@/types/database';
+import { eq, inArray } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -46,11 +47,16 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
               },
             },
             programSasaranList: {
+              where: (ps) => eq(ps.renstraId, parseInt(renstraId)),
               with: {
                 program: {
                   with: {
-                    kegiatanList: {
-                      with: { subKegiatanList: true },
+                    refProgram: true,
+                    kegiatan: {
+                      with: {
+                        refKegiatan: true,
+                        subKegiatanList: true,
+                      },
                     },
                   },
                 },
@@ -60,6 +66,43 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         },
       },
     });
+
+    const refSubKegiatanIdSet = new Set<number>();
+    for (const t of record) {
+      for (const s of t.sasaranList) {
+        for (const ps of s.programSasaranList) {
+          const k = ps.program.kegiatan;
+          if (k) {
+            for (const sk of k.subKegiatanList) {
+              if (sk.refSubKegiatanId != null) {
+                refSubKegiatanIdSet.add(sk.refSubKegiatanId);
+              }
+            }
+          }
+        }
+      }
+    }
+    const refSubKegiatanList = await db.query.refSubKegiatan.findMany({
+      where: inArray(refSubKegiatan.id, Array.from(refSubKegiatanIdSet)),
+    });
+    const refSubKegiatanMap = new Map(
+      refSubKegiatanList.map((ref) => [ref.id, ref]),
+    );
+    for (const t of record) {
+      for (const s of t.sasaranList) {
+        for (const ps of s.programSasaranList) {
+          const k = ps.program.kegiatan;
+          if (k) {
+            for (const sk of k.subKegiatanList) {
+              (
+                sk as SubKegiatan & { refSubKegiatan?: RefSubKegiatan }
+              ).refSubKegiatan =
+                refSubKegiatanMap.get(sk.refSubKegiatanId) ?? undefined;
+            }
+          }
+        }
+      }
+    }
 
     return NextResponse.json(record);
   } catch (error) {

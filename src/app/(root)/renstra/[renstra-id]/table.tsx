@@ -6,12 +6,15 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import {
   IndikatorSasaranTarget,
   IndikatorTujuanTarget,
+  ProgramSasaran,
   RenstraDetail,
+  Sasaran,
 } from '@/types/database';
 import IndikatorTujuanColumn from './indikator-tujuan-column';
 import {
@@ -22,25 +25,49 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FormDialog from '@/components/form-dialog';
 import IndikatorTujuanTargetForm from './indikator-tujuan-target-form';
 import IndikatorSasaranColumn from './indikator-sasaran-column';
 import IndikatorSasaranTargetForm from './indikator-sasaran-target-form';
+import ProgramSasaranForm from './program-sasaran-form';
+import DeleteAlertDialog from '@/components/delete-alert-dialog';
+import { useDeleteProgramSasaran } from '@/hooks/query/renstra/program-sasaran';
+import { toast } from 'sonner';
+import IndikatorSasaranTargetFilterDropdown from './indikator-sasaran-target-filter-dropdown';
 
 const RenstraDetailTable = () => {
   const params = useParams();
   const { data: renstra = [] } = useGetRenstra(Number(params['renstra-id']));
+  const [selectedSasaranLevels, setSelectedSasaranLevels] = useState<number[]>(
+    [],
+  );
+  useEffect(() => {
+    if (renstra.length > 0) {
+      const levels = Array.from(
+        new Set(
+          renstra.flatMap((item) =>
+            item.sasaranList.map((sasaran) => sasaran.level),
+          ),
+        ),
+      ).sort((a, b) => a - b);
+
+      setSelectedSasaranLevels(levels);
+    }
+  }, [renstra]);
+
   const columnHelper = createColumnHelper<RenstraDetail>();
   const columns = [
     columnHelper.accessor('judul', {
       id: 'judul',
       header: 'Tujuan',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('indikatorTujuanList', {
       id: 'indikatorTujuanList',
       header: 'Target Indikator Tujuan',
+      size: 70,
       cell: (info) => (
         <IndikatorTujuanColumn
           indikatorTujuanList={info.getValue()}
@@ -53,13 +80,35 @@ const RenstraDetailTable = () => {
     }),
     columnHelper.accessor('sasaranList', {
       id: 'sasaranList',
-      header: 'Target Indikator Sasaran',
+      header: () => (
+        <div className="flex gap-x-2 items-center">
+          <p>Target Indikator Sasaran</p>
+          <IndikatorSasaranTargetFilterDropdown
+            data={renstra}
+            selectedLevels={selectedSasaranLevels}
+            onFilterChange={(levels) => {
+              setSelectedSasaranLevels(levels);
+            }}
+          />
+        </div>
+      ),
+      size: 100,
       cell: (info) => (
         <IndikatorSasaranColumn
-          sasaranList={info.getValue()}
+          sasaranList={info
+            .getValue()
+            .filter((sasaran) => selectedSasaranLevels.includes(sasaran.level))}
           onEditTarget={(target) => {
             setSasaranTargetItem(target);
             setSasaranTargetDialogOpen(true);
+          }}
+          onAddProgram={(sasaran) => {
+            setSasaran(sasaran);
+            setProgramSasaranDialogOpen(true);
+          }}
+          onDeleteProgram={(ps) => {
+            setProgramSasaran(ps);
+            setDeleteProgramSasaranDialogOpen(true);
           }}
         />
       ),
@@ -69,6 +118,7 @@ const RenstraDetailTable = () => {
     data: renstra,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
   const [tujuanTargetDialogOpen, setTujuanTargetDialogOpen] = useState(false);
   const [tujuanTargetItem, setTujuanTargetItem] =
@@ -77,6 +127,15 @@ const RenstraDetailTable = () => {
   const [sasaranTargetItem, setSasaranTargetItem] = useState<
     IndikatorSasaranTarget[]
   >([]);
+  const [programSasaranDialogOpen, setProgramSasaranDialogOpen] =
+    useState(false);
+  const [sasaran, setSasaran] = useState<Sasaran>();
+  const [deleteProgramSasaranDialogOpen, setDeleteProgramSasaranDialogOpen] =
+    useState(false);
+  const [programSasaran, setProgramSasaran] = useState<ProgramSasaran>();
+  const deleteProgramSasaran = useDeleteProgramSasaran(
+    Number(params['renstra-id']),
+  );
 
   return (
     <div className="border rounded-md overflow-hidden">
@@ -85,7 +144,13 @@ const RenstraDetailTable = () => {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
+                <TableHead
+                  key={header.id}
+                  style={{
+                    width: `${header.getSize()}px`,
+                    minWidth: `${header.getSize()}px`,
+                    maxWidth: `${header.getSize()}px`,
+                  }}>
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext(),
@@ -147,6 +212,31 @@ const RenstraDetailTable = () => {
           }}
         />
       </FormDialog>
+
+      <FormDialog
+        title="Tambah Program"
+        open={programSasaranDialogOpen}
+        onOpenChange={setProgramSasaranDialogOpen}>
+        <ProgramSasaranForm
+          renstraId={Number(params['renstra-id'])}
+          sasaranId={sasaran?.id ?? 0}
+          onSuccess={() => {
+            setProgramSasaranDialogOpen(false);
+            setSasaran(undefined);
+          }}
+        />
+      </FormDialog>
+
+      <DeleteAlertDialog
+        open={deleteProgramSasaranDialogOpen}
+        onOpenChange={setDeleteProgramSasaranDialogOpen}
+        onSuccess={() => {
+          deleteProgramSasaran.mutateAsync(programSasaran!.id);
+          setProgramSasaran(undefined);
+          setDeleteProgramSasaranDialogOpen(false);
+          toast.info('Program berhasil dihapus');
+        }}
+      />
     </div>
   );
 };

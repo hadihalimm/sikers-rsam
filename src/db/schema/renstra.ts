@@ -34,9 +34,9 @@ export const indikatorTujuanTarget = pgTable('indikator_tujuan_target', {
 
 export const programSasaran = pgTable('program_sasaran', {
   id: serial('id').primaryKey(),
-  programId: integer('program_id')
-    .notNull()
-    .references(() => program.id, { onDelete: 'cascade' }),
+  // programId: integer('program_id')
+  //   .notNull()
+  //   .references(() => program.id, { onDelete: 'restrict' }),
   sasaranId: integer('sasaran_id')
     .notNull()
     .references(() => sasaran.id, { onDelete: 'cascade' }),
@@ -59,23 +59,56 @@ export const indikatorSasaranTarget = pgTable('indikator_sasaran_target', {
 
 export const program = pgTable('program', {
   id: serial('id').primaryKey(),
-  nama: text('nama').notNull(),
+  // nama: text('nama').notNull(),
+  programSasaranId: integer('program_sasaran_id')
+    .notNull()
+    .references(() => programSasaran.id, { onDelete: 'cascade' }),
+  refProgramId: integer('ref_program_id')
+    .notNull()
+    .references(() => refProgram.id, { onDelete: 'restrict' }),
 });
 
 export const kegiatan = pgTable('kegiatan', {
   id: serial('id').primaryKey(),
-  nama: text('nama').notNull(),
+  // nama: text('nama').notNull(),
   programId: integer('program_id')
     .notNull()
     .references(() => program.id, { onDelete: 'cascade' }),
+  refKegiatanId: integer('ref_kegiatan_id')
+    .notNull()
+    .references(() => refKegiatan.id, { onDelete: 'restrict' }),
 });
 
 export const subKegiatan = pgTable('sub_kegiatan', {
   id: serial('id').primaryKey(),
-  nama: text('nama').notNull(),
+  // nama: text('nama').notNull(),
   kegiatanId: integer('kegiatan_id')
     .notNull()
     .references(() => kegiatan.id, { onDelete: 'cascade' }),
+  refSubKegiatanId: integer('ref_sub_kegiatan_id')
+    .notNull()
+    .references(() => refSubKegiatan.id, { onDelete: 'restrict' }),
+});
+
+export const refProgram = pgTable('ref_program', {
+  id: serial('id').primaryKey(),
+  nama: text('nama').notNull(),
+});
+
+export const refKegiatan = pgTable('ref_kegiatan', {
+  id: serial('id').primaryKey(),
+  nama: text('nama').notNull(),
+  refProgramId: integer('ref_program_id')
+    .notNull()
+    .references(() => refProgram.id, { onDelete: 'cascade' }),
+});
+
+export const refSubKegiatan = pgTable('ref_sub_kegiatan', {
+  id: serial('id').primaryKey(),
+  nama: text('nama').notNull(),
+  refKegiatanId: integer('ref_kegiatan_id')
+    .notNull()
+    .references(() => refKegiatan.id, { onDelete: 'cascade' }),
 });
 
 export const renstraRelations = relations(renstra, ({ one, many }) => ({
@@ -104,8 +137,8 @@ export const indikatorTujuanTargetRelations = relations(
 
 export const programSasaranRelations = relations(programSasaran, ({ one }) => ({
   program: one(program, {
-    fields: [programSasaran.programId],
-    references: [program.id],
+    fields: [programSasaran.id],
+    references: [program.programSasaranId],
   }),
   sasaran: one(sasaran, {
     fields: [programSasaran.sasaranId],
@@ -131,12 +164,23 @@ export const indikatorSasaranTargetRelations = relations(
   }),
 );
 
-export const programRelations = relations(program, ({ many }) => ({
-  kegiatanList: many(kegiatan),
-  programSasaranList: many(programSasaran),
+export const programRelations = relations(program, ({ one }) => ({
+  refProgram: one(refProgram, {
+    fields: [program.refProgramId],
+    references: [refProgram.id],
+  }),
+  kegiatan: one(kegiatan),
+  programSasaran: one(programSasaran, {
+    fields: [program.programSasaranId],
+    references: [programSasaran.id],
+  }),
 }));
 
 export const kegiatanRelations = relations(kegiatan, ({ one, many }) => ({
+  refKegiatan: one(refKegiatan, {
+    fields: [kegiatan.refKegiatanId],
+    references: [refKegiatan.id],
+  }),
   program: one(program, {
     fields: [kegiatan.programId],
     references: [program.id],
@@ -145,8 +189,31 @@ export const kegiatanRelations = relations(kegiatan, ({ one, many }) => ({
 }));
 
 export const subKegiatanRelations = relations(subKegiatan, ({ one }) => ({
+  refSubKegiatan: one(refSubKegiatan, {
+    fields: [subKegiatan.refSubKegiatanId],
+    references: [refSubKegiatan.id],
+  }),
   kegiatan: one(kegiatan, {
     fields: [subKegiatan.kegiatanId],
     references: [kegiatan.id],
+  }),
+}));
+
+export const refProgramRelations = relations(refProgram, ({ many }) => ({
+  refKegiatanList: many(refKegiatan),
+}));
+
+export const refKegiatanRelations = relations(refKegiatan, ({ one, many }) => ({
+  refProgram: one(refProgram, {
+    fields: [refKegiatan.refProgramId],
+    references: [refProgram.id],
+  }),
+  refSubKegiatanList: many(refSubKegiatan),
+}));
+
+export const refSubKegiatanRelations = relations(refSubKegiatan, ({ one }) => ({
+  refKegiatan: one(refKegiatan, {
+    fields: [refSubKegiatan.refKegiatanId],
+    references: [refKegiatan.id],
   }),
 }));
