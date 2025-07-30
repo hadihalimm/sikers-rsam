@@ -24,6 +24,10 @@ export type Program = InferSelectModel<typeof schema.program>;
 export type Kegiatan = InferSelectModel<typeof schema.kegiatan>;
 export type SubKegiatan = InferSelectModel<typeof schema.subKegiatan>;
 
+export type RefProgram = InferSelectModel<typeof schema.refProgram>;
+export type RefKegiatan = InferSelectModel<typeof schema.refKegiatan>;
+export type RefSubKegiatan = InferSelectModel<typeof schema.refSubKegiatan>;
+
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };
@@ -46,9 +50,13 @@ export type RenstraDetail = Tujuan & {
     })[];
     programSasaranList: (ProgramSasaran & {
       program: Program & {
-        kegiatanList: (Kegiatan & {
-          subKegiatanList: SubKegiatan[];
-        })[];
+        refProgram: RefProgram;
+        kegiatan: Kegiatan & {
+          refKegiatan: RefKegiatan;
+          subKegiatanList: (SubKegiatan & {
+            refSubKegiatan: RefSubKegiatan;
+          })[];
+        };
       };
     })[];
   })[];
