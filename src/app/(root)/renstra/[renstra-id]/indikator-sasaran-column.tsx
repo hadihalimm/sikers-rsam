@@ -44,11 +44,11 @@ const IndikatorSasaranColumn = ({
   onDeleteProgram,
 }: IndikatorSasaranColumnProps) => {
   return (
-    <div className="flex flex-col gap-y-2">
+    <div className="flex flex-col gap-y-8">
       {sasaranList.map((sasaran, index) => (
         <div
           key={sasaran.id}
-          className="flex flex-col gap-y-1 border px-2 py-2 rounded-lg border-blue-200">
+          className="flex flex-col gap-y-2 border px-2 py-2 rounded-lg">
           <p className="font-medium text-base text-foreground">
             {index + 1}. {sasaran.judul}
           </p>
