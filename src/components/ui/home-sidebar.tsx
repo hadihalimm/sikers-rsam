@@ -30,23 +30,23 @@ export const aplikasiGroup = [
   },
   {
     title: 'Indikator Kinerja Utama',
-    url: 'indikator-kinerja-utama',
+    url: '/indikator-kinerja-utama',
   },
   {
     title: 'Rencana Kinerja Tahunan',
-    url: 'rencana-kinerja-tahunan',
+    url: '/rencana-kinerja-tahunan',
   },
   {
     title: 'Perjanjian Kinerja',
-    url: 'perjanjian-kinerja',
+    url: '/perjanjian-kinerja',
   },
   {
     title: 'Rencana Aksi',
-    url: 'rencana-aksi',
+    url: '/rencana-aksi',
   },
   {
     title: 'Realisasi Rencana Aksi',
-    url: 'realisasi-rencana-aksi',
+    url: '/realisasi-rencana-aksi',
   },
 ];
 
