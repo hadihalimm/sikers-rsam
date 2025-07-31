@@ -167,4 +167,80 @@
   body {
     @apply bg-background text-foreground;
   }
+  h1 {
+    @apply text-2xl font-bold;
+  }
+  h2 {
+    @apply text-xl font-semibold;
+  }
+  h3 {
+    @apply text-lg font-medium;
+  }
+
+  .tiptap {
+    :first-child {
+      margin-top: 0;
+    }
+
+    /* Table-specific styling */
+    table {
+      border-collapse: collapse;
+      margin: 0;
+      overflow: hidden;
+      table-layout: auto;
+      width: fit-content;
+
+      td,
+      th {
+        border: 1px solid oklch(70.5% 0.015 286.067);
+        box-sizing: border-box;
+        min-width: 1em;
+        padding: 6px 8px;
+        position: relative;
+        vertical-align: top;
+
+        > * {
+          margin-bottom: 0;
+        }
+      }
+
+      th {
+        background-color: oklch(92% 0.004 286.32);
+        font-weight: bold;
+        text-align: left;
+      }
+
+      .selectedCell:after {
+        background: oklch(87.1% 0.006 286.286);
+        content: '';
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        pointer-events: none;
+        position: absolute;
+        z-index: -1;
+      }
+
+      .column-resize-handle {
+        background-color: oklch(70.7% 0.165 254.624);
+        bottom: -2px;
+        pointer-events: none;
+        position: absolute;
+        right: -2px;
+        top: 0;
+        width: 4px;
+      }
+    }
+
+    .tableWrapper {
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+
+    &.resize-cursor {
+      cursor: ew-resize;
+      cursor: col-resize;
+    }
+  }
 }
