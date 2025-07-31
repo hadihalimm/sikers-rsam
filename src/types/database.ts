@@ -28,6 +28,13 @@ export type RefProgram = InferSelectModel<typeof schema.refProgram>;
 export type RefKegiatan = InferSelectModel<typeof schema.refKegiatan>;
 export type RefSubKegiatan = InferSelectModel<typeof schema.refSubKegiatan>;
 
+export type IndikatorKinerjaUtama = InferSelectModel<
+  typeof schema.indikatorKinerjaUtama
+>;
+export type IndikatorKinerjaUtamaDetail = InferSelectModel<
+  typeof schema.indikatorKinerjaUtamaDetail
+>;
+
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };
@@ -60,4 +67,14 @@ export type RenstraDetail = Tujuan & {
       };
     })[];
   })[];
+};
+
+export type IndikatorKinerjaUtamaWithCascading = IndikatorKinerjaUtama & {
+  cascading: Cascading;
+};
+
+export type IndikatorKinerjaUtamaDetailWithSasaran = {
+  detail: IndikatorKinerjaUtamaDetail;
+  indikatorSasaran: IndikatorSasaran;
+  sasaran: Sasaran;
 };
