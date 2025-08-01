@@ -30,9 +30,12 @@ export const indikatorKinerjaUtamaDetail = pgTable(
     indikatorSasaranId: integer('sasaran_id')
       .notNull()
       .references(() => indikatorSasaran.id, { onDelete: 'restrict' }),
-    baseline: jsonb('baseline').default({}),
-    penjelasan: jsonb('penjelasan').default({}),
-    penanggungJawab: jsonb('penanggung_jawab').default({}),
+    baseline: jsonb('baseline').default({ type: 'doc', content: [] }),
+    penjelasan: jsonb('penjelasan').default({ type: 'doc', content: [] }),
+    penanggungJawab: jsonb('penanggung_jawab').default({
+      type: 'doc',
+      content: [],
+    }),
     indikatorKinerjaUtamaId: integer('indikator_kinerja_utama_id')
       .notNull()
       .references(() => indikatorKinerjaUtama.id, { onDelete: 'cascade' }),
