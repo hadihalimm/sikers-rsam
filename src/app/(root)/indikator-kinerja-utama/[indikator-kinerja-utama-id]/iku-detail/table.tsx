@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -17,6 +18,12 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import Highlight from '@tiptap/extension-highlight';
+import { TableKit } from '@tiptap/extension-table';
+import TextAlign from '@tiptap/extension-text-align';
+import { generateHTML, JSONContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -78,21 +85,33 @@ const IndikatorKinerjaUtamaDetailTable = () => {
       header: 'Indikator Sasaran',
       cell: (info) => info.getValue(),
     }),
-    // columnHelper.accessor('detail.baseline', {
-    //   id: 'baseline',
-    //   header: 'Baseline',
-    //   cell: (info) => info.getValue(),
-    // }),
-    // columnHelper.accessor('detail.penjelasan', {
-    //   id: 'penjelasan',
-    //   header: 'Penjelasan',
-    //   cell: (info) => info.getValue(),
-    // }),
-    // columnHelper.accessor('detail.penanggungJawab', {
-    //   id: 'penanggungJawab',
-    //   header: 'Penanggung Jawab',
-    //   cell: (info) => info.getValue(),
-    // }),
+    columnHelper.accessor('detail.baseline', {
+      id: 'baseline',
+      header: 'Baseline',
+      cell: (info) => renderTipTapHTML(info.getValue() as JSONContent),
+    }),
+    columnHelper.accessor('detail.penjelasan', {
+      id: 'penjelasan',
+      header: 'Penjelasan',
+      cell: (info) => renderTipTapHTML(info.getValue() as JSONContent),
+    }),
+    columnHelper.accessor('detail.penanggungJawab', {
+      id: 'penanggungJawab',
+      header: 'Penanggung Jawab',
+      cell: (info) => renderTipTapHTML(info.getValue() as JSONContent),
+    }),
+    columnHelper.display({
+      id: 'action',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <Link
+          href={`/indikator-kinerja-utama/${Number(
+            params['indikator-kinerja-utama-id'],
+          )}/iku-detail/${row.original.detail.id}`}>
+          <Button>Edit</Button>
+        </Link>
+      ),
+    }),
   ];
 
   const table = useReactTable({
@@ -102,7 +121,7 @@ const IndikatorKinerjaUtamaDetailTable = () => {
   });
 
   return (
-    <div className="border rounded-md overflow-hidden">
+    <div className="border rounded-md">
       <Table className="table-fixed">
         <TableHeader className="bg-blue-100">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -121,7 +140,7 @@ const IndikatorKinerjaUtamaDetailTable = () => {
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow key={row.id} className="hover:bg-background">
                 {row.getVisibleCells().map((cell) => {
                   if (cell.column.id === 'sasaran') {
                     if (!row.original.showSasaran) {
@@ -130,7 +149,8 @@ const IndikatorKinerjaUtamaDetailTable = () => {
                     return (
                       <TableCell
                         key={cell.id}
-                        rowSpan={row.original.sasaranRowSpan}>
+                        rowSpan={row.original.sasaranRowSpan}
+                        className="whitespace-normal break-words">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -139,7 +159,9 @@ const IndikatorKinerjaUtamaDetailTable = () => {
                     );
                   }
                   return (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="whitespace-normal break-words">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -160,6 +182,34 @@ const IndikatorKinerjaUtamaDetailTable = () => {
       </Table>
     </div>
   );
+};
+
+const renderTipTapHTML = (content: JSONContent) => {
+  return generateHTML(content, [
+    StarterKit.configure({
+      bulletList: {
+        HTMLAttributes: {
+          class: 'list-disc ml-6',
+        },
+      },
+      orderedList: {
+        HTMLAttributes: {
+          class: 'list-decimal ml-6',
+        },
+      },
+    }),
+    TextAlign.configure({
+      types: ['heading', 'paragraph'],
+    }),
+    Highlight.configure({
+      HTMLAttributes: {
+        class: 'bg-[#f8df81]',
+      },
+    }),
+    TableKit.configure({
+      table: { resizable: true },
+    }),
+  ]);
 };
 
 export default IndikatorKinerjaUtamaDetailTable;
