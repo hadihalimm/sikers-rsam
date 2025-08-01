@@ -14,6 +14,7 @@ import {
   programSasaran,
   renstra,
 } from './renstra';
+import { indikatorKinerjaUtama } from './indikator-kinerja-utama';
 
 export const cascading = pgTable('cascading', {
   id: serial('id').primaryKey(),
@@ -119,5 +120,6 @@ export const indikatorSasaranRelations = relations(
       references: [sasaran.id],
     }),
     indikatorSasaranTargetList: many(indikatorSasaranTarget),
+    indikatorKinerjaUtamaList: many(indikatorKinerjaUtama),
   }),
 );
