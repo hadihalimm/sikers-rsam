@@ -10,6 +10,34 @@ interface RouteParams {
   }>;
 }
 
+export async function GET(request: NextRequest, { params }: RouteParams) {
+  try {
+    const { 'iku-detail-id': indikatorKinerjaUtamaDetailId } = await params;
+    const record = await db.query.indikatorKinerjaUtamaDetail.findFirst({
+      where: eq(
+        indikatorKinerjaUtamaDetail.id,
+        parseInt(indikatorKinerjaUtamaDetailId),
+      ),
+    });
+    if (!record) {
+      return NextResponse.json(
+        { error: "'indikator_kinerja_utama_detail' record not found" },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json(record);
+  } catch (error) {
+    console.error(
+      "Error fetching 'indikator_kinerja_utama_detail' record: ",
+      error,
+    );
+    return NextResponse.json(
+      { error: "Failed to fetch 'indikator_kinerja_utama_detail' record" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'iku-detail-id': indikatorKinerjaUtamaDetailId } = await params;
