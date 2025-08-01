@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, JSONContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Highlight from '@tiptap/extension-highlight';
@@ -10,7 +10,7 @@ import MenuBar from './menu-bar';
 
 interface TipTapTextEditorProps {
   content?: Record<string, any>;
-  onChange: (content: Record<string, any>) => void;
+  onChange: (content: JSONContent) => void;
 }
 
 const TipTapTextEditor = ({ content, onChange }: TipTapTextEditorProps) => {
