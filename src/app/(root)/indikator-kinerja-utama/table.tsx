@@ -53,7 +53,7 @@ const IndikatorKinerjaUtamaTable = () => {
       header: 'Nama',
       cell: (info) => (
         <Link
-          href={`/indikator-kinerja-utama/${info.row.original.id}`}
+          href={`/indikator-kinerja-utama/${info.row.original.id}/iku-detail`}
           className="font-medium hover:cursor-pointer text-primary hover:font-semibold hover:underline">
           {info.getValue()}
         </Link>
