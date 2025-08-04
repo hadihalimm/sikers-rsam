@@ -73,6 +73,7 @@ const IndikatorKinerjaUtamaDetailTable = () => {
     columnHelper.accessor((row) => row.sasaran.judul, {
       id: 'sasaran',
       header: 'Sasaran',
+      size: 50,
       cell: (info) => {
         if (!info.row.original.showSasaran) {
           return null;
@@ -83,26 +84,50 @@ const IndikatorKinerjaUtamaDetailTable = () => {
     columnHelper.accessor((row) => row.indikatorSasaran.nama, {
       id: 'indikatorSasaran',
       header: 'Indikator Sasaran',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('detail.baseline', {
       id: 'baseline',
       header: 'Baseline',
-      cell: (info) => renderTipTapHTML(info.getValue() as JSONContent),
+      size: 40,
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{
+            __html: renderTipTapHTML(info.getValue() as JSONContent),
+          }}
+        />
+      ),
     }),
     columnHelper.accessor('detail.penjelasan', {
       id: 'penjelasan',
       header: 'Penjelasan',
-      cell: (info) => renderTipTapHTML(info.getValue() as JSONContent),
+      size: 100,
+      cell: (info) => (
+        <div
+          className="tiptap"
+          dangerouslySetInnerHTML={{
+            __html: renderTipTapHTML(info.getValue() as JSONContent),
+          }}
+        />
+      ),
     }),
     columnHelper.accessor('detail.penanggungJawab', {
       id: 'penanggungJawab',
       header: 'Penanggung Jawab',
-      cell: (info) => renderTipTapHTML(info.getValue() as JSONContent),
+      size: 50,
+      cell: (info) => (
+        <div
+          dangerouslySetInnerHTML={{
+            __html: renderTipTapHTML(info.getValue() as JSONContent),
+          }}
+        />
+      ),
     }),
     columnHelper.display({
       id: 'action',
       header: 'Actions',
+      size: 20,
       cell: ({ row }) => (
         <Link
           href={`/indikator-kinerja-utama/${Number(
@@ -127,7 +152,13 @@ const IndikatorKinerjaUtamaDetailTable = () => {
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
+                <TableHead
+                  key={header.id}
+                  style={{
+                    width: `${header.getSize()}px`,
+                    minWidth: `${header.getSize()}px`,
+                    maxWidth: `${header.getSize()}px`,
+                  }}>
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext(),
@@ -150,7 +181,7 @@ const IndikatorKinerjaUtamaDetailTable = () => {
                       <TableCell
                         key={cell.id}
                         rowSpan={row.original.sasaranRowSpan}
-                        className="whitespace-normal break-words">
+                        className="whitespace-normal break-words align-top">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -161,7 +192,7 @@ const IndikatorKinerjaUtamaDetailTable = () => {
                   return (
                     <TableCell
                       key={cell.id}
-                      className="whitespace-normal break-words">
+                      className="whitespace-normal break-words align-top">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
