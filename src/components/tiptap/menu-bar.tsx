@@ -235,6 +235,7 @@ const MenuBar = ({ editor }: MenuBarProps) => {
         {TableOptions.map((option, index) => (
           <Button
             key={index}
+            type="button"
             variant="ghost"
             size="icon"
             onClick={option.onClick}>
