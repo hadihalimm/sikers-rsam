@@ -35,6 +35,13 @@ export type IndikatorKinerjaUtamaDetail = InferSelectModel<
   typeof schema.indikatorKinerjaUtamaDetail
 >;
 
+export type RencanaKinerjaTahunan = InferSelectModel<
+  typeof schema.rencanaKinerjaTahunan
+>;
+export type RencanaKinerjaTahunanDetail = InferSelectModel<
+  typeof schema.rencanaKinerjaTahunanDetail
+>;
+
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };
@@ -75,6 +82,12 @@ export type IndikatorKinerjaUtamaWithCascading = IndikatorKinerjaUtama & {
 
 export type IndikatorKinerjaUtamaDetailWithSasaran = {
   detail: IndikatorKinerjaUtamaDetail;
+  indikatorSasaran: IndikatorSasaran;
+  sasaran: Sasaran;
+};
+
+export type RencanaKinerjaTahunanDetailWithSasaran = {
+  detail: RencanaKinerjaTahunanDetail;
   indikatorSasaran: IndikatorSasaran;
   sasaran: Sasaran;
 };
