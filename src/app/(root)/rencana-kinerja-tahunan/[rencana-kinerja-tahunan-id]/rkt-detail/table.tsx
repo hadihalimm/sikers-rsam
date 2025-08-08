@@ -95,7 +95,7 @@ const RencanaKinerjaTahunanDetailTable = () => {
     columnHelper.accessor((row) => row.sasaran.judul, {
       id: 'sasaran',
       header: 'Sasaran',
-      size: 50,
+      size: 100,
       cell: (info) => {
         if (!info.row.original.showSasaran) {
           return null;
@@ -106,24 +106,25 @@ const RencanaKinerjaTahunanDetailTable = () => {
     columnHelper.accessor((row) => row.indikatorSasaran.nama, {
       id: 'indikatorSasaran',
       header: 'Indikator Sasaran',
-      size: 50,
+      size: 100,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor((row) => row.detail.target, {
       id: 'target',
       header: 'Target',
-      size: 50,
+      size: 80,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor((row) => row.detail.updatedAt, {
       id: 'updatedAt',
       header: 'Updated at',
-      size: 50,
+      size: 100,
       cell: (info) => info.getValue(),
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
+      size: 40,
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -191,7 +192,13 @@ const RencanaKinerjaTahunanDetailTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),
@@ -214,7 +221,7 @@ const RencanaKinerjaTahunanDetailTable = () => {
                         <TableCell
                           key={cell.id}
                           rowSpan={row.original.sasaranRowSpan}
-                          className="whitespace-normal break-words align-top">
+                          className="whitespace-normal break-words align-top pt-4">
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext(),
