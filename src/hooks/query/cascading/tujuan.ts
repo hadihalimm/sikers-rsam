@@ -5,11 +5,12 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllTujuan = (cascadingId: number) => {
   return useQuery<TujuanWithIndikator[]>({
-    queryKey: ['tujuan'],
+    queryKey: ['tujuan', cascadingId],
     queryFn: async () => {
       const { data } = await api.get(`/cascading/${cascadingId}/tujuan`);
       return data;
     },
+    enabled: !!cascadingId,
   });
 };
 
@@ -36,7 +37,7 @@ export const useCreateTujuan = (cascadingId: number) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tujuan'] });
+      queryClient.invalidateQueries({ queryKey: ['tujuan', cascadingId] });
     },
   });
 };
@@ -52,7 +53,7 @@ export const useUpdateTujuan = (cascadingId: number) => {
       return data;
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['tujuan'] });
+      queryClient.invalidateQueries({ queryKey: ['tujuan', cascadingId] });
       queryClient.invalidateQueries({ queryKey: ['tujuan', variables.id] });
     },
   });
@@ -66,7 +67,7 @@ export const useDeleteTujuan = (cascadingId: number) => {
     },
     onSuccess: (_data, variables) => {
       queryClient.removeQueries({ queryKey: ['tujuan', variables] });
-      queryClient.invalidateQueries({ queryKey: ['tujuan'] });
+      queryClient.invalidateQueries({ queryKey: ['tujuan', cascadingId] });
     },
   });
 };

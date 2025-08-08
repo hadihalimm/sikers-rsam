@@ -5,13 +5,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllSasaran = (tujuanId: number, cascadingId: number) => {
   return useQuery<SasaranWithIndikator[]>({
-    queryKey: ['sasaran'],
+    queryKey: ['sasaran', tujuanId, cascadingId],
     queryFn: async () => {
       const { data } = await api.get(
         `/cascading/${cascadingId}/tujuan/${tujuanId}/sasaran`,
       );
       return data;
     },
+    enabled: !!tujuanId && !!cascadingId,
   });
 };
 
@@ -47,7 +48,9 @@ export const useCreateSasaran = (tujuanId: number, cascadingId: number) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sasaran'] });
+      queryClient.invalidateQueries({
+        queryKey: ['sasaran', tujuanId, cascadingId],
+      });
     },
   });
 };
@@ -67,7 +70,9 @@ export const useUpdateSasaran = (tujuanId: number, cascadingId: number) => {
       return data;
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['sasaran'] });
+      queryClient.invalidateQueries({
+        queryKey: ['sasaran', tujuanId, cascadingId],
+      });
       queryClient.invalidateQueries({ queryKey: ['sasaran', variables.id] });
     },
   });
@@ -83,7 +88,9 @@ export const useDeleteSasaran = (tujuanId: number, cascadingId: number) => {
     },
     onSuccess: (_data, variables) => {
       queryClient.removeQueries({ queryKey: ['sasaran', variables] });
-      queryClient.invalidateQueries({ queryKey: ['sasaran'] });
+      queryClient.invalidateQueries({
+        queryKey: ['sasaran', tujuanId, cascadingId],
+      });
     },
   });
 };

@@ -5,7 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllRencanaKinerjaTahunanDetail = (rktId: number) => {
   return useQuery<RencanaKinerjaTahunanDetailWithSasaran[]>({
-    queryKey: ['rencana-kinerja-tahunan-detail'],
+    queryKey: ['rencana-kinerja-tahunan-detail', rktId],
     queryFn: async () => {
       const { data } = await api.get(
         `/rencana-kinerja-tahunan/${rktId}/rkt-detail`,
@@ -15,13 +15,14 @@ export const useGetAllRencanaKinerjaTahunanDetail = (rktId: number) => {
   });
 };
 
-export const useCreateRencanaKinerjaTahunanDetail = (rktId: number) => {
+export const useCreateRencanaKinerjaTahunanDetail = (rktId?: number) => {
   const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (newItem: {
       target: string;
       indikatorSasaranId: number;
     }) => {
+      if (!rktId) throw new Error('Missing rencanaKinerjaTahunanId');
       const { data } = await api.post(
         `/rencana-kinerja-tahunan/${rktId}/rkt-detail`,
         newItem,
@@ -30,16 +31,17 @@ export const useCreateRencanaKinerjaTahunanDetail = (rktId: number) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['rencana-kinerja-tahunan-detail'],
+        queryKey: ['rencana-kinerja-tahunan-detail', rktId],
       });
     },
   });
 };
 
-export const useUpdateRencanaKinerjaTahunanDetail = (rktId: number) => {
+export const useUpdateRencanaKinerjaTahunanDetail = (rktId?: number) => {
   const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (updatedItem: { id: number; target: string }) => {
+      if (!rktId) throw new Error('Missing rencanaKinerjaTahunanId');
       const { data } = await api.put(
         `/rencana-kinerja-tahunan/${rktId}/rkt-detail/${updatedItem.id}`,
         updatedItem,
@@ -48,7 +50,7 @@ export const useUpdateRencanaKinerjaTahunanDetail = (rktId: number) => {
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['rencana-kinerja-tahunan-detail'],
+        queryKey: ['rencana-kinerja-tahunan-detail', rktId],
       });
       queryClient.invalidateQueries({
         queryKey: ['rencana-kinerja-tahunan-detail', variables.id],
@@ -65,7 +67,7 @@ export const useDeleteRencanaKinerjaTahunanDetail = (rktId: number) => {
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['rencana-kinerja-tahunan-detail'],
+        queryKey: ['rencana-kinerja-tahunan-detail', rktId],
       });
       queryClient.removeQueries({
         queryKey: ['rencana-kinerja-tahunan-detail', variables],

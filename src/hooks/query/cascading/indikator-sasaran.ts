@@ -16,6 +16,7 @@ export const useGetAllIndikatorSasaran = (
       );
       return data;
     },
+    enabled: !!sasaranId && !!tujuanId && !!cascadingId,
   });
 };
 
