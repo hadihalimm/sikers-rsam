@@ -225,7 +225,7 @@ const RencanaKinerjaTahunanDetailTable = () => {
                     return (
                       <TableCell
                         key={cell.id}
-                        className="whitespace-normal break-words align-top">
+                        className="whitespace-normal break-words">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
