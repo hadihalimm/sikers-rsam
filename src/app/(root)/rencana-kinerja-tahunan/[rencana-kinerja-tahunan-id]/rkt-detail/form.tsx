@@ -121,16 +121,15 @@ const RencanaKinerjaTahunanDetailForm = ({
             </form.AppField>
             <form.AppField name="sasaranId">
               {(field) => (
-                <field.SelectField
+                <field.SelectWithSearchField
                   label="Sasaran"
-                  placeholder="Pilih Sasaran..."
+                  placeholder="Sasaran"
                   disabled={initialData ? true : false}
                   options={sasaranList.map((item) => ({
                     label: item.judul,
                     value: String(item.id),
                   }))}
-                  className="max-w-full whitespace-normal break-words"
-                  onValueChange={() => {
+                  onSelect={() => {
                     form.setFieldValue('indikatorSasaranId', '');
                   }}
                 />
