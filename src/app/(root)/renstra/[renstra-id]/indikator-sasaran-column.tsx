@@ -68,20 +68,28 @@ const IndikatorSasaranColumn = ({
                   <Table className="w-2/3 max-w-full">
                     <TableHeader>
                       <TableRow>
-                        {indikator.indikatorSasaranTargetList.map((target) => (
-                          <TableHead key={target.tahun} className="border">
-                            {target.tahun}
-                          </TableHead>
-                        ))}
+                        {indikator.indikatorSasaranTargetList.map(
+                          (target, idx) => (
+                            <TableHead
+                              key={`${target.indikatorSasaranId}-${idx}`}
+                              className="border">
+                              {target.tahun}
+                            </TableHead>
+                          ),
+                        )}
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       <TableRow>
-                        {indikator.indikatorSasaranTargetList.map((target) => (
-                          <TableCell key={target.target} className="border">
-                            {target.target}
-                          </TableCell>
-                        ))}
+                        {indikator.indikatorSasaranTargetList.map(
+                          (target, idx) => (
+                            <TableCell
+                              key={`${target.indikatorSasaranId}-${idx}`}
+                              className="border">
+                              {target.target}
+                            </TableCell>
+                          ),
+                        )}
                       </TableRow>
                     </TableBody>
                   </Table>
