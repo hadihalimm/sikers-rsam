@@ -77,7 +77,12 @@ const CreateOrUpdateRKTForm = ({
           {(field) => <field.TextField label="Nama" />}
         </form.AppField>
         <form.AppField name="tahun">
-          {(field) => <field.TextField label="Tahun" disabled={true} />}
+          {(field) => (
+            <field.TextField
+              label="Tahun"
+              disabled={initialData ? true : false}
+            />
+          )}
         </form.AppField>
         <form.AppField name="cascadingId">
           {(field) => (
