@@ -42,6 +42,22 @@ export type RencanaKinerjaTahunanDetail = InferSelectModel<
   typeof schema.rencanaKinerjaTahunanDetail
 >;
 
+export type Pegawai = InferSelectModel<typeof schema.pegawai>;
+export type PerjanjianKinerja = InferSelectModel<
+  typeof schema.perjanjianKinerja
+>;
+export type PerjanjianKinerjaPegawai = InferSelectModel<
+  typeof schema.perjanjianKinerjaPegawai
+> & {
+  pegawai: Pegawai;
+};
+export type PerjanjianKinerjaPegawaiSasaran = InferSelectModel<
+  typeof schema.perjanjianKinerjaPegawaiSasaran
+>;
+export type PerjanjianKinerjaPegawaiProgram = InferSelectModel<
+  typeof schema.perjanjianKinerjaPegawaiProgram
+>;
+
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };
@@ -90,4 +106,18 @@ export type RencanaKinerjaTahunanDetailWithSasaran = {
   detail: RencanaKinerjaTahunanDetail;
   indikatorSasaran: IndikatorSasaran;
   sasaran: Sasaran;
+};
+
+export type PerjanjianKinerjaPegawaiSasaranDetail = {
+  detail: PerjanjianKinerjaPegawaiSasaran;
+  indikatorSasaran: IndikatorSasaran;
+  sasaran: Sasaran;
+};
+
+export type PerjanjianKinerjaPegawaiProgramDetail = {
+  detail: PerjanjianKinerjaPegawaiProgram;
+  sasaran: Sasaran;
+  subKegiatan: SubKegiatan;
+  kegiatan: Kegiatan;
+  program: Program;
 };
