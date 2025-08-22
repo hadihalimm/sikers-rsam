@@ -57,16 +57,36 @@ export const perjanjianKinerjaPegawaiProgram = pgTable(
   'perjanjian_kinerja_pegawai_program',
   {
     id: serial('id').primaryKey(),
-    subKegiatanId: integer('sub_kegiatan_id')
-      .notNull()
-      .references(() => refSubKegiatan.id, { onDelete: 'cascade' }),
-    anggaran: bigint('anggaran', { mode: 'number' }),
     sasaranId: integer('sasaran_id')
       .notNull()
       .references(() => sasaran.id, { onDelete: 'cascade' }),
     perjanjianKinerjaPegawaiId: integer('perjanjian_kinerja_pegawai_id')
       .notNull()
       .references(() => perjanjianKinerjaPegawai.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+);
+
+export const perjanjianKinerjaPegawaiProgramDetail = pgTable(
+  'perjanjian_kinerja_pegawai_program_detail',
+  {
+    id: serial('id').primaryKey(),
+    subKegiatanId: integer('sub_kegiatan_id')
+      .notNull()
+      .references(() => refSubKegiatan.id, { onDelete: 'cascade' }),
+    anggaran: bigint('anggaran', { mode: 'number' }),
+    perjanjianKinerjaPegawaiProgramId: integer(
+      'perjanjian_kinerja_pegawai_program_id',
+    )
+      .notNull()
+      .references(() => perjanjianKinerjaPegawaiProgram.id, {
+        onDelete: 'cascade',
+      }),
     createdAt: timestamp('created_at', { withTimezone: true })
       .defaultNow()
       .notNull(),
@@ -119,11 +139,7 @@ export const perjanjianKinerjaPegawaiSasaranRelations = relations(
 
 export const perjanjianKinerjaPegawaiProgramRelations = relations(
   perjanjianKinerjaPegawaiProgram,
-  ({ one }) => ({
-    subKegiatan: one(refSubKegiatan, {
-      fields: [perjanjianKinerjaPegawaiProgram.subKegiatanId],
-      references: [refSubKegiatan.id],
-    }),
+  ({ one, many }) => ({
     sasaran: one(sasaran, {
       fields: [perjanjianKinerjaPegawaiProgram.sasaranId],
       references: [sasaran.id],
@@ -131,6 +147,25 @@ export const perjanjianKinerjaPegawaiProgramRelations = relations(
     perjanjianKinerjaPegawai: one(perjanjianKinerjaPegawai, {
       fields: [perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiId],
       references: [perjanjianKinerjaPegawai.id],
+    }),
+    perjanjianKinerjaPegawaiProgramDetailList: many(
+      perjanjianKinerjaPegawaiProgramDetail,
+    ),
+  }),
+);
+
+export const perjanjianKinerjaPegawaiProgramDetailRelations = relations(
+  perjanjianKinerjaPegawaiProgramDetail,
+  ({ one }) => ({
+    perjanjianKinerjaPegawaiProgram: one(perjanjianKinerjaPegawaiProgram, {
+      fields: [
+        perjanjianKinerjaPegawaiProgramDetail.perjanjianKinerjaPegawaiProgramId,
+      ],
+      references: [perjanjianKinerjaPegawaiProgram.id],
+    }),
+    subKegiatan: one(refSubKegiatan, {
+      fields: [perjanjianKinerjaPegawaiProgramDetail.subKegiatanId],
+      references: [refSubKegiatan.id],
     }),
   }),
 );
