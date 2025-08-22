@@ -3,11 +3,13 @@ import { getQueryClient } from '@/lib/get-query-client';
 import { Pegawai } from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-export const useGetAllPegawai = (userId: number) => {
+export const useGetAllPegawai = (userId?: number) => {
   return useQuery<Pegawai[]>({
     queryKey: ['pegawai-list', userId],
     queryFn: async () => {
-      const { data } = await api.get(`/pegawai?userId=${userId}`);
+      const { data } = await api.get(
+        userId ? `/pegawai?userId=${userId}` : `/pegawai`,
+      );
       return data;
     },
   });
