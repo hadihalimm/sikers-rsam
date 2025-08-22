@@ -1,13 +1,16 @@
 import api from '@/lib/axios';
 import { getQueryClient } from '@/lib/get-query-client';
-import { PerjanjianKinerjaPegawaiProgram } from '@/types/database';
+import {
+  PerjanjianKinerjaPegawaiProgram,
+  PerjanjianKinerjaPegawaiProgramDetailFlat,
+} from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllPkPegawaiProgram = (
   pkId: number,
   pkPegawaiId: number,
 ) => {
-  return useQuery<PerjanjianKinerjaPegawaiProgram[]>({
+  return useQuery<PerjanjianKinerjaPegawaiProgramDetailFlat[]>({
     queryKey: ['pk-pegawai-program', pkId, pkPegawaiId],
     queryFn: async () => {
       const { data } = await api.get(
@@ -34,17 +37,13 @@ export const useGetPkPegawaiProgram = (
   });
 };
 
-export const useCreatePkPegawaiSasaran = (
+export const useCreatePkPegawaiProgram = (
   pkId: number,
   pkPegawaiId: number,
 ) => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (newRecord: {
-      subKegiatanId: number;
-      anggaran: number;
-      sasaranId: number;
-    }) => {
+    mutationFn: async (newRecord: { sasaranId: number }) => {
       const { data } = await api.post(
         `perjanjian-kinerja/${pkId}/pk-pegawai/${pkPegawaiId}/pk-pegawai-program`,
         newRecord,
