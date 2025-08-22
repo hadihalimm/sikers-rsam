@@ -21,6 +21,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+    return NextResponse.json(record);
   } catch (error) {
     console.error("Error fetching 'perjanjian_kinerja' record: ", error);
     return NextResponse.json(
