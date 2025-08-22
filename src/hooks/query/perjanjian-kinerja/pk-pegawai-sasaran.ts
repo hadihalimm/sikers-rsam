@@ -97,7 +97,7 @@ export const useDeletePkPegawaiSasaran = (
   const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      const { data } = await api.put(
+      const { data } = await api.delete(
         `perjanjian-kinerja/${pkId}/pk-pegawai/${pkPegawaiId}/pk-pegawai-sasaran/${id}`,
       );
       return data;
