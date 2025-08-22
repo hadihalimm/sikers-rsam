@@ -3,6 +3,7 @@
 import { useAppForm } from '@/components/form';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 import z from 'zod';
 
 const formSchema = z.object({
@@ -11,6 +12,7 @@ const formSchema = z.object({
 });
 
 const SignInForm = ({ className, ...props }: React.ComponentProps<'form'>) => {
+  const router = useRouter();
   const form = useAppForm({
     defaultValues: {
       username: '',
@@ -20,11 +22,16 @@ const SignInForm = ({ className, ...props }: React.ComponentProps<'form'>) => {
       onChange: formSchema,
     },
     onSubmit: async ({ value }) => {
-      const data = await authClient.signIn.username({
-        username: value.username,
-        password: value.password,
-      });
-      console.log(data.data?.user);
+      try {
+        const data = await authClient.signIn.username({
+          username: value.username,
+          password: value.password,
+        });
+        console.log(data.data?.user);
+        router.push('/');
+      } catch (error) {
+        console.error(error);
+      }
     },
   });
   return (
