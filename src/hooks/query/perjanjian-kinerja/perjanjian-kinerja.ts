@@ -3,13 +3,14 @@ import { getQueryClient } from '@/lib/get-query-client';
 import { PerjanjianKinerja } from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-export const useGetAllPerjanjianKinerja = (userId: number) => {
+export const useGetAllPerjanjianKinerja = (userId: string) => {
   return useQuery<PerjanjianKinerja[]>({
     queryKey: ['perjanjian-kinerja-list', userId],
     queryFn: async () => {
       const { data } = await api.get(`/perjanjian-kinerja?userId=${userId}`);
       return data;
     },
+    enabled: !!userId,
   });
 };
 
@@ -46,7 +47,10 @@ export const useUpdatePerjanjianKinerja = () => {
   const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (updatedPK: { id: number; nama: string }) => {
-      const { data } = await api.put(`/perjanjian-kinerja/${updatedPK.id}`);
+      const { data } = await api.put(
+        `/perjanjian-kinerja/${updatedPK.id}`,
+        updatedPK,
+      );
       return data;
     },
     onSuccess: (data, variables) => {
