@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import { getQueryClient } from '@/lib/get-query-client';
-import { Cascading } from '@/types/database';
+import { Cascading, Sasaran } from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllCascading = () => {
@@ -72,5 +72,16 @@ export const useDeleteCascading = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cascading'] });
     },
+  });
+};
+
+export const useGetAllSasaran = (tahun: number) => {
+  return useQuery<Sasaran[]>({
+    queryKey: ['sasaran', tahun],
+    queryFn: async () => {
+      const { data } = await api.get(`/cascading/sasaran?tahun=${tahun}`);
+      return data;
+    },
+    enabled: !!tahun,
   });
 };
