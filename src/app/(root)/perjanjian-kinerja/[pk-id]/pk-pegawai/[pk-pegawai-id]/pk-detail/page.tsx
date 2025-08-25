@@ -1,4 +1,4 @@
-import { Pegawai, PerjanjianKinerja } from '@/types/database';
+import { PerjanjianKinerja, PerjanjianKinerjaPegawai } from '@/types/database';
 import axios from 'axios';
 import PerjanjianKinerjaSasaranTable from './sasaran-table';
 import PerjanjianKinerjaProgramTable from './program-table';
@@ -12,8 +12,8 @@ const PerjanjianKinerjaDetail = async ({
   const { data: perjanjianKinerja } = await axios.get<PerjanjianKinerja>(
     `${process.env.NEXT_PUBLIC_APP_URL}/api/perjanjian-kinerja/${pkId}`,
   );
-  const { data: pegawai } = await axios.get<Pegawai>(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/pegawai/${pkPegawaiId}`,
+  const { data: pkPegawai } = await axios.get<PerjanjianKinerjaPegawai>(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/perjanjian-kinerja/${pkId}/pk-pegawai/${pkPegawaiId}`,
   );
 
   return (
@@ -25,8 +25,8 @@ const PerjanjianKinerjaDetail = async ({
         <p>Tahun {perjanjianKinerja.tahun}</p>
       </div>
       <div>
-        <h2>{pegawai.nama}</h2>
-        <p>{pegawai.jabatan}</p>
+        <h2>{pkPegawai.pegawai.nama}</h2>
+        <p>{pkPegawai.pegawai.jabatan}</p>
       </div>
       <PerjanjianKinerjaSasaranTable />
       <PerjanjianKinerjaProgramTable />
