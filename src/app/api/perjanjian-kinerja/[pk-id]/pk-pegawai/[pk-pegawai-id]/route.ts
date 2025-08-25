@@ -15,6 +15,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const { 'pk-pegawai-id': pkPegawaiId } = await params;
     const record = await db.query.perjanjianKinerjaPegawai.findFirst({
       where: eq(perjanjianKinerjaPegawai.id, parseInt(pkPegawaiId)),
+      with: {
+        pegawai: true,
+      },
     });
     if (!record) {
       return NextResponse.json(
