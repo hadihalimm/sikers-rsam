@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import FooterDropdown from './footer-dropdown';
 
 interface HomeSidebarProps {
   className?: string;
@@ -114,7 +115,11 @@ export function HomeSidebar({ className }: HomeSidebarProps) {
       </SidebarContent>
 
       <SidebarFooter className="mb-4">
-        <p>User</p>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <FooterDropdown />
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
