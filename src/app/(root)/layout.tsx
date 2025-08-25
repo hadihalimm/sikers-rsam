@@ -1,4 +1,4 @@
-import { HomeSidebar } from '@/components/ui/home-sidebar';
+import { HomeSidebar } from '@/components/sidebar/home-sidebar';
 import { Separator } from '@/components/ui/separator';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
