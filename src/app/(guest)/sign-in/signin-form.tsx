@@ -1,9 +1,12 @@
 'use client';
 
 import { useAppForm } from '@/components/form';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
+import { AlertCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import z from 'zod';
 
 const formSchema = z.object({
@@ -13,6 +16,12 @@ const formSchema = z.object({
 
 const SignInForm = ({ className, ...props }: React.ComponentProps<'form'>) => {
   const router = useRouter();
+  const [errorResponse, setErrorResponse] = useState<{
+    code?: string | undefined;
+    message?: string | undefined;
+    status: number;
+    statusText: string;
+  } | null>(null);
   const form = useAppForm({
     defaultValues: {
       username: '',
@@ -21,13 +30,18 @@ const SignInForm = ({ className, ...props }: React.ComponentProps<'form'>) => {
     validators: {
       onChange: formSchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value, formApi }) => {
       try {
-        const data = await authClient.signIn.username({
+        const { error } = await authClient.signIn.username({
           username: value.username,
           password: value.password,
         });
-        console.log(data.data?.user);
+        if (error) {
+          setErrorResponse(error);
+          formApi.setFieldValue('username', '');
+          formApi.setFieldValue('password', '');
+          return;
+        }
         router.push('/');
       } catch (error) {
         console.error(error);
@@ -49,6 +63,13 @@ const SignInForm = ({ className, ...props }: React.ComponentProps<'form'>) => {
         </p>
       </div>
       <div className="flex flex-col gap-4">
+        {errorResponse && (
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>{errorResponse.statusText}</AlertTitle>
+            <AlertDescription>{errorResponse.message}</AlertDescription>
+          </Alert>
+        )}
         <form.AppField name="username">
           {(field) => <field.TextField label="Username" />}
         </form.AppField>
