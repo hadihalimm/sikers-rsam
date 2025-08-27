@@ -48,7 +48,7 @@ export const useCreatePkPegawaiSasaran = (
       modelCapaian: number;
       indikatorSasaranId: number;
     }) => {
-      const { data } = await api.post(
+      const { data } = await api.post<PerjanjianKinerjaPegawaiSasaran>(
         `perjanjian-kinerja/${pkId}/pk-pegawai/${pkPegawaiId}/pk-pegawai-sasaran`,
         newRecord,
       );

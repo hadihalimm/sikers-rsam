@@ -2,7 +2,7 @@ import api from '@/lib/axios';
 import { getQueryClient } from '@/lib/get-query-client';
 import {
   PerjanjianKinerjaPegawaiProgram,
-  PerjanjianKinerjaPegawaiProgramDetailFlat,
+  PerjanjianKinerjaPegawaiProgramDetail,
 } from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
@@ -10,7 +10,7 @@ export const useGetAllPkPegawaiProgram = (
   pkId: number,
   pkPegawaiId: number,
 ) => {
-  return useQuery<PerjanjianKinerjaPegawaiProgramDetailFlat[]>({
+  return useQuery<PerjanjianKinerjaPegawaiProgramDetail[]>({
     queryKey: ['pk-pegawai-program', pkId, pkPegawaiId],
     queryFn: async () => {
       const { data } = await api.get(
@@ -43,7 +43,10 @@ export const useCreatePkPegawaiProgram = (
 ) => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (newRecord: { sasaranId: number }) => {
+    mutationFn: async (newRecord: {
+      sasaranId: number;
+      pkPegawaiSasaranId: number;
+    }) => {
       const { data } = await api.post(
         `perjanjian-kinerja/${pkId}/pk-pegawai/${pkPegawaiId}/pk-pegawai-program`,
         newRecord,
@@ -64,7 +67,11 @@ export const useUpdatePkPegawaiProgram = (
 ) => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (updatedRecord: { id: number; anggaran: number }) => {
+    mutationFn: async (updatedRecord: {
+      id: number;
+      anggaran: number;
+      subKegiatanId: number;
+    }) => {
       const { data } = await api.put(
         `perjanjian-kinerja/${pkId}/pk-pegawai/${pkPegawaiId}/pk-pegawai-program/${updatedRecord.id}`,
         updatedRecord,

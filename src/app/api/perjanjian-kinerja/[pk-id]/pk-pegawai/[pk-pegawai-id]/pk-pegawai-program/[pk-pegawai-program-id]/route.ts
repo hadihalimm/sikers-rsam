@@ -39,38 +39,38 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-// export async function PUT(request: NextRequest, { params }: RouteParams) {
-//   try {
-//     const { 'pk-pegawai-program-id': pkPegawaiProgramId } = await params;
-//     const body = await request.json();
-//     const { anggaran } = body;
+export async function PUT(request: NextRequest, { params }: RouteParams) {
+  try {
+    const { 'pk-pegawai-program-id': pkPegawaiProgramId } = await params;
+    const body = await request.json();
+    const { anggaran, subKegiatanId } = body;
 
-//     const updatedRecord = await db
-//       .update(perjanjianKinerjaPegawaiProgram)
-//       .set({  })
-//       .where(
-//         eq(perjanjianKinerjaPegawaiProgram.id, parseInt(pkPegawaiProgramId)),
-//       )
-//       .returning();
+    const updatedRecord = await db
+      .update(perjanjianKinerjaPegawaiProgram)
+      .set({ anggaran, subKegiatanId })
+      .where(
+        eq(perjanjianKinerjaPegawaiProgram.id, parseInt(pkPegawaiProgramId)),
+      )
+      .returning();
 
-//     if (updatedRecord.length === 0) {
-//       return NextResponse.json(
-//         { error: "'perjanjian_kinerja_pegawai_program' record not found" },
-//         { status: 404 },
-//       );
-//     }
-//     return NextResponse.json(updatedRecord[0]);
-//   } catch (error) {
-//     console.error(
-//       "Error updating 'perjanjian_kinerja_pegawai_program' record: ",
-//       error,
-//     );
-//     return NextResponse.json(
-//       { error: "Failed to update 'perjanjian_kinerja_pegawai_program' record" },
-//       { status: 500 },
-//     );
-//   }
-// }
+    if (updatedRecord.length === 0) {
+      return NextResponse.json(
+        { error: "'perjanjian_kinerja_pegawai_program' record not found" },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json(updatedRecord[0]);
+  } catch (error) {
+    console.error(
+      "Error updating 'perjanjian_kinerja_pegawai_program' record: ",
+      error,
+    );
+    return NextResponse.json(
+      { error: "Failed to update 'perjanjian_kinerja_pegawai_program' record" },
+      { status: 500 },
+    );
+  }
+}
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {

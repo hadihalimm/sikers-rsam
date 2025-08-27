@@ -1,13 +1,12 @@
 import db from '@/db';
 import {
   perjanjianKinerjaPegawaiProgram,
-  perjanjianKinerjaPegawaiProgramDetail,
   refKegiatan,
   refProgram,
   refSubKegiatan,
   sasaran,
 } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -23,13 +22,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const records = await db
       .select({
         pkPegawaiProgram: perjanjianKinerjaPegawaiProgram,
-        pkPegawaiProgramDetail: perjanjianKinerjaPegawaiProgramDetail,
         sasaran: sasaran,
-        programDetail: {
-          programNama: refProgram.nama,
-          kegiatanNama: refKegiatan.nama,
-          subKegiatanNama: refSubKegiatan.nama,
-        },
+        program: refProgram,
+        kegiatan: refKegiatan,
+        subKegiatan: refSubKegiatan,
       })
       .from(perjanjianKinerjaPegawaiProgram)
       .where(
@@ -39,22 +35,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         ),
       )
       .leftJoin(
-        perjanjianKinerjaPegawaiProgramDetail,
-        eq(
-          perjanjianKinerjaPegawaiProgramDetail.perjanjianKinerjaPegawaiProgramId,
-          perjanjianKinerjaPegawaiProgram.id,
-        ),
-      )
-      .leftJoin(
         sasaran,
         eq(perjanjianKinerjaPegawaiProgram.sasaranId, sasaran.id),
       )
       .leftJoin(
         refSubKegiatan,
-        eq(
-          perjanjianKinerjaPegawaiProgramDetail.subKegiatanId,
-          refSubKegiatan.id,
-        ),
+        eq(perjanjianKinerjaPegawaiProgram.subKegiatanId, refSubKegiatan.id),
       )
       .leftJoin(refKegiatan, eq(refSubKegiatan.refKegiatanId, refKegiatan.id))
       .leftJoin(refProgram, eq(refKegiatan.refProgramId, refProgram.id));
@@ -75,9 +61,15 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'pk-pegawai-id': pkPegawaiId } = await params;
     const body = await request.json();
-    const { sasaranId } = body;
+    const { sasaranId, pkPegawaiSasaranId } = body;
     const record = await db.query.perjanjianKinerjaPegawaiProgram.findFirst({
-      where: eq(perjanjianKinerjaPegawaiProgram.sasaranId, parseInt(sasaranId)),
+      where: and(
+        eq(
+          perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiId,
+          parseInt(pkPegawaiId),
+        ),
+        eq(perjanjianKinerjaPegawaiProgram.sasaranId, parseInt(sasaranId)),
+      ),
     });
     if (record) {
       return NextResponse.json(record, { status: 200 });
@@ -87,6 +79,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       .insert(perjanjianKinerjaPegawaiProgram)
       .values({
         sasaranId,
+        perjanjianKinerjaPegawaiSasaranId: parseInt(pkPegawaiSasaranId),
         perjanjianKinerjaPegawaiId: parseInt(pkPegawaiId),
       })
       .returning();
