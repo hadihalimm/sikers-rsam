@@ -70,16 +70,17 @@ const PerjanjianKinerjaSasaranForm = ({
     validators: {
       onChange: createFormSchema,
     },
-    onSubmit: ({ value }) => {
+    onSubmit: async ({ value }) => {
       try {
         const payload = createFormSchema.parse(value);
-        createPkPegawaiSasaran.mutateAsync({
+        const item = await createPkPegawaiSasaran.mutateAsync({
           indikatorSasaranId: payload.indikatorSasaranId,
           target: payload.target,
           modelCapaian: payload.modelCapaian,
         });
         createPkPegawaiProgram.mutateAsync({
           sasaranId: payload.sasaranId,
+          pkPegawaiSasaranId: item.id,
         });
         onSuccess();
       } catch (error) {

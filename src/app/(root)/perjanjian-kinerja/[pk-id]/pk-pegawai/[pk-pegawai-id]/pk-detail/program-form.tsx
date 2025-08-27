@@ -1,9 +1,7 @@
+'use client';
+
 import { useAppForm } from '@/components/form';
-import {
-  useCreatePkPegawaiProgramDetail,
-  useGetPkPegawaiProgramDetail,
-  useUpdatePkPegawaiProgramDetail,
-} from '@/hooks/query/perjanjian-kinerja/pk-pegawai-program-detail';
+import { useUpdatePkPegawaiProgram } from '@/hooks/query/perjanjian-kinerja/pk-pegawai-program';
 import { useGetAllRefKegiatan } from '@/hooks/query/ref/ref-kegiatan';
 import { useGetAllRefProgram } from '@/hooks/query/ref/ref-program';
 import { useGetAllRefSubKegiatan } from '@/hooks/query/ref/ref-sub-kegiatan';
@@ -15,7 +13,6 @@ interface PerjanjianKinerjaProgramFormProps {
   initialData?: PerjanjianKinerjaPegawaiProgramDetail;
   pkId: number;
   pkPegawaiId: number;
-  pkPegawaiProgramId: number;
   onSuccess: () => void;
 }
 
@@ -42,36 +39,16 @@ const PerjanjianKinerjaProgramForm = ({
   initialData,
   pkId,
   pkPegawaiId,
-  pkPegawaiProgramId,
   onSuccess,
 }: PerjanjianKinerjaProgramFormProps) => {
-  const { data: pkPegawaiProgramDetail } = useGetPkPegawaiProgramDetail(
-    pkId,
-    pkPegawaiId,
-    pkPegawaiProgramId,
-    initialData?.id ?? 0,
-  );
-
-  const createPkPegawaiProgramDetail = useCreatePkPegawaiProgramDetail(
-    pkId,
-    pkPegawaiId,
-    pkPegawaiProgramId,
-  );
-  const updatePkPegawaiProgramDetail = useUpdatePkPegawaiProgramDetail(
-    pkId,
-    pkPegawaiId,
-    pkPegawaiProgramId,
-  );
-  console.log(pkPegawaiProgramDetail);
+  console.log(initialData);
+  const updatePkPegawaiProgram = useUpdatePkPegawaiProgram(pkId, pkPegawaiId);
   const form = useAppForm({
     defaultValues: {
-      programId:
-        pkPegawaiProgramDetail?.subKegiatan.refKegiatan.refProgramId.toString() ??
-        '',
-      kegiatanId:
-        pkPegawaiProgramDetail?.subKegiatan.refKegiatanId.toString() ?? '',
-      subKegiatanId: initialData?.subKegiatanId.toString() ?? '',
-      anggaran: initialData?.anggaran?.toString() ?? '',
+      programId: initialData?.program?.id.toString() ?? '',
+      kegiatanId: initialData?.kegiatan?.id.toString() ?? '',
+      subKegiatanId: initialData?.subKegiatan?.id.toString() ?? '',
+      anggaran: initialData?.pkPegawaiProgram.anggaran?.toString() ?? '',
     },
     validators: {
       onChange: formSchema,
@@ -80,12 +57,8 @@ const PerjanjianKinerjaProgramForm = ({
       try {
         const payload = formSchema.parse(value);
         if (initialData) {
-          updatePkPegawaiProgramDetail.mutateAsync({
-            id: initialData.id,
-            anggaran: payload.anggaran,
-          });
-        } else {
-          createPkPegawaiProgramDetail.mutateAsync({
+          updatePkPegawaiProgram.mutateAsync({
+            id: initialData.pkPegawaiProgram.id,
             subKegiatanId: payload.subKegiatanId,
             anggaran: payload.anggaran,
           });
@@ -126,7 +99,6 @@ const PerjanjianKinerjaProgramForm = ({
                 label: program.nama,
                 value: program.id.toString(),
               }))}
-              disabled={initialData ? true : false}
               className="max-w-full whitespace-normal break-words"
             />
           )}
@@ -140,7 +112,6 @@ const PerjanjianKinerjaProgramForm = ({
                 label: kegiatan.nama,
                 value: kegiatan.id.toString(),
               }))}
-              disabled={initialData ? true : false}
             />
           )}
         </form.AppField>
@@ -153,7 +124,6 @@ const PerjanjianKinerjaProgramForm = ({
                 label: subKegiatan.nama,
                 value: subKegiatan.id.toString(),
               }))}
-              disabled={initialData ? true : false}
             />
           )}
         </form.AppField>

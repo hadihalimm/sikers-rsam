@@ -19,25 +19,20 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useGetAllPkPegawaiProgram } from '@/hooks/query/perjanjian-kinerja/pk-pegawai-program';
-import {
-  PerjanjianKinerjaPegawaiProgram,
-  PerjanjianKinerjaPegawaiProgramDetail,
-  PerjanjianKinerjaPegawaiProgramDetailFlat,
-} from '@/types/database';
+import { PerjanjianKinerjaPegawaiProgramDetail } from '@/types/database';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Plus, SquarePen } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import PerjanjianKinerjaProgramForm from './program-form';
-import { useDeletePkPegawaiProgramDetail } from '@/hooks/query/perjanjian-kinerja/pk-pegawai-program-detail';
 import { toast } from 'sonner';
 
-type ProcessedRowData = PerjanjianKinerjaPegawaiProgramDetailFlat & {
+type ProcessedRowData = PerjanjianKinerjaPegawaiProgramDetail & {
   sasaranRowSpan: number;
   showSasaran: boolean;
   sasaranId: string;
@@ -50,11 +45,8 @@ const PerjanjianKinerjaProgramTable = () => {
     Number(pkPegawaiId),
   );
 
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedPkPegawaiProgram, setSelectedPkPegawaiProgram] =
-    useState<PerjanjianKinerjaPegawaiProgram>();
   const [editingItem, setEditingItem] =
     useState<PerjanjianKinerjaPegawaiProgramDetail>();
 
@@ -69,7 +61,7 @@ const PerjanjianKinerjaProgramTable = () => {
       }
       acc[sasaranId].items.push(item);
       return acc;
-    }, {} as Record<string, { sasaran: any; items: PerjanjianKinerjaPegawaiProgramDetailFlat[] }>);
+    }, {} as Record<string, { sasaran: any; items: PerjanjianKinerjaPegawaiProgramDetail[] }>);
 
     // Flatten the data with row span information
     const result: ProcessedRowData[] = [];
@@ -88,8 +80,6 @@ const PerjanjianKinerjaProgramTable = () => {
     return result;
   }, [data]);
 
-  console.log(processedData);
-
   const columnHelper = createColumnHelper<ProcessedRowData>();
   const columns = [
     columnHelper.accessor('sasaran.judul', {
@@ -99,42 +89,28 @@ const PerjanjianKinerjaProgramTable = () => {
         if (!info.row.original.showSasaran) {
           return null;
         }
-        return (
-          <div className="flex flex-col gap-y-4">
-            <p>{info.getValue()}</p>
-            <Button
-              size="sm"
-              onClick={() => {
-                setSelectedPkPegawaiProgram(info.row.original.pkPegawaiProgram);
-                setCreateDialogOpen(true);
-              }}
-              className="w-fit">
-              <Plus className="size-4" />
-              <p className="text-xs">Program</p>
-            </Button>
-          </div>
-        );
+        return info.getValue();
       },
     }),
-    columnHelper.accessor('programDetail', {
+    columnHelper.accessor((row) => row, {
       id: 'program',
       header: 'Program',
       cell: (info) => {
-        if (info.getValue().programNama === null) {
+        if (info.getValue().subKegiatan === null) {
           return null;
         }
         return (
           <div>
             <p className="font-semibold text-md">
-              {info.getValue().programNama}
+              {info.getValue().program.nama}
             </p>
-            <p>Kegiatan: {info.getValue().kegiatanNama}</p>
-            <p>Sub-kegiatan: {info.getValue().subKegiatanNama}</p>
+            <p>Kegiatan: {info.getValue().kegiatan.nama}</p>
+            <p>Sub-kegiatan: {info.getValue().subKegiatan.nama}</p>
           </div>
         );
       },
     }),
-    columnHelper.accessor('pkPegawaiProgramDetail.anggaran', {
+    columnHelper.accessor('pkPegawaiProgram.anggaran', {
       id: 'anggaran',
       header: 'Anggaran',
       cell: (info) => {
@@ -142,7 +118,7 @@ const PerjanjianKinerjaProgramTable = () => {
         return <p>{info.getValue()}</p>;
       },
     }),
-    columnHelper.accessor('pkPegawaiProgramDetail.updatedAt', {
+    columnHelper.accessor('pkPegawaiProgram.updatedAt', {
       id: 'updatedAt',
       header: 'Updated at',
       cell: (info) => {
@@ -154,9 +130,6 @@ const PerjanjianKinerjaProgramTable = () => {
       id: 'actions',
       header: 'Actions',
       cell: ({ row }) => {
-        if (row.original.programDetail.programNama === null) {
-          return null;
-        }
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -168,16 +141,14 @@ const PerjanjianKinerjaProgramTable = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedPkPegawaiProgram(row.original.pkPegawaiProgram);
-                  setEditingItem(row.original.pkPegawaiProgramDetail);
+                  setEditingItem(row.original);
                   setUpdateDialogOpen(true);
                 }}>
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  setSelectedPkPegawaiProgram(row.original.pkPegawaiProgram);
-                  setEditingItem(row.original.pkPegawaiProgramDetail);
+                  setEditingItem(row.original);
                   setDeleteDialogOpen(true);
                 }}>
                 Hapus
@@ -189,11 +160,6 @@ const PerjanjianKinerjaProgramTable = () => {
     }),
   ];
 
-  const deletePkPegawaiProgramDetail = useDeletePkPegawaiProgramDetail(
-    Number(pkId),
-    Number(pkPegawaiId),
-    selectedPkPegawaiProgram?.id ?? 0,
-  );
   const table = useReactTable({
     data: processedData,
     columns,
@@ -202,25 +168,6 @@ const PerjanjianKinerjaProgramTable = () => {
 
   return (
     <div className="flex flex-col gap-y-4">
-      <div className="flex justify-between items-end">
-        {selectedPkPegawaiProgram && (
-          <FormDialog
-            title="Tambah PK Pegawai Program"
-            open={createDialogOpen}
-            onOpenChange={setCreateDialogOpen}>
-            <PerjanjianKinerjaProgramForm
-              pkId={Number(pkId)}
-              pkPegawaiId={Number(pkPegawaiId)}
-              pkPegawaiProgramId={selectedPkPegawaiProgram!.id}
-              onSuccess={() => {
-                setEditingItem(undefined);
-                setCreateDialogOpen(false);
-              }}
-            />
-          </FormDialog>
-        )}
-      </div>
-
       <div className="border rounded-md overflow-hidden">
         <Table className="table-fixed">
           <TableHeader className="bg-blue-100">
@@ -284,29 +231,25 @@ const PerjanjianKinerjaProgramTable = () => {
         </Table>
       </div>
 
-      {selectedPkPegawaiProgram && (
-        <FormDialog
-          title="Edit PK Pegawai Program"
-          open={updateDialogOpen}
-          onOpenChange={setUpdateDialogOpen}>
-          <PerjanjianKinerjaProgramForm
-            initialData={editingItem}
-            pkId={Number(pkId)}
-            pkPegawaiId={Number(pkPegawaiId)}
-            pkPegawaiProgramId={selectedPkPegawaiProgram!.id}
-            onSuccess={() => {
-              setEditingItem(undefined);
-              setUpdateDialogOpen(false);
-            }}
-          />
-        </FormDialog>
-      )}
+      <FormDialog
+        title="Edit PK Pegawai Program"
+        open={updateDialogOpen}
+        onOpenChange={setUpdateDialogOpen}>
+        <PerjanjianKinerjaProgramForm
+          initialData={editingItem}
+          pkId={Number(pkId)}
+          pkPegawaiId={Number(pkPegawaiId)}
+          onSuccess={() => {
+            setEditingItem(undefined);
+            setUpdateDialogOpen(false);
+          }}
+        />
+      </FormDialog>
 
       <DeleteAlertDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onSuccess={() => {
-          deletePkPegawaiProgramDetail.mutateAsync(editingItem!.id);
           setEditingItem(undefined);
           setDeleteDialogOpen(false);
           toast.info('PK Pegawai Program berhasil dihapus');

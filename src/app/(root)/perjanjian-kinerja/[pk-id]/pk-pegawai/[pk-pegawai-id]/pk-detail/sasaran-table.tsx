@@ -42,6 +42,16 @@ type ProcessedRowData = PerjanjianKinerjaPegawaiSasaranDetail & {
   showSasaran: boolean;
   sasaranId: string;
 };
+const modelCapaian = [
+  {
+    label: 'Model A (Semakin tinggi target, semakin baik)',
+    value: '1',
+  },
+  {
+    label: 'Model B (Semakin rendah target, semakin baik)',
+    value: '2',
+  },
+];
 
 const PerjanjianKinerjaSasaranTable = () => {
   const { 'pk-id': pkId, 'pk-pegawai-id': pkPegawaiId } = useParams();
@@ -110,7 +120,9 @@ const PerjanjianKinerjaSasaranTable = () => {
     columnHelper.accessor('detail.modelCapaian', {
       id: 'modelCapaian',
       header: 'Model capaian',
-      cell: (info) => info.getValue(),
+      cell: (info) =>
+        modelCapaian.find((model) => Number(model.value) === info.getValue())
+          ?.label,
     }),
     columnHelper.accessor('detail.updatedAt', {
       id: 'updatedAt',
