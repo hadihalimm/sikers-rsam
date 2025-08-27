@@ -58,16 +58,6 @@ export type PerjanjianKinerjaPegawaiProgram = InferSelectModel<
   typeof schema.perjanjianKinerjaPegawaiProgram
 >;
 
-export type PerjanjianKinerjaPegawaiProgramDetail = InferSelectModel<
-  typeof schema.perjanjianKinerjaPegawaiProgramDetail
-> & {
-  subKegiatan: RefSubKegiatan & {
-    refKegiatan: RefKegiatan & {
-      refProgram: RefProgram;
-    };
-  };
-};
-
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };
@@ -124,13 +114,10 @@ export type PerjanjianKinerjaPegawaiSasaranDetail = {
   sasaran: Sasaran;
 };
 
-export type PerjanjianKinerjaPegawaiProgramDetailFlat = {
-  pkPegawaiProgramDetail: PerjanjianKinerjaPegawaiProgramDetail;
+export type PerjanjianKinerjaPegawaiProgramDetail = {
   pkPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
   sasaran: Sasaran;
-  programDetail: {
-    programNama: string;
-    kegiatanNama: string;
-    subKegiatanNama: string;
-  };
+  program: RefProgram;
+  kegiatan: RefKegiatan;
+  subKegiatan: RefSubKegiatan;
 };
