@@ -5,3 +5,4 @@ export * from './indikator-kinerja-utama';
 export * from './rencana-kinerja-tahunan';
 export * from './pegawai';
 export * from './perjanjian-kinerja';
+export * from './rencana-aksi';

@@ -58,6 +58,23 @@ export type PerjanjianKinerjaPegawaiProgram = InferSelectModel<
   typeof schema.perjanjianKinerjaPegawaiProgram
 >;
 
+export type RencanaAksi = InferSelectModel<typeof schema.rencanaAksi>;
+export type RencanaAksiPegawai = InferSelectModel<
+  typeof schema.rencanaAksiPegawai
+>;
+export type RencanaAksiTarget = InferSelectModel<
+  typeof schema.rencanaAksiTarget
+>;
+export type RencanaAksiPencapaianLangkah = InferSelectModel<
+  typeof schema.rencanaAksiPencapaianLangkah
+>;
+export type RencanaAksiPencapaianTarget = InferSelectModel<
+  typeof schema.rencanaAksiPencapaianTarget
+>;
+export type RencanaAksiSubKegiatanTarget = InferSelectModel<
+  typeof schema.rencanaAksiSubKegiatanTarget
+>;
+
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };
