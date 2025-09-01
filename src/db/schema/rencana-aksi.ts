@@ -35,7 +35,8 @@ export const rencanaAksiPegawai = pgTable('rencana_aksi_pegawai', {
     .references(() => rencanaAksi.id, { onDelete: 'restrict' }),
   perjanjianKinerjaPegawaiId: integer('perjanjian_kinerja_pegawai_id')
     .notNull()
-    .references(() => perjanjianKinerjaPegawai.id, { onDelete: 'cascade' }),
+    .references(() => perjanjianKinerjaPegawai.id, { onDelete: 'cascade' })
+    .unique(),
   createdAt: timestamp('created_at', { withTimezone: true })
     .defaultNow()
     .notNull(),
