@@ -11,7 +11,7 @@ import { pegawai } from './pegawai';
 import { indikatorSasaran, sasaran } from './cascading';
 import { refSubKegiatan } from './renstra';
 import { relations } from 'drizzle-orm';
-import { rencanaAksiPegawai } from './rencana-aksi';
+import { rencanaAksi, rencanaAksiPegawai } from './rencana-aksi';
 
 export const perjanjianKinerja = pgTable('perjanjian_kinerja', {
   id: serial('id').primaryKey(),
@@ -117,6 +117,7 @@ export const perjanjianKinerjaRelations = relations(
       references: [user.id],
     }),
     perjanjianKinerjaPegawaiList: many(perjanjianKinerjaPegawai),
+    rencanaAksi: one(rencanaAksi),
   }),
 );
 

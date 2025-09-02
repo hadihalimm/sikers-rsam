@@ -9,6 +9,7 @@ import {
 import { user } from './user';
 import { pegawai } from './pegawai';
 import {
+  perjanjianKinerja,
   perjanjianKinerjaPegawai,
   perjanjianKinerjaPegawaiProgram,
   perjanjianKinerjaPegawaiSasaran,
@@ -19,6 +20,10 @@ export const rencanaAksi = pgTable('rencana_aksi', {
   id: serial('id').primaryKey(),
   nama: text('nama').notNull(),
   tahun: integer('tahun').notNull(),
+  perjanjianKinerjaId: integer('perjanjian_kinerja_id')
+    .notNull()
+    .references(() => perjanjianKinerja.id, { onDelete: 'cascade' })
+    .unique(),
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'restrict' }),
@@ -48,7 +53,7 @@ export const rencanaAksiPegawai = pgTable('rencana_aksi_pegawai', {
 export const rencanaAksiTarget = pgTable('rencana_aksi_target', {
   id: serial('id').primaryKey(),
   bulan: integer('bulan').notNull(),
-  target: numeric(),
+  target: numeric('target', { mode: 'number' }),
   rencanaAksiPegawaiId: integer('rencana_aksi_pegawai_id')
     .notNull()
     .references(() => rencanaAksiPegawai.id, {
@@ -67,7 +72,7 @@ export const rencanaAksiPencapaianLangkah = pgTable(
   'rencana_aksi_pencapaian_langkah',
   {
     id: serial('id').primaryKey(),
-    nama: text().notNull(),
+    nama: text('nama').notNull(),
     rencanaAksiPegawaiId: integer('rencana_aksi_pegawai_id')
       .notNull()
       .references(() => rencanaAksiPegawai.id, {
@@ -87,7 +92,7 @@ export const rencanaAksiPencapaianTarget = pgTable(
   'rencana_aksi_pencapaian_target',
   {
     id: serial('id').primaryKey(),
-    target: text().notNull(),
+    target: text('target').notNull(),
     rencanaAksiPencapaianLangkahId: integer(
       'rencana_aksi_langkah_pencapaian_id',
     )
@@ -102,8 +107,8 @@ export const rencanaAksiSubKegiatanTarget = pgTable(
   'rencana_aksi_subkegiatan_target',
   {
     id: serial('id').primaryKey(),
-    target: numeric(),
-    satuan: text(),
+    target: numeric('target', { mode: 'number' }),
+    satuan: text('satuan'),
     rencanaAksiPegawaiId: integer('rencana_aksi_pegawai_id')
       .notNull()
       .references(() => rencanaAksiPegawai.id, {
@@ -125,6 +130,10 @@ export const rencanaAksiRelations = relations(rencanaAksi, ({ one, many }) => ({
     references: [user.id],
   }),
   rencanaAksiPegawaiList: many(rencanaAksiPegawai),
+  perjanjianKinerja: one(perjanjianKinerja, {
+    fields: [rencanaAksi.perjanjianKinerjaId],
+    references: [perjanjianKinerja.id],
+  }),
 }));
 
 export const rencanaAksiPegawaiRelations = relations(
