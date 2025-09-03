@@ -1,6 +1,6 @@
 import db from '@/db';
 import { rencanaAksiTarget } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -15,6 +15,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const { 'ra-pegawai-id': raPegawaiId } = await params;
     const records = await db.query.rencanaAksiTarget.findMany({
       where: eq(rencanaAksiTarget.rencanaAksiPegawaiId, parseInt(raPegawaiId)),
+      orderBy: [asc(rencanaAksiTarget.bulan)],
     });
     return NextResponse.json(records);
   } catch (error) {
