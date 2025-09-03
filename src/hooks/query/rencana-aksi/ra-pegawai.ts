@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import { getQueryClient } from '@/lib/get-query-client';
-import { RencanaAksiPegawai } from '@/types/database';
+import { RencanaAksiPegawai, RencanaAksiPegawaiDetail } from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllRaPegawai = (raId: number) => {
@@ -62,5 +62,18 @@ export const useDeleteRaPegawai = (raId: number) => {
         queryKey: ['ra-pegawai', data.deletedRecord.rencanaAksiId, variables],
       });
     },
+  });
+};
+
+export const useGetRaPegawaiDetail = (raId: number, raPegawaiId: number) => {
+  return useQuery<RencanaAksiPegawaiDetail[]>({
+    queryKey: ['ra-pegawai-detail-list', raId],
+    queryFn: async () => {
+      const { data } = await api.get(
+        `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/detail`,
+      );
+      return data;
+    },
+    enabled: !!raId && !!raPegawaiId,
   });
 };
