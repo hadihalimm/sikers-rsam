@@ -1,5 +1,9 @@
 import db from '@/db';
-import { perjanjianKinerjaPegawai } from '@/db/schema';
+import {
+  perjanjianKinerjaPegawai,
+  rencanaAksi,
+  rencanaAksiPegawai,
+} from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -39,6 +43,22 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const newRecord = await db
       .insert(perjanjianKinerjaPegawai)
       .values({ tahun, pegawaiId, perjanjianKinerjaId: parseInt(pkId) })
+      .returning();
+
+    const raRecord = await db.query.rencanaAksi.findFirst({
+      where: eq(rencanaAksi.perjanjianKinerjaId, parseInt(pkId)),
+    });
+    if (!raRecord) {
+      throw new Error('rencanaAksi not found for this perjanjianKinerja');
+    }
+    await db
+      .insert(rencanaAksiPegawai)
+      .values({
+        tahun,
+        pegawaiId,
+        rencanaAksiId: raRecord.id,
+        perjanjianKinerjaPegawaiId: newRecord[0].id,
+      })
       .returning();
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {

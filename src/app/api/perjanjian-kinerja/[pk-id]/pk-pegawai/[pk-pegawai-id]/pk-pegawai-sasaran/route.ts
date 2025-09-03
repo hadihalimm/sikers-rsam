@@ -2,6 +2,8 @@ import db from '@/db';
 import {
   indikatorSasaran,
   perjanjianKinerjaPegawaiSasaran,
+  rencanaAksiPegawai,
+  rencanaAksiTarget,
   sasaran,
 } from '@/db/schema';
 import { eq } from 'drizzle-orm';
@@ -65,6 +67,27 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         perjanjianKinerjaPegawaiId: parseInt(pkPegawaiId),
       })
       .returning();
+
+    const raPegawaiRecord = await db.query.rencanaAksiPegawai.findFirst({
+      where: eq(
+        rencanaAksiPegawai.perjanjianKinerjaPegawaiId,
+        parseInt(pkPegawaiId),
+      ),
+    });
+    if (!raPegawaiRecord) {
+      throw new Error(
+        'rencanaAksiPegawai not found for this perjanjianKinerjaPegawai',
+      );
+    }
+
+    const targets = Array.from({ length: 12 }, (_, i) => ({
+      bulan: i + 1,
+      target: null,
+      rencanaAksiPegawaiId: raPegawaiRecord.id,
+      perjanjianKinerjaPegawaiSasaranId: newRecord[0].id,
+    }));
+    await db.insert(rencanaAksiTarget).values(targets);
+
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error(
