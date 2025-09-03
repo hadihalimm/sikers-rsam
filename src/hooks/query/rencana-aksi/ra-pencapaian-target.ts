@@ -49,7 +49,7 @@ export const useCreateRaPencapaianTarget = (
 ) => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (newRecord: { target: string }) => {
+    mutationFn: async (newRecord: { target: string; bulan: number }) => {
       const { data } = await api.post(
         `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-pencapaian-langkah/${raPencapaianLangkahId}/ra-pencapaian-target`,
         newRecord,
