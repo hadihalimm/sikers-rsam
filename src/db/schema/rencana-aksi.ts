@@ -93,7 +93,7 @@ export const rencanaAksiPencapaianTarget = pgTable(
   {
     id: serial('id').primaryKey(),
     bulan: integer('bulan').notNull(),
-    target: text('target').notNull(),
+    target: text('target'),
     rencanaAksiPencapaianLangkahId: integer(
       'rencana_aksi_langkah_pencapaian_id',
     )
