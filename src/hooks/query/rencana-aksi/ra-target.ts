@@ -38,7 +38,7 @@ export const useCreateRaTarget = (raId: number, raPegawaiId: number) => {
   return useMutation({
     mutationFn: async (newRecord: {
       bulan: number;
-      target: string;
+      target: number | null;
       perjanjianKinerjaPegawaiSasaranId: number;
     }) => {
       const { data } = await api.post(
@@ -58,7 +58,10 @@ export const useCreateRaTarget = (raId: number, raPegawaiId: number) => {
 export const useUpdateRaTarget = (raId: number, raPegawaiId: number) => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (updatedRecord: { id: number; target: string }) => {
+    mutationFn: async (updatedRecord: {
+      id: number;
+      target: number | null;
+    }) => {
       const { data } = await api.put(
         `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-target/${updatedRecord.id}`,
         updatedRecord,
