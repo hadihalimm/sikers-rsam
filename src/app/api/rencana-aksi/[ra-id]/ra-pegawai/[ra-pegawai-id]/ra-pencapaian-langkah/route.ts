@@ -1,5 +1,8 @@
 import db from '@/db';
-import { rencanaAksiPencapaianLangkah } from '@/db/schema';
+import {
+  rencanaAksiPencapaianLangkah,
+  rencanaAksiPencapaianTarget,
+} from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -49,6 +52,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         rencanaAksiPegawaiId: parseInt(raPegawaiId),
       })
       .returning();
+
+    const targets = Array.from({ length: 12 }, (_, i) => ({
+      bulan: i + 1,
+      target: null,
+      rencanaAksiPencapaianLangkahId: newRecord[0].id,
+    }));
+    await db.insert(rencanaAksiPencapaianTarget).values(targets);
+
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error(
