@@ -18,6 +18,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         rencanaAksiPencapaianLangkah.rencanaAksiPegawaiId,
         parseInt(raPegawaiId),
       ),
+      with: {
+        rencanaAksiPencapaianTargetList: true,
+      },
     });
     return NextResponse.json(records);
   } catch (error) {
