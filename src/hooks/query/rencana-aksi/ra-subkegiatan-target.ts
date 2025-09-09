@@ -1,6 +1,9 @@
 import api from '@/lib/axios';
 import { getQueryClient } from '@/lib/get-query-client';
-import { RencanaAksiSubKegiatanTarget } from '@/types/database';
+import {
+  RencanaAksiSubKegiatanTarget,
+  RencanaAksiSubkegiatanTargetDetail,
+} from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllRaSubkegiatanTarget = (
@@ -43,8 +46,9 @@ export const useCreateRaSubkegiatanTarget = (
   const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (newRecord: {
+      nama: string;
       target: number;
-      satuan: number;
+      satuan: string;
       pkPegawaiProgramId: number;
     }) => {
       const { data } = await api.post(
@@ -56,6 +60,9 @@ export const useCreateRaSubkegiatanTarget = (
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['ra-subkegiatan-target-list', raPegawaiId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['ra-subkegiatan-target-detail-list', raPegawaiId],
       });
     },
   });
@@ -69,6 +76,7 @@ export const useUpdateRaSubkegiatanTarget = (
   return useMutation({
     mutationFn: async (updatedRecord: {
       id: number;
+      nama: string;
       target: number;
       satuan: string;
     }) => {
@@ -84,6 +92,9 @@ export const useUpdateRaSubkegiatanTarget = (
       });
       queryClient.invalidateQueries({
         queryKey: ['ra-subkegiatan-target', variables.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['ra-subkegiatan-target-detail-list', raPegawaiId],
       });
     },
   });
@@ -108,6 +119,25 @@ export const useDeleteRaSubkegiatanTarget = (
       queryClient.removeQueries({
         queryKey: ['ra-subkegiatan-target', variables],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['ra-subkegiatan-target-detail-list', raPegawaiId],
+      });
     },
+  });
+};
+
+export const useGetAllRaSubkegiatanTargetDetail = (
+  raId: number,
+  raPegawaiId: number,
+) => {
+  return useQuery<RencanaAksiSubkegiatanTargetDetail[]>({
+    queryKey: ['ra-subkegiatan-target-detail-list', raPegawaiId],
+    queryFn: async () => {
+      const { data } = await api.get(
+        `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-subkegiatan-target/detail`,
+      );
+      return data;
+    },
+    enabled: !!raId && !!raPegawaiId,
   });
 };

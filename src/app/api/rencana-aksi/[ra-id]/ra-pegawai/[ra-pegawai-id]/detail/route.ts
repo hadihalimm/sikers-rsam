@@ -2,6 +2,7 @@ import db from '@/db';
 import {
   indikatorSasaran,
   perjanjianKinerjaPegawai,
+  perjanjianKinerjaPegawaiProgram,
   perjanjianKinerjaPegawaiSasaran,
   rencanaAksiPegawai,
   sasaran,
@@ -25,6 +26,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         rencanaAksiPegawai,
         perjanjianKinerjaPegawai,
         perjanjianKinerjaPegawaiSasaran,
+        perjanjianKinerjaPegawaiProgram,
         indikatorSasaran,
         sasaran,
       })
@@ -42,6 +44,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         eq(
           perjanjianKinerjaPegawaiSasaran.perjanjianKinerjaPegawaiId,
           perjanjianKinerjaPegawai.id,
+        ),
+      )
+      .innerJoin(
+        perjanjianKinerjaPegawaiProgram,
+        eq(
+          perjanjianKinerjaPegawaiSasaran.id,
+          perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiSasaranId,
         ),
       )
       .innerJoin(

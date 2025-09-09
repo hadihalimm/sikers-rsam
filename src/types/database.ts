@@ -61,7 +61,9 @@ export type PerjanjianKinerjaPegawaiProgram = InferSelectModel<
 export type RencanaAksi = InferSelectModel<typeof schema.rencanaAksi>;
 export type RencanaAksiPegawai = InferSelectModel<
   typeof schema.rencanaAksiPegawai
->;
+> & {
+  pegawai: Pegawai;
+};
 export type RencanaAksiTarget = InferSelectModel<
   typeof schema.rencanaAksiTarget
 >;
@@ -137,4 +139,26 @@ export type PerjanjianKinerjaPegawaiProgramDetail = {
   program: RefProgram;
   kegiatan: RefKegiatan;
   subKegiatan: RefSubKegiatan;
+};
+
+export type RencanaAksiPegawaiDetail = {
+  rencanaAksiPegawai: RencanaAksiPegawai;
+  perjanjianKinerjaPegawai: PerjanjianKinerjaPegawai;
+  perjanjianKinerjaPegawaiSasaran: PerjanjianKinerjaPegawaiSasaran;
+  perjanjianKinerjaPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
+  indikatorSasaran: IndikatorSasaran;
+  sasaran: Sasaran;
+};
+
+export type RencanaAksiPencapaianDetail = RencanaAksiPencapaianLangkah & {
+  rencanaAksiPencapaianTargetList: RencanaAksiPencapaianTarget[];
+};
+
+export type RencanaAksiSubkegiatanTargetDetail = {
+  rencanaAksiSubKegiatanTarget: RencanaAksiSubKegiatanTarget;
+  perjanjianKinerjaPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
+  perjanjianKinerjaPegawaiSasaran: PerjanjianKinerjaPegawaiSasaran;
+  refProgram: RefProgram;
+  refKegiatan: RefKegiatan;
+  refSubKegiatan: RefSubKegiatan;
 };

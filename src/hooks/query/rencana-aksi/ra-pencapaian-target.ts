@@ -45,13 +45,22 @@ export const useGetRaPencapaianTarget = (
 export const useCreateRaPencapaianTarget = (
   raId: number,
   raPegawaiId: number,
-  raPencapaianLangkahId: number,
+  raPencapaianLangkahId?: number,
 ) => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (newRecord: { target: string; bulan: number }) => {
+    mutationFn: async (newRecord: {
+      target: string | null;
+      bulan: number;
+      newRaPencapaianLangkahId?: number;
+    }) => {
+      const finalId =
+        raPencapaianLangkahId ?? newRecord.newRaPencapaianLangkahId;
+      if (!finalId) {
+        throw new Error('raPencapaianLangkahId is required');
+      }
       const { data } = await api.post(
-        `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-pencapaian-langkah/${raPencapaianLangkahId}/ra-pencapaian-target`,
+        `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-pencapaian-langkah/${finalId}/ra-pencapaian-target`,
         newRecord,
       );
       return data;
@@ -71,7 +80,10 @@ export const useUpdateRaPencapaianTarget = (
 ) => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (updatedRecord: { id: string; target: string }) => {
+    mutationFn: async (updatedRecord: {
+      id: number;
+      target: string | null;
+    }) => {
       const { data } = await api.put(
         `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-pencapaian-langkah/${raPencapaianLangkahId}/ra-pencapaian-target/${updatedRecord.id}`,
         updatedRecord,

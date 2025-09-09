@@ -108,6 +108,7 @@ export const rencanaAksiSubKegiatanTarget = pgTable(
   'rencana_aksi_subkegiatan_target',
   {
     id: serial('id').primaryKey(),
+    nama: text('nama').notNull(),
     target: numeric('target', { mode: 'number' }),
     satuan: text('satuan'),
     rencanaAksiPegawaiId: integer('rencana_aksi_pegawai_id')
