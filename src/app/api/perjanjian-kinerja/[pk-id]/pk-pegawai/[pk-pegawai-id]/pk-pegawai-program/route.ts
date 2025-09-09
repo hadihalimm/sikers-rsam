@@ -6,7 +6,7 @@ import {
   refSubKegiatan,
   sasaran,
 } from '@/db/schema';
-import { and, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -62,18 +62,18 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const { 'pk-pegawai-id': pkPegawaiId } = await params;
     const body = await request.json();
     const { sasaranId, pkPegawaiSasaranId } = body;
-    const record = await db.query.perjanjianKinerjaPegawaiProgram.findFirst({
-      where: and(
-        eq(
-          perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiId,
-          parseInt(pkPegawaiId),
-        ),
-        eq(perjanjianKinerjaPegawaiProgram.sasaranId, parseInt(sasaranId)),
-      ),
-    });
-    if (record) {
-      return NextResponse.json(record, { status: 200 });
-    }
+    // const record = await db.query.perjanjianKinerjaPegawaiProgram.findFirst({
+    //   where: and(
+    //     eq(
+    //       perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiId,
+    //       parseInt(pkPegawaiId),
+    //     ),
+    //     eq(perjanjianKinerjaPegawaiProgram.sasaranId, parseInt(sasaranId)),
+    //   ),
+    // });
+    // if (record) {
+    //   return NextResponse.json(record, { status: 200 });
+    // }
 
     const newRecord = await db
       .insert(perjanjianKinerjaPegawaiProgram)
