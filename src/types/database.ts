@@ -157,7 +157,9 @@ export type RencanaAksiPegawaiDetail = {
 };
 
 export type RencanaAksiPencapaianDetail = RencanaAksiPencapaianLangkah & {
-  rencanaAksiPencapaianTargetList: RencanaAksiPencapaianTarget[];
+  rencanaAksiPencapaianTargetList: (RencanaAksiPencapaianTarget & {
+    satuan: Satuan;
+  })[];
 };
 
 export type RencanaAksiSubkegiatanTargetDetail = {

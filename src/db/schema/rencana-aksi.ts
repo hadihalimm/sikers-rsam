@@ -200,6 +200,10 @@ export const rencanaAksiPencapaianTargetRelations = relations(
       fields: [rencanaAksiPencapaianTarget.rencanaAksiPencapaianLangkahId],
       references: [rencanaAksiPencapaianLangkah.id],
     }),
+    satuan: one(satuan, {
+      fields: [rencanaAksiPencapaianTarget.satuanId],
+      references: [satuan.id],
+    }),
   }),
 );
 

@@ -43,7 +43,10 @@ const RencanaAksiPencapaianColumn = ({
                 <p className="whitespace-normal break-words">
                   M-{target.bulan}
                 </p>
-                <p> : {target.target}</p>
+                <p>
+                  {' '}
+                  : {target.target} {target.target && target.satuan.nama}
+                </p>
               </div>
             ))}
           </div>

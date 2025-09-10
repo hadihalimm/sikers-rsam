@@ -24,6 +24,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       with: {
         rencanaAksiPencapaianTargetList: {
           orderBy: () => [asc(rencanaAksiPencapaianTarget.bulan)],
+          with: {
+            satuan: true,
+          },
         },
       },
     });
