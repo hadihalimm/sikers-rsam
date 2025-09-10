@@ -46,7 +46,6 @@ const CreateOrUpdateRKTForm = ({
       onChange: formSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(formSchema.parse(value));
       try {
         const payload = formSchema.parse(value);
         if (initialData) {

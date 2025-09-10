@@ -41,7 +41,6 @@ const PerjanjianKinerjaProgramForm = ({
   pkPegawaiId,
   onSuccess,
 }: PerjanjianKinerjaProgramFormProps) => {
-  console.log(initialData);
   const updatePkPegawaiProgram = useUpdatePkPegawaiProgram(pkId, pkPegawaiId);
   const form = useAppForm({
     defaultValues: {

@@ -70,7 +70,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       )
       .leftJoin(satuan, eq(rencanaAksiSubKegiatanTarget.satuanId, satuan.id))
       .where(eq(rencanaAksiPegawai.id, parseInt(raPegawaiId)));
-    console.log(records.length);
     return NextResponse.json(records);
   } catch (error) {
     console.error(

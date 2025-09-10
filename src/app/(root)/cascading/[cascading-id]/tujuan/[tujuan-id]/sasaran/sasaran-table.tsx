@@ -26,7 +26,6 @@ interface SasaranTableProps {
 
 const SasaranTable = ({ tujuanId, cascadingId }: SasaranTableProps) => {
   const { data: sasaranList = [] } = useGetAllSasaran(tujuanId, cascadingId);
-  console.log(sasaranList);
   const topLevelSasaran = sasaranList.filter((item) => item.parentId === null);
 
   const [createDialogOpen, setCreateDialogOpen] = useState(false);

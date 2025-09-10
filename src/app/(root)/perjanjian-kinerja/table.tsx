@@ -93,7 +93,6 @@ const PerjanjianKinerjaTable = () => {
   ];
 
   const { data: session } = authClient.useSession();
-  console.log(session);
   const { data = [] } = useGetAllPerjanjianKinerja(session?.user.id ?? '');
   const deletePerjanjianKinerja = useDeletePerjanjianKinerja();
   const table = useReactTable({
