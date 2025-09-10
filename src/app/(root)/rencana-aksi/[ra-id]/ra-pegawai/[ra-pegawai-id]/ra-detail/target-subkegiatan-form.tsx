@@ -3,6 +3,7 @@ import {
   useCreateRaSubkegiatanTarget,
   useUpdateRaSubkegiatanTarget,
 } from '@/hooks/query/rencana-aksi/ra-subkegiatan-target';
+import { useGetAllSatuan } from '@/hooks/query/satuan/satuan';
 import { RencanaAksiSubKegiatanTarget } from '@/types/database';
 import z from 'zod';
 
@@ -22,7 +23,10 @@ const formSchema = z.object({
       message: 'Harus berupa angka',
     })
     .transform((val) => Number(val)),
-  satuan: z.string(),
+  satuanId: z
+    .string()
+    .min(1, { message: 'Silahkan pilih satuan' })
+    .transform((val) => Number(val)),
 });
 
 const RencanaAksiSubkegiatanTargetForm = ({
@@ -32,6 +36,7 @@ const RencanaAksiSubkegiatanTargetForm = ({
   pkPegawaiProgramId,
   onSuccess,
 }: RencanaAksiSubkegiatanTargetFormProps) => {
+  const { data: satuanList = [] } = useGetAllSatuan();
   const createRaSubkegiatanTarget = useCreateRaSubkegiatanTarget(
     raId,
     raPegawaiId,
@@ -43,8 +48,8 @@ const RencanaAksiSubkegiatanTargetForm = ({
   const form = useAppForm({
     defaultValues: {
       nama: initialData?.nama ?? '',
-      target: initialData?.target ?? '',
-      satuan: initialData?.satuan ?? '',
+      target: initialData?.target?.toString() ?? '',
+      satuanId: initialData?.satuanId.toString() ?? '',
     },
     validators: {
       onChange: formSchema,
@@ -56,7 +61,7 @@ const RencanaAksiSubkegiatanTargetForm = ({
           id: initialData.id,
           nama: payload.nama,
           target: payload.target,
-          satuan: payload.satuan,
+          satuanId: payload.satuanId,
         });
       } else {
         if (!pkPegawaiProgramId) {
@@ -65,7 +70,7 @@ const RencanaAksiSubkegiatanTargetForm = ({
         await createRaSubkegiatanTarget.mutateAsync({
           nama: payload.nama,
           target: payload.target,
-          satuan: payload.satuan,
+          satuanId: payload.satuanId,
           pkPegawaiProgramId,
         });
       }
@@ -82,12 +87,27 @@ const RencanaAksiSubkegiatanTargetForm = ({
         <form.AppField name="nama">
           {(field) => <field.TextField label="Nama" />}
         </form.AppField>
-        <form.AppField name="target">
-          {(field) => <field.TextField label="Target" />}
-        </form.AppField>
-        <form.AppField name="satuan">
-          {(field) => <field.TextField label="Satuan" />}
-        </form.AppField>
+        <div className="flex gap-x-2">
+          <div className="w-3/5">
+            <form.AppField name="target">
+              {(field) => <field.TextField label="Target" />}
+            </form.AppField>
+          </div>
+          <div className="w-2/5">
+            <form.AppField name="satuanId">
+              {(field) => (
+                <field.SelectWithSearchField
+                  label="Satuan"
+                  placeholder="Satuan"
+                  options={satuanList.map((item) => ({
+                    label: item.nama,
+                    value: String(item.id),
+                  }))}
+                />
+              )}
+            </form.AppField>
+          </div>
+        </div>
         <form.AppForm>
           <form.SubmitButton className="mt-4">Submit</form.SubmitButton>
         </form.AppForm>

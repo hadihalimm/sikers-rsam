@@ -15,6 +15,7 @@ import {
   perjanjianKinerjaPegawaiSasaran,
 } from './perjanjian-kinerja';
 import { relations } from 'drizzle-orm';
+import { satuan } from './satuan';
 
 export const rencanaAksi = pgTable('rencana_aksi', {
   id: serial('id').primaryKey(),
@@ -94,6 +95,9 @@ export const rencanaAksiPencapaianTarget = pgTable(
     id: serial('id').primaryKey(),
     bulan: integer('bulan').notNull(),
     target: text('target'),
+    satuanId: integer('satuan_id')
+      .notNull()
+      .references(() => satuan.id, { onDelete: 'restrict' }),
     rencanaAksiPencapaianLangkahId: integer(
       'rencana_aksi_langkah_pencapaian_id',
     )
@@ -110,7 +114,9 @@ export const rencanaAksiSubKegiatanTarget = pgTable(
     id: serial('id').primaryKey(),
     nama: text('nama').notNull(),
     target: numeric('target', { mode: 'number' }),
-    satuan: text('satuan'),
+    satuanId: integer('satuan_id')
+      .notNull()
+      .references(() => satuan.id, { onDelete: 'restrict' }),
     rencanaAksiPegawaiId: integer('rencana_aksi_pegawai_id')
       .notNull()
       .references(() => rencanaAksiPegawai.id, {

@@ -16,6 +16,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const records = await db.query.rencanaAksiTarget.findMany({
       where: eq(rencanaAksiTarget.rencanaAksiPegawaiId, parseInt(raPegawaiId)),
       orderBy: [asc(rencanaAksiTarget.bulan)],
+      with: {
+        perjanjianKinerjaPegawaiSasaran: {
+          with: {
+            satuan: true,
+          },
+        },
+      },
     });
     return NextResponse.json(records);
   } catch (error) {

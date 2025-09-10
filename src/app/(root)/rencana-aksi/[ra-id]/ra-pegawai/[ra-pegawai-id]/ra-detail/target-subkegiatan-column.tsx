@@ -6,6 +6,7 @@ import {
   RefSubKegiatan,
   RencanaAksiSubKegiatanTarget,
   RencanaAksiSubkegiatanTargetDetail,
+  Satuan,
 } from '@/types/database';
 import { Edit, Plus, Trash } from 'lucide-react';
 
@@ -20,6 +21,7 @@ type GroupedData = {
   refKegiatan: RefKegiatan;
   refSubKegiatan: RefSubKegiatan;
   perjanjianKinerjaPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
+  satuan: Satuan;
   targetList: RencanaAksiSubKegiatanTarget[];
 };
 
@@ -33,11 +35,11 @@ const RencanaAksiSubkegiatanTargetColumn = ({
     refKegiatan: data[0]?.refKegiatan,
     refSubKegiatan: data[0]?.refSubKegiatan,
     perjanjianKinerjaPegawaiProgram: data[0]?.perjanjianKinerjaPegawaiProgram,
+    satuan: data[0]?.satuan,
     targetList: data
       .map((item) => item.rencanaAksiSubKegiatanTarget)
       .filter((item) => item),
   };
-  console.log(data);
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex flex-col gap-y-2">
@@ -55,7 +57,7 @@ const RencanaAksiSubkegiatanTargetColumn = ({
                   {index + 1}. {target?.nama}
                 </p>
                 <p>
-                  {target?.target} - {target?.satuan}
+                  {target?.target} {grouped.satuan?.nama}
                 </p>
               </div>
               <div className="flex flex-col gap-y-1">

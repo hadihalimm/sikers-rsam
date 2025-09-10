@@ -48,7 +48,7 @@ export const useCreateRaSubkegiatanTarget = (
     mutationFn: async (newRecord: {
       nama: string;
       target: number;
-      satuan: string;
+      satuanId: number;
       pkPegawaiProgramId: number;
     }) => {
       const { data } = await api.post(
@@ -78,7 +78,7 @@ export const useUpdateRaSubkegiatanTarget = (
       id: number;
       nama: string;
       target: number;
-      satuan: string;
+      satuanId: number;
     }) => {
       const { data } = await api.put(
         `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-subkegiatan-target/${updatedRecord.id}`,

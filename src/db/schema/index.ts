@@ -6,3 +6,4 @@ export * from './rencana-kinerja-tahunan';
 export * from './pegawai';
 export * from './perjanjian-kinerja';
 export * from './rencana-aksi';
+export * from './satuan';

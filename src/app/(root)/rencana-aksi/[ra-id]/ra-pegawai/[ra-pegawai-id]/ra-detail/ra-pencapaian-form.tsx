@@ -7,6 +7,7 @@ import {
   useCreateRaPencapaianTarget,
   useUpdateRaPencapaianTarget,
 } from '@/hooks/query/rencana-aksi/ra-pencapaian-target';
+import { useGetAllSatuan } from '@/hooks/query/satuan/satuan';
 import { getQueryClient } from '@/lib/get-query-client';
 import { RencanaAksiPencapaianDetail } from '@/types/database';
 import z from 'zod';
@@ -21,6 +22,10 @@ interface RencanaAksiPencapaianFormProps {
 
 const formSchema = z.object({
   nama: z.string().min(1, { message: 'Nama tidak boleh kosong' }),
+  satuanId: z
+    .string()
+    .min(1, { message: 'Silahkan pilih satuan' })
+    .transform((val) => Number(val)),
   targetList: z.array(
     z.object({
       id: z.number(),
@@ -40,6 +45,7 @@ const RencanaAksiPencapaianForm = ({
   pkPegawaiSasaranId,
   onSuccess,
 }: RencanaAksiPencapaianFormProps) => {
+  const { data: satuanList = [] } = useGetAllSatuan();
   const createRaPencapaianLangkah = useCreateRaPencapaianLangkah(
     raId,
     raPegawaiId,
@@ -61,6 +67,9 @@ const RencanaAksiPencapaianForm = ({
   const form = useAppForm({
     defaultValues: {
       nama: initialData?.nama ?? '',
+      satuanId:
+        initialData?.rencanaAksiPencapaianTargetList[0].satuanId.toString() ??
+        '',
       targetList:
         initialData?.rencanaAksiPencapaianTargetList.map((item) => ({
           id: item.id,
@@ -96,6 +105,7 @@ const RencanaAksiPencapaianForm = ({
             updateRaPencapaianTarget.mutateAsync({
               id: target.id,
               target: target.target,
+              satuanId: payload.satuanId,
             }),
           ),
         );
@@ -115,6 +125,7 @@ const RencanaAksiPencapaianForm = ({
             createRaPencapaianTarget.mutateAsync({
               bulan: target.bulan,
               target: target.target,
+              satuanId: payload.satuanId,
               newRaPencapaianLangkahId: raPencapaianLangkah.id,
             }),
           ),
@@ -136,6 +147,18 @@ const RencanaAksiPencapaianForm = ({
       <div className="flex flex-col gap-y-4">
         <form.AppField name="nama">
           {(field) => <field.TextAreaField label="Nama" />}
+        </form.AppField>
+        <form.AppField name="satuanId">
+          {(field) => (
+            <field.SelectWithSearchField
+              label="Satuan"
+              placeholder="Satuan"
+              options={satuanList.map((item) => ({
+                label: item.nama,
+                value: String(item.id),
+              }))}
+            />
+          )}
         </form.AppField>
 
         <div className="grid grid-rows-4 grid-cols-3 grid-flow-col gap-y-2 gap-x-4">

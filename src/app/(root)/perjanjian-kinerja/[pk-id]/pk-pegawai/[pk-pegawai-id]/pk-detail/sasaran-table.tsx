@@ -112,10 +112,11 @@ const PerjanjianKinerjaSasaranTable = () => {
       header: 'Indikator Sasaran',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('detail.target', {
+    columnHelper.accessor((row) => row, {
       id: 'target',
       header: 'Target',
-      cell: (info) => info.getValue(),
+      cell: ({ row }) =>
+        row.original.detail.target + ' ' + row.original.satuan.nama,
     }),
     columnHelper.accessor('detail.modelCapaian', {
       id: 'modelCapaian',

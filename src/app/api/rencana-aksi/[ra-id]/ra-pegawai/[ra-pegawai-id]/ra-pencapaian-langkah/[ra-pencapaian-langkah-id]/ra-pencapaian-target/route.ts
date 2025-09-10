@@ -37,12 +37,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'ra-pencapaian-langkah-id': raPencapaianLangkahId } = await params;
     const body = await request.json();
-    const { target, bulan } = body;
+    const { target, satuanId, bulan } = body;
 
     const newRecord = await db
       .insert(rencanaAksiPencapaianTarget)
       .values({
         target,
+        satuanId,
         bulan,
         rencanaAksiPencapaianLangkahId: parseInt(raPencapaianLangkahId),
       })

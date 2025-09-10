@@ -9,6 +9,7 @@ import {
   useCreatePkPegawaiSasaran,
   useUpdatePkPegawaiSasaran,
 } from '@/hooks/query/perjanjian-kinerja/pk-pegawai-sasaran';
+import { useGetAllSatuan } from '@/hooks/query/satuan/satuan';
 import { PerjanjianKinerjaPegawaiSasaran } from '@/types/database';
 import { useStore } from '@tanstack/react-form';
 import { useParams } from 'next/navigation';
@@ -29,6 +30,10 @@ const createFormSchema = z.object({
     .min(1, { message: 'Silahkan pilih indikator sasaran' })
     .transform((val) => Number(val)),
   target: z.string().min(1, { message: 'Target tidak boleh kosong' }),
+  satuanId: z
+    .string()
+    .min(1, { message: 'Silahkan pilih satuan' })
+    .transform((val) => Number(val)),
   modelCapaian: z
     .string()
     .min(1, { message: 'Silahkan pilih model capaian' })
@@ -37,6 +42,10 @@ const createFormSchema = z.object({
 
 const updateFormSchema = z.object({
   target: z.string().min(1, { message: 'Target tidak boleh kosong' }),
+  satuanId: z
+    .string()
+    .min(1, { message: 'Silahkan pilih satuan' })
+    .transform((val) => Number(val)),
   modelCapaian: z
     .string()
     .min(1, { message: 'Silahkan pilih model capaian' })
@@ -65,6 +74,7 @@ const PerjanjianKinerjaSasaranForm = ({
       sasaranId: '',
       indikatorSasaranId: initialData?.indikatorSasaranId ?? '',
       target: initialData?.target ?? '',
+      satuanId: initialData?.satuanId ?? '',
       modelCapaian: initialData?.modelCapaian.toString() ?? '',
     },
     validators: {
@@ -76,6 +86,7 @@ const PerjanjianKinerjaSasaranForm = ({
         const item = await createPkPegawaiSasaran.mutateAsync({
           indikatorSasaranId: payload.indikatorSasaranId,
           target: payload.target,
+          satuanId: payload.satuanId,
           modelCapaian: payload.modelCapaian,
         });
         createPkPegawaiProgram.mutateAsync({
@@ -92,6 +103,7 @@ const PerjanjianKinerjaSasaranForm = ({
   const updateForm = useAppForm({
     defaultValues: {
       target: initialData?.target ?? '',
+      satuanId: initialData?.satuanId.toString() ?? '',
       modelCapaian: initialData?.modelCapaian.toString() ?? '',
     },
     validators: {
@@ -104,6 +116,7 @@ const PerjanjianKinerjaSasaranForm = ({
           updatePkPegawaiSasaran.mutateAsync({
             id: initialData.id,
             target: payload.target,
+            satuanId: payload.satuanId,
             modelCapaian: payload.modelCapaian,
           });
         }
@@ -122,6 +135,7 @@ const PerjanjianKinerjaSasaranForm = ({
     Number(pkId),
     Number(pkPegawaiId),
   );
+  const { data: satuanList = [] } = useGetAllSatuan();
   const { data: sasaranList = [] } = useGetAllSasaran(pkPegawai?.tahun ?? 0);
   const { data: indikatorSasaranList = [] } = useGetAllIndikatorSasaran(
     Number(sasaranId),
@@ -137,9 +151,27 @@ const PerjanjianKinerjaSasaranForm = ({
           updateForm.handleSubmit();
         }}>
         <div className="flex flex-col gap-y-4">
-          <updateForm.AppField name="target">
-            {(field) => <field.TextField label="Target" />}
-          </updateForm.AppField>
+          <div className="flex gap-x-2">
+            <div className="w-3/5">
+              <updateForm.AppField name="target">
+                {(field) => <field.TextField label="Target" />}
+              </updateForm.AppField>
+            </div>
+            <div className="w-2/5">
+              <updateForm.AppField name="satuanId">
+                {(field) => (
+                  <field.SelectWithSearchField
+                    label="Satuan"
+                    placeholder="Satuan"
+                    options={satuanList.map((item) => ({
+                      label: item.nama,
+                      value: String(item.id),
+                    }))}
+                  />
+                )}
+              </updateForm.AppField>
+            </div>
+          </div>
           <updateForm.AppField name="modelCapaian">
             {(field) => (
               <field.SelectField
@@ -204,9 +236,27 @@ const PerjanjianKinerjaSasaranForm = ({
             />
           )}
         </createForm.AppField>
-        <createForm.AppField name="target">
-          {(field) => <field.TextField label="Target" />}
-        </createForm.AppField>
+        <div className="flex gap-x-2">
+          <div className="w-3/5">
+            <createForm.AppField name="target">
+              {(field) => <field.TextField label="Target" />}
+            </createForm.AppField>
+          </div>
+          <div className="w-2/5">
+            <createForm.AppField name="satuanId">
+              {(field) => (
+                <field.SelectWithSearchField
+                  label="Satuan"
+                  placeholder="Satuan"
+                  options={satuanList.map((item) => ({
+                    label: item.nama,
+                    value: String(item.id),
+                  }))}
+                />
+              )}
+            </createForm.AppField>
+          </div>
+        </div>
         <createForm.AppField name="modelCapaian">
           {(field) => (
             <field.SelectField

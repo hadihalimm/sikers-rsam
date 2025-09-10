@@ -51,6 +51,7 @@ export const useCreateRaPencapaianTarget = (
   return useMutation({
     mutationFn: async (newRecord: {
       target: string | null;
+      satuanId: number;
       bulan: number;
       newRaPencapaianLangkahId?: number;
     }) => {
@@ -83,6 +84,7 @@ export const useUpdateRaPencapaianTarget = (
     mutationFn: async (updatedRecord: {
       id: number;
       target: string | null;
+      satuanId: number;
     }) => {
       const { data } = await api.put(
         `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-pencapaian-langkah/${raPencapaianLangkahId}/ra-pencapaian-target/${updatedRecord.id}`,

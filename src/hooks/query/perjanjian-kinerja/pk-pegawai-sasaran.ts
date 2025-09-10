@@ -45,6 +45,7 @@ export const useCreatePkPegawaiSasaran = (
   return useMutation({
     mutationFn: async (newRecord: {
       target: string;
+      satuanId: number;
       modelCapaian: number;
       indikatorSasaranId: number;
     }) => {
@@ -70,6 +71,7 @@ export const useUpdatePkPegawaiSasaran = (
   return useMutation({
     mutationFn: async (updatedRecord: {
       id: number;
+      satuanId: number;
       target: string;
       modelCapaian: number;
     }) => {

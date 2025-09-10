@@ -14,7 +14,11 @@ const TargetKinerjaColumn = ({ data, onEdit }: TargetKinerjaColumnProps) => {
         {data.map((item) => (
           <div key={item.id} className="grid grid-cols-[35px_auto]">
             <p className="whitespace-normal break-words">M-{item.bulan}</p>
-            <p> : {item.target}</p>
+            <p>
+              {' '}
+              : {item.target}{' '}
+              {item.target && item.perjanjianKinerjaPegawaiSasaran.satuan.nama}
+            </p>
           </div>
         ))}
       </div>

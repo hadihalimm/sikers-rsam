@@ -12,6 +12,7 @@ import { indikatorSasaran, sasaran } from './cascading';
 import { refSubKegiatan } from './renstra';
 import { relations } from 'drizzle-orm';
 import { rencanaAksi, rencanaAksiPegawai } from './rencana-aksi';
+import { satuan } from './satuan';
 
 export const perjanjianKinerja = pgTable('perjanjian_kinerja', {
   id: serial('id').primaryKey(),
@@ -38,6 +39,9 @@ export const perjanjianKinerjaPegawaiSasaran = pgTable(
   {
     id: serial('id').primaryKey(),
     target: text('target').notNull(),
+    satuanId: integer('satuan_id')
+      .notNull()
+      .references(() => satuan.id, { onDelete: 'restrict' }),
     modelCapaian: integer('modelCapaian').notNull(),
     indikatorSasaranId: integer('indikator_sasaran_id')
       .notNull()
@@ -141,6 +145,10 @@ export const perjanjianKinerjaPegawaiRelations = relations(
 export const perjanjianKinerjaPegawaiSasaranRelations = relations(
   perjanjianKinerjaPegawaiSasaran,
   ({ one }) => ({
+    satuan: one(satuan, {
+      fields: [perjanjianKinerjaPegawaiSasaran.satuanId],
+      references: [satuan.id],
+    }),
     perjanjianKinerjaPegawai: one(perjanjianKinerjaPegawai, {
       fields: [perjanjianKinerjaPegawaiSasaran.perjanjianKinerjaPegawaiId],
       references: [perjanjianKinerjaPegawai.id],

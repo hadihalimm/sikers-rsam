@@ -66,7 +66,11 @@ export type RencanaAksiPegawai = InferSelectModel<
 };
 export type RencanaAksiTarget = InferSelectModel<
   typeof schema.rencanaAksiTarget
->;
+> & {
+  perjanjianKinerjaPegawaiSasaran: PerjanjianKinerjaPegawaiSasaran & {
+    satuan: Satuan;
+  };
+};
 export type RencanaAksiPencapaianLangkah = InferSelectModel<
   typeof schema.rencanaAksiPencapaianLangkah
 >;
@@ -76,6 +80,7 @@ export type RencanaAksiPencapaianTarget = InferSelectModel<
 export type RencanaAksiSubKegiatanTarget = InferSelectModel<
   typeof schema.rencanaAksiSubKegiatanTarget
 >;
+export type Satuan = InferSelectModel<typeof schema.satuan>;
 
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
@@ -129,6 +134,7 @@ export type RencanaKinerjaTahunanDetailWithSasaran = {
 
 export type PerjanjianKinerjaPegawaiSasaranDetail = {
   detail: PerjanjianKinerjaPegawaiSasaran;
+  satuan: Satuan;
   indikatorSasaran: IndikatorSasaran;
   sasaran: Sasaran;
 };
@@ -158,6 +164,7 @@ export type RencanaAksiSubkegiatanTargetDetail = {
   rencanaAksiSubKegiatanTarget: RencanaAksiSubKegiatanTarget;
   perjanjianKinerjaPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
   perjanjianKinerjaPegawaiSasaran: PerjanjianKinerjaPegawaiSasaran;
+  satuan: Satuan;
   refProgram: RefProgram;
   refKegiatan: RefKegiatan;
   refSubKegiatan: RefSubKegiatan;

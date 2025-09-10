@@ -41,11 +41,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'ra-pencapaian-target-id': raPencapaianTargetId } = await params;
     const body = await request.json();
-    const { target } = body;
+    const { target, satuanId } = body;
 
     const updatedRecord = await db
       .update(rencanaAksiPencapaianTarget)
-      .set({ target })
+      .set({ target, satuanId })
       .where(eq(rencanaAksiPencapaianTarget.id, parseInt(raPencapaianTargetId)))
       .returning();
     if (updatedRecord.length === 0) {

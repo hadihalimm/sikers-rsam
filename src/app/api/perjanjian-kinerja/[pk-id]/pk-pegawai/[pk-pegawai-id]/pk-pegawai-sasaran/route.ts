@@ -6,6 +6,7 @@ import {
   rencanaAksiTarget,
   sasaran,
 } from '@/db/schema';
+import { satuan } from '@/db/schema/satuan';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -22,8 +23,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const records = await db
       .select({
         detail: perjanjianKinerjaPegawaiSasaran,
-        indikatorSasaran: indikatorSasaran,
-        sasaran: sasaran,
+        satuan,
+        indikatorSasaran,
+        sasaran,
       })
       .from(perjanjianKinerjaPegawaiSasaran)
       .where(
@@ -31,6 +33,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           perjanjianKinerjaPegawaiSasaran.perjanjianKinerjaPegawaiId,
           parseInt(pkPegawaiId),
         ),
+      )
+      .innerJoin(
+        satuan,
+        eq(perjanjianKinerjaPegawaiSasaran.satuanId, satuan.id),
       )
       .innerJoin(
         indikatorSasaran,
@@ -57,11 +63,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'pk-pegawai-id': pkPegawaiId } = await params;
     const body = await request.json();
-    const { target, modelCapaian, indikatorSasaranId } = body;
+    const { target, satuanId, modelCapaian, indikatorSasaranId } = body;
     const newRecord = await db
       .insert(perjanjianKinerjaPegawaiSasaran)
       .values({
         target,
+        satuanId,
         modelCapaian,
         indikatorSasaranId,
         perjanjianKinerjaPegawaiId: parseInt(pkPegawaiId),
