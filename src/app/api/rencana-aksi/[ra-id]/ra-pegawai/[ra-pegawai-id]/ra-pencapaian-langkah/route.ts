@@ -1,6 +1,9 @@
 import db from '@/db';
-import { rencanaAksiPencapaianLangkah } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import {
+  rencanaAksiPencapaianLangkah,
+  rencanaAksiPencapaianTarget,
+} from '@/db/schema';
+import { asc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -19,7 +22,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         parseInt(raPegawaiId),
       ),
       with: {
-        rencanaAksiPencapaianTargetList: true,
+        rencanaAksiPencapaianTargetList: {
+          orderBy: () => [asc(rencanaAksiPencapaianTarget.bulan)],
+        },
       },
     });
     return NextResponse.json(records);
