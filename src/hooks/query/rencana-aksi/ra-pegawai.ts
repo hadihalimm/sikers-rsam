@@ -67,7 +67,7 @@ export const useDeleteRaPegawai = (raId: number) => {
 
 export const useGetRaPegawaiDetail = (raId: number, raPegawaiId: number) => {
   return useQuery<RencanaAksiPegawaiDetail[]>({
-    queryKey: ['ra-pegawai-detail-list', raId],
+    queryKey: ['ra-pegawai-detail-list', raPegawaiId],
     queryFn: async () => {
       const { data } = await api.get(
         `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/detail`,
