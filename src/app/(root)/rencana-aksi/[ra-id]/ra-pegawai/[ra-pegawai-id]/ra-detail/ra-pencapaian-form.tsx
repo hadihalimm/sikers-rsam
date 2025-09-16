@@ -3,12 +3,7 @@ import {
   useCreateRaPencapaianLangkah,
   useUpdateRaPencapaianLangkah,
 } from '@/hooks/query/rencana-aksi/ra-pencapaian-langkah';
-import {
-  useCreateRaPencapaianTarget,
-  useUpdateRaPencapaianTarget,
-} from '@/hooks/query/rencana-aksi/ra-pencapaian-target';
 import { useGetAllSatuan } from '@/hooks/query/satuan/satuan';
-import { getQueryClient } from '@/lib/get-query-client';
 import { RencanaAksiPencapaianDetail } from '@/types/database';
 import z from 'zod';
 
@@ -30,10 +25,15 @@ const formSchema = z.object({
     z.object({
       id: z.number(),
       bulan: z.number(),
-      target: z.string().transform((val) => {
-        if (!val.trim()) return null;
-        return val;
-      }),
+      target: z
+        .string()
+        .refine((val) => !isNaN(Number(val)), {
+          message: 'Harus berupa angka',
+        })
+        .transform((val) => {
+          if (!val.trim()) return null;
+          return Number(val);
+        }),
     }),
   ),
 });
@@ -53,15 +53,6 @@ const RencanaAksiPencapaianForm = ({
   const updateRaPencapaianLangkah = useUpdateRaPencapaianLangkah(
     raId,
     raPegawaiId,
-  );
-  const createRaPencapaianTarget = useCreateRaPencapaianTarget(
-    raId,
-    raPegawaiId,
-  );
-  const updateRaPencapaianTarget = useUpdateRaPencapaianTarget(
-    raId,
-    raPegawaiId,
-    initialData?.id ?? 0,
   );
 
   const form = useAppForm({
@@ -86,55 +77,38 @@ const RencanaAksiPencapaianForm = ({
       onChange: formSchema,
     },
     onSubmit: async ({ value }) => {
-      const payload = formSchema.parse(value);
-      const queryClient = getQueryClient();
-      if (initialData) {
-        const changedItems = payload.targetList.filter((item) => {
-          const initialTarget =
-            initialData.rencanaAksiPencapaianTargetList.find(
-              (data) => data.id === item.id,
-            )?.target;
-          return item.target !== initialTarget;
-        });
-        await updateRaPencapaianLangkah.mutateAsync({
-          id: initialData.id,
-          nama: payload.nama,
-        });
-        await Promise.all(
-          changedItems.map((target) =>
-            updateRaPencapaianTarget.mutateAsync({
-              id: target.id,
-              target: target.target,
-              satuanId: payload.satuanId,
-            }),
-          ),
-        );
-      } else {
-        if (!pkPegawaiSasaranId) {
-          onSuccess();
-          return;
-        }
-        const raPencapaianLangkah = await createRaPencapaianLangkah.mutateAsync(
-          {
+      try {
+        if (!pkPegawaiSasaranId)
+          throw new Error('no pkPegawaiSasaranId provided.');
+        const payload = formSchema.parse(value);
+        if (initialData) {
+          const changedTargets = payload.targetList.filter((target) => {
+            const original = initialData.rencanaAksiPencapaianTargetList.find(
+              (t) => t.id === target.id,
+            );
+            return (
+              target.target !== original?.target ||
+              payload.satuanId !== original.satuanId
+            );
+          });
+          await updateRaPencapaianLangkah.mutateAsync({
+            id: initialData.id,
             nama: payload.nama,
-            pkPegawaiSasaranId: pkPegawaiSasaranId,
-          },
-        );
-        await Promise.all(
-          payload.targetList.map((target) =>
-            createRaPencapaianTarget.mutateAsync({
-              bulan: target.bulan,
-              target: target.target,
-              satuanId: payload.satuanId,
-              newRaPencapaianLangkahId: raPencapaianLangkah.id,
-            }),
-          ),
-        );
+            satuanId: payload.satuanId,
+            targetList: changedTargets,
+          });
+        } else {
+          await createRaPencapaianLangkah.mutateAsync({
+            nama: payload.nama,
+            satuanId: payload.satuanId,
+            targetList: payload.targetList,
+            pkPegawaiSasaranId,
+          });
+        }
+        onSuccess();
+      } catch (error) {
+        console.error(error);
       }
-      queryClient.invalidateQueries({
-        queryKey: ['ra-pencapaian-langkah-list', raPegawaiId],
-      });
-      onSuccess();
     },
   });
 

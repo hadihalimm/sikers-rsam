@@ -1,7 +1,11 @@
 import db from '@/db';
-import { rencanaAksiPencapaianLangkah } from '@/db/schema';
+import {
+  rencanaAksiPencapaianLangkah,
+  rencanaAksiPencapaianTarget,
+} from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
+import { RencanaAksiPencapaianInput } from '../route';
 
 interface RouteParams {
   params: Promise<{
@@ -42,8 +46,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'ra-pencapaian-langkah-id': raPencapaianLangkahId } = await params;
-    const body = await request.json();
-    const { nama } = body;
+    const body = (await request.json()) as RencanaAksiPencapaianInput;
+    const { nama, satuanId, targetList } = body;
+    console.log(targetList);
 
     const updatedRecord = await db
       .update(rencanaAksiPencapaianLangkah)
@@ -58,6 +63,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await Promise.all(
+      targetList.map((item) =>
+        db
+          .update(rencanaAksiPencapaianTarget)
+          .set({ satuanId, target: item.target })
+          .where(eq(rencanaAksiPencapaianTarget.id, item.id)),
+      ),
+    );
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error(
