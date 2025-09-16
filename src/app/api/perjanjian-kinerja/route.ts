@@ -1,5 +1,9 @@
 import db from '@/db';
-import { perjanjianKinerja, rencanaAksi } from '@/db/schema';
+import {
+  perjanjianKinerja,
+  realisasiRencanaAksi,
+  rencanaAksi,
+} from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -28,7 +32,7 @@ export async function POST(request: NextRequest) {
       .values({ nama, tahun, userId })
       .returning();
 
-    await db
+    const newRa = await db
       .insert(rencanaAksi)
       .values({
         nama: `Rencana Aksi - ${nama}`,
@@ -37,6 +41,13 @@ export async function POST(request: NextRequest) {
         perjanjianKinerjaId: newRecord[0].id,
       })
       .returning();
+
+    await db.insert(realisasiRencanaAksi).values({
+      nama: `Realisasi Rencana Aksi - ${newRa[0].tahun}`,
+      tahun,
+      userId,
+      rencanaAksiId: newRa[0].id,
+    });
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error("Error creating 'perjanjian_kinerja' record: ", error);

@@ -43,11 +43,17 @@ export const useCreateRaPencapaianLangkah = (
   raId: number,
   raPegawaiId: number,
 ) => {
-  // const queryClient = getQueryClient();
+  const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (newRecord: {
       nama: string;
       pkPegawaiSasaranId: number;
+      satuanId: number;
+      targetList: {
+        id: number;
+        bulan: number;
+        target: number | null;
+      }[];
     }) => {
       const { data } = await api.post<RencanaAksiPencapaianLangkah>(
         `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-pencapaian-langkah`,
@@ -55,11 +61,11 @@ export const useCreateRaPencapaianLangkah = (
       );
       return data;
     },
-    // onSuccess: () => {
-    //   queryClient.invalidateQueries({
-    //     queryKey: ['ra-pencapaian-langkah-list', raPegawaiId],
-    //   });
-    // },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['ra-pencapaian-langkah-list', raPegawaiId],
+      });
+    },
   });
 };
 
@@ -67,23 +73,32 @@ export const useUpdateRaPencapaianLangkah = (
   raId: number,
   raPegawaiId: number,
 ) => {
-  // const queryClient = getQueryClient();
+  const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (updatedRecord: { id: number; nama: string }) => {
+    mutationFn: async (updatedRecord: {
+      id: number;
+      nama: string;
+      satuanId: number;
+      targetList: {
+        id: number;
+        bulan: number;
+        target: number | null;
+      }[];
+    }) => {
       const { data } = await api.put(
         `/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}/ra-pencapaian-langkah/${updatedRecord.id}`,
         updatedRecord,
       );
       return data;
     },
-    // onSuccess: (_data, variables) => {
-    //   queryClient.invalidateQueries({
-    //     queryKey: ['ra-pencapaian-langkah-list', raPegawaiId],
-    //   });
-    //   queryClient.invalidateQueries({
-    //     queryKey: ['ra-pencapaian-langkah', raPegawaiId, variables.id],
-    //   });
-    // },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['ra-pencapaian-langkah-list', raPegawaiId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['ra-pencapaian-langkah', raPegawaiId, variables.id],
+      });
+    },
   });
 };
 

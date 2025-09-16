@@ -1,6 +1,8 @@
 import db from '@/db';
 import {
   perjanjianKinerjaPegawai,
+  realisasiRencanaAksi,
+  realisasiRencanaAksiPegawai,
   rencanaAksi,
   rencanaAksiPegawai,
 } from '@/db/schema';
@@ -45,21 +47,39 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       .values({ tahun, pegawaiId, perjanjianKinerjaId: parseInt(pkId) })
       .returning();
 
-    const raRecord = await db.query.rencanaAksi.findFirst({
+    const rencanaAksiRecord = await db.query.rencanaAksi.findFirst({
       where: eq(rencanaAksi.perjanjianKinerjaId, parseInt(pkId)),
     });
-    if (!raRecord) {
+    if (!rencanaAksiRecord) {
       throw new Error('rencanaAksi not found for this perjanjianKinerja');
     }
-    await db
+    const newRaPegawai = await db
       .insert(rencanaAksiPegawai)
       .values({
         tahun,
         pegawaiId,
-        rencanaAksiId: raRecord.id,
+        rencanaAksiId: rencanaAksiRecord.id,
         perjanjianKinerjaPegawaiId: newRecord[0].id,
       })
       .returning();
+
+    const realisasiRencanaAksiRecord =
+      await db.query.realisasiRencanaAksi.findFirst({
+        where: eq(realisasiRencanaAksi.rencanaAksiId, rencanaAksiRecord.id),
+      });
+    console.log(realisasiRencanaAksiRecord);
+    if (!realisasiRencanaAksiRecord) {
+      throw new Error(
+        'realisasiRencanaAksiPegawai not found for this rencanaAksiPegawai',
+      );
+    }
+
+    await db.insert(realisasiRencanaAksiPegawai).values({
+      tahun,
+      pegawaiId,
+      realisasiRencanaAksiId: realisasiRencanaAksiRecord.id,
+      rencanaAksiPegawaiId: newRaPegawai[0].id,
+    });
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error(

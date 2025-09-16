@@ -2,6 +2,8 @@ import db from '@/db';
 import {
   indikatorSasaran,
   perjanjianKinerjaPegawaiSasaran,
+  realisasiRencanaAksiPegawai,
+  realisasiRencanaAksiTarget,
   rencanaAksiPegawai,
   rencanaAksiTarget,
   sasaran,
@@ -93,7 +95,35 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       rencanaAksiPegawaiId: raPegawaiRecord.id,
       perjanjianKinerjaPegawaiSasaranId: newRecord[0].id,
     }));
-    await db.insert(rencanaAksiTarget).values(targets);
+    const rencanaAksiTargetList = await db
+      .insert(rencanaAksiTarget)
+      .values(targets)
+      .returning();
+
+    const realisasiRencanaAksiPegawaiRecord =
+      await db.query.realisasiRencanaAksiPegawai.findFirst({
+        where: eq(
+          realisasiRencanaAksiPegawai.rencanaAksiPegawaiId,
+          raPegawaiRecord.id,
+        ),
+      });
+    if (!realisasiRencanaAksiPegawaiRecord) {
+      throw new Error(
+        'realisasiRencanaAksiPegawai not found for this rencanaAksiPegawai',
+      );
+    }
+
+    const realisasiTargets = rencanaAksiTargetList.map((item) => ({
+      bulan: item.bulan,
+      realisasi: null,
+      capaian: null,
+      tindakLanjut: null,
+      hambatan: null,
+      rencanaAksiTargetId: item.id,
+      realisasiRencanaAksiPegawaiId: realisasiRencanaAksiPegawaiRecord.id,
+    }));
+
+    await db.insert(realisasiRencanaAksiTarget).values(realisasiTargets);
 
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
