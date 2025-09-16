@@ -94,12 +94,12 @@ export const rencanaAksiPencapaianTarget = pgTable(
   {
     id: serial('id').primaryKey(),
     bulan: integer('bulan').notNull(),
-    target: text('target'),
+    target: numeric('target', { mode: 'number' }),
     satuanId: integer('satuan_id')
       .notNull()
       .references(() => satuan.id, { onDelete: 'restrict' }),
     rencanaAksiPencapaianLangkahId: integer(
-      'rencana_aksi_langkah_pencapaian_id',
+      'rencana_aksi_pencapaian_langkah_id',
     )
       .notNull()
       .references(() => rencanaAksiPencapaianLangkah.id, {

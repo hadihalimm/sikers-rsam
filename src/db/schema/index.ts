@@ -7,3 +7,4 @@ export * from './pegawai';
 export * from './perjanjian-kinerja';
 export * from './rencana-aksi';
 export * from './satuan';
+export * from './realisasi-rencana-aksi';
