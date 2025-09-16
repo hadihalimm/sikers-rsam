@@ -1,7 +1,10 @@
 'use client';
 
 import { useAppForm } from '@/components/form';
-import { useUpdatePkPegawaiProgram } from '@/hooks/query/perjanjian-kinerja/pk-pegawai-program';
+import {
+  useCreatePkPegawaiProgram,
+  useUpdatePkPegawaiProgram,
+} from '@/hooks/query/perjanjian-kinerja/pk-pegawai-program';
 import { useGetAllRefKegiatan } from '@/hooks/query/ref/ref-kegiatan';
 import { useGetAllRefProgram } from '@/hooks/query/ref/ref-program';
 import { useGetAllRefSubKegiatan } from '@/hooks/query/ref/ref-sub-kegiatan';
@@ -13,6 +16,8 @@ interface PerjanjianKinerjaProgramFormProps {
   initialData?: PerjanjianKinerjaPegawaiProgramDetail;
   pkId: number;
   pkPegawaiId: number;
+  pkPegawaiSasaranId?: number;
+  sasaranId?: number;
   onSuccess: () => void;
 }
 
@@ -31,16 +36,24 @@ const formSchema = z.object({
     .transform((val) => Number(val)),
   anggaran: z
     .string()
-    .min(1, { message: 'Anggaran tidak boleh kosong' })
-    .transform((val) => Number(val)),
+    .refine((val) => !isNaN(Number(val)), {
+      message: 'Harus berupa angka',
+    })
+    .transform((val) => {
+      if (!val.trim()) return null;
+      return Number(val);
+    }),
 });
 
 const PerjanjianKinerjaProgramForm = ({
   initialData,
   pkId,
   pkPegawaiId,
+  pkPegawaiSasaranId,
+  sasaranId,
   onSuccess,
 }: PerjanjianKinerjaProgramFormProps) => {
+  const createPkPegawaiProgram = useCreatePkPegawaiProgram(pkId, pkPegawaiId);
   const updatePkPegawaiProgram = useUpdatePkPegawaiProgram(pkId, pkPegawaiId);
   const form = useAppForm({
     defaultValues: {
@@ -52,14 +65,22 @@ const PerjanjianKinerjaProgramForm = ({
     validators: {
       onChange: formSchema,
     },
-    onSubmit: ({ value }) => {
+    onSubmit: async ({ value }) => {
       try {
         const payload = formSchema.parse(value);
         if (initialData) {
-          updatePkPegawaiProgram.mutateAsync({
+          await updatePkPegawaiProgram.mutateAsync({
             id: initialData.pkPegawaiProgram.id,
             subKegiatanId: payload.subKegiatanId,
             anggaran: payload.anggaran,
+          });
+        } else {
+          if (!sasaranId || !pkPegawaiSasaranId) return null;
+          await createPkPegawaiProgram.mutateAsync({
+            anggaran: payload.anggaran,
+            subKegiatanId: payload.subKegiatanId,
+            pkPegawaiSasaranId: pkPegawaiSasaranId,
+            sasaranId: sasaranId,
           });
         }
         onSuccess();

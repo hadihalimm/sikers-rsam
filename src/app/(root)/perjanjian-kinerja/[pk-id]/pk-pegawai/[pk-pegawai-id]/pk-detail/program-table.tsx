@@ -18,15 +18,22 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useGetAllPkPegawaiProgram } from '@/hooks/query/perjanjian-kinerja/pk-pegawai-program';
-import { PerjanjianKinerjaPegawaiProgramDetail } from '@/types/database';
+import {
+  useDeletePkPegawaiProgram,
+  useGetAllPkPegawaiProgram,
+} from '@/hooks/query/perjanjian-kinerja/pk-pegawai-program';
+import {
+  PerjanjianKinerjaPegawaiProgramDetail,
+  PerjanjianKinerjaPegawaiSasaran,
+  Sasaran,
+} from '@/types/database';
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { SquarePen } from 'lucide-react';
+import { Plus, SquarePen } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import PerjanjianKinerjaProgramForm from './program-form';
@@ -45,10 +52,14 @@ const PerjanjianKinerjaProgramTable = () => {
     Number(pkPegawaiId),
   );
 
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingItem, setEditingItem] =
     useState<PerjanjianKinerjaPegawaiProgramDetail>();
+  const [selectedPkPegawaiSasaran, setSelectedPkPegawaiSasaran] =
+    useState<PerjanjianKinerjaPegawaiSasaran>();
+  const [selectedSasaran, setSelectedSasaran] = useState<Sasaran>();
 
   const processedData = useMemo(() => {
     const grouped = data.reduce((acc, item) => {
@@ -82,14 +93,28 @@ const PerjanjianKinerjaProgramTable = () => {
 
   const columnHelper = createColumnHelper<ProcessedRowData>();
   const columns = [
-    columnHelper.accessor('sasaran.judul', {
+    columnHelper.accessor((row) => row, {
       id: 'sasaran',
       header: 'Sasaran',
-      cell: (info) => {
-        if (!info.row.original.showSasaran) {
+      cell: ({ row }) => {
+        if (!row.original.showSasaran) {
           return null;
         }
-        return info.getValue();
+        return (
+          <div className="flex flex-col gap-y-4">
+            <p>{row.original.sasaran.judul}</p>
+            <Button
+              className="w-fit h-6"
+              onClick={() => {
+                setSelectedPkPegawaiSasaran(row.original.pkPegawaiSasaran);
+                setSelectedSasaran(row.original.sasaran);
+                setCreateDialogOpen(true);
+              }}>
+              <Plus />
+              Tambah Program
+            </Button>
+          </div>
+        );
       },
     }),
     columnHelper.accessor((row) => row, {
@@ -97,7 +122,11 @@ const PerjanjianKinerjaProgramTable = () => {
       header: 'Program',
       cell: (info) => {
         if (info.getValue().subKegiatan === null) {
-          return null;
+          return (
+            <p>
+              <i>Silahkan edit program ini</i>
+            </p>
+          );
         }
         return (
           <div>
@@ -165,6 +194,10 @@ const PerjanjianKinerjaProgramTable = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+  const deletePkPegawaiProgram = useDeletePkPegawaiProgram(
+    Number(pkId),
+    Number(pkPegawaiId),
+  );
 
   return (
     <div className="flex flex-col gap-y-4">
@@ -232,6 +265,22 @@ const PerjanjianKinerjaProgramTable = () => {
       </div>
 
       <FormDialog
+        title="Tambah PK Pegawai Program"
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}>
+        <PerjanjianKinerjaProgramForm
+          pkId={Number(pkId)}
+          pkPegawaiId={Number(pkPegawaiId)}
+          pkPegawaiSasaranId={Number(selectedPkPegawaiSasaran?.id)}
+          sasaranId={Number(selectedSasaran?.id)}
+          onSuccess={() => {
+            setCreateDialogOpen(false);
+            setEditingItem(undefined);
+          }}
+        />
+      </FormDialog>
+
+      <FormDialog
         title="Edit PK Pegawai Program"
         open={updateDialogOpen}
         onOpenChange={setUpdateDialogOpen}>
@@ -249,7 +298,10 @@ const PerjanjianKinerjaProgramTable = () => {
       <DeleteAlertDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        onSuccess={() => {
+        onSuccess={async () => {
+          await deletePkPegawaiProgram.mutateAsync(
+            editingItem!.pkPegawaiProgram.id,
+          );
           setEditingItem(undefined);
           setDeleteDialogOpen(false);
           toast.info('PK Pegawai Program berhasil dihapus');

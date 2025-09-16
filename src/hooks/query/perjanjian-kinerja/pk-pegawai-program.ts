@@ -44,6 +44,8 @@ export const useCreatePkPegawaiProgram = (
   const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (newRecord: {
+      anggaran: number | null;
+      subKegiatanId: number | null;
       sasaranId: number;
       pkPegawaiSasaranId: number;
     }) => {
@@ -69,7 +71,7 @@ export const useUpdatePkPegawaiProgram = (
   return useMutation({
     mutationFn: async (updatedRecord: {
       id: number;
-      anggaran: number;
+      anggaran: number | null;
       subKegiatanId: number;
     }) => {
       const { data } = await api.put(
@@ -96,7 +98,7 @@ export const useDeletePkPegawaiProgram = (
   const queryClient = getQueryClient();
   return useMutation({
     mutationFn: async (id: number) => {
-      const { data } = await api.put(
+      const { data } = await api.delete(
         `perjanjian-kinerja/${pkId}/pk-pegawai/${pkPegawaiId}/pk-pegawai-program/${id}`,
       );
       return data;

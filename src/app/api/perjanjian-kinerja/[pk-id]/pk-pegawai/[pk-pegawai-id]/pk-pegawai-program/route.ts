@@ -1,12 +1,13 @@
 import db from '@/db';
 import {
   perjanjianKinerjaPegawaiProgram,
+  perjanjianKinerjaPegawaiSasaran,
   refKegiatan,
   refProgram,
   refSubKegiatan,
   sasaran,
 } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -22,6 +23,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const records = await db
       .select({
         pkPegawaiProgram: perjanjianKinerjaPegawaiProgram,
+        pkPegawaiSasaran: perjanjianKinerjaPegawaiSasaran,
         sasaran: sasaran,
         program: refProgram,
         kegiatan: refKegiatan,
@@ -32,6 +34,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         eq(
           perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiId,
           parseInt(pkPegawaiId),
+        ),
+      )
+      .innerJoin(
+        perjanjianKinerjaPegawaiSasaran,
+        eq(
+          perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiSasaranId,
+          perjanjianKinerjaPegawaiSasaran.id,
         ),
       )
       .leftJoin(
@@ -61,24 +70,34 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'pk-pegawai-id': pkPegawaiId } = await params;
     const body = await request.json();
-    const { sasaranId, pkPegawaiSasaranId } = body;
-    // const record = await db.query.perjanjianKinerjaPegawaiProgram.findFirst({
-    //   where: and(
-    //     eq(
-    //       perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiId,
-    //       parseInt(pkPegawaiId),
-    //     ),
-    //     eq(perjanjianKinerjaPegawaiProgram.sasaranId, parseInt(sasaranId)),
-    //   ),
-    // });
-    // if (record) {
-    //   return NextResponse.json(record, { status: 200 });
-    // }
-
+    const { sasaranId, pkPegawaiSasaranId, anggaran, subKegiatanId } = body;
+    const record = await db.query.perjanjianKinerjaPegawaiProgram.findFirst({
+      where: and(
+        eq(
+          perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiId,
+          parseInt(pkPegawaiId),
+        ),
+        eq(perjanjianKinerjaPegawaiProgram.sasaranId, parseInt(sasaranId)),
+      ),
+    });
+    if (record) {
+      const newRecord = await db
+        .insert(perjanjianKinerjaPegawaiProgram)
+        .values({
+          sasaranId,
+          anggaran,
+          subKegiatanId,
+          perjanjianKinerjaPegawaiSasaranId: parseInt(pkPegawaiSasaranId),
+          perjanjianKinerjaPegawaiId: parseInt(pkPegawaiId),
+        })
+        .returning();
+      return NextResponse.json(newRecord[0], { status: 201 });
+    }
     const newRecord = await db
       .insert(perjanjianKinerjaPegawaiProgram)
       .values({
         sasaranId,
+        anggaran,
         perjanjianKinerjaPegawaiSasaranId: parseInt(pkPegawaiSasaranId),
         perjanjianKinerjaPegawaiId: parseInt(pkPegawaiId),
       })

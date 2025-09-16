@@ -89,9 +89,12 @@ const PerjanjianKinerjaSasaranForm = ({
           satuanId: payload.satuanId,
           modelCapaian: payload.modelCapaian,
         });
+
         createPkPegawaiProgram.mutateAsync({
           sasaranId: payload.sasaranId,
           pkPegawaiSasaranId: item.id,
+          anggaran: 0,
+          subKegiatanId: null,
         });
         onSuccess();
       } catch (error) {
