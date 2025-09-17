@@ -1,17 +1,20 @@
 import api from '@/lib/axios';
 import { getQueryClient } from '@/lib/get-query-client';
-import { RealisasiRencanaAksiSubkegiatanTarget } from '@/types/database';
+import {
+  RealisasiRencanaAksiSubkegiatanTarget,
+  RealisasiRencanaAksiSubkegiatanTargetDetail,
+} from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllRraSubkegiatanTarget = (
   rraId: number,
   rraPegawaiId: number,
 ) => {
-  return useQuery<RealisasiRencanaAksiSubkegiatanTarget[]>({
+  return useQuery<RealisasiRencanaAksiSubkegiatanTargetDetail[]>({
     queryKey: ['rra-subkegiatan-target-list', rraPegawaiId],
     queryFn: async () => {
       const { data } = await api.get(
-        `/realisasi-rencana-aksi/${rraId}/ra-pegawai/${rraPegawaiId}/ra-subkegiatan-target`,
+        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${rraPegawaiId}/rra-subkegiatan-target`,
       );
       return data;
     },
@@ -28,7 +31,7 @@ export const useGetRraSubkegiatanTarget = (
     queryKey: ['rra-subkegiatan-target', rraSubkegiatanTargetId],
     queryFn: async () => {
       const { data } = await api.get(
-        `/rencana-aksi/${rraId}/ra-pegawai/${rraPegawaiId}/ra-subkegiatan-target/${rraSubkegiatanTargetId}`,
+        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${rraPegawaiId}/rra-subkegiatan-target/${rraSubkegiatanTargetId}`,
       );
       return data;
     },
@@ -48,7 +51,7 @@ export const useCreateRraSubkegiatanTarget = (
       rencanaAksiSubKegiatanTargetId: number;
     }) => {
       const { data } = await api.post(
-        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${rraPegawaiId}/ra-subkegiatan-target`,
+        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${rraPegawaiId}/rra-subkegiatan-target`,
         newRecord,
       );
       return data;
@@ -76,7 +79,7 @@ export const useUpdateRraSubkegiatanTarget = (
       realisasiAnggaran: number | null;
     }) => {
       const { data } = await api.put(
-        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${rraPegawaiId}/ra-subkegiatan-target/${updatedRecord.id}`,
+        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${rraPegawaiId}/rra-subkegiatan-target/${updatedRecord.id}`,
         updatedRecord,
       );
       return data;
@@ -100,7 +103,7 @@ export const useDeleteRraSubkegiatanTarget = (
   return useMutation({
     mutationFn: async (id: number) => {
       const { data } = await api.delete(
-        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${rraPegawaiId}/ra-subkegiatan-target/${id}`,
+        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${rraPegawaiId}/rra-subkegiatan-target/${id}`,
       );
       return data;
     },
