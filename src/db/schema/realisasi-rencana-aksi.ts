@@ -107,7 +107,7 @@ export const realisasiRencanaAksiSubkegiatanTarget = pgTable(
       .references(() => rencanaAksiSubKegiatanTarget.id, {
         onDelete: 'cascade',
       }),
-    realisasiRencanaAksiPegawaiId: integer('realisasi_rencana_aksi_id')
+    realisasiRencanaAksiPegawaiId: integer('realisasi_rencana_aksi_pegawai_id')
       .notNull()
       .references(() => realisasiRencanaAksiPegawai.id, {
         onDelete: 'cascade',
