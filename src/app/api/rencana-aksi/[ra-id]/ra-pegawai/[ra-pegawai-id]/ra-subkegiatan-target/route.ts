@@ -1,5 +1,9 @@
 import db from '@/db';
-import { rencanaAksiSubKegiatanTarget } from '@/db/schema';
+import {
+  realisasiRencanaAksiPegawai,
+  realisasiRencanaAksiSubkegiatanTarget,
+  rencanaAksiSubKegiatanTarget,
+} from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -48,6 +52,22 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         rencanaAksiPegawaiId: parseInt(raPegawaiId),
       })
       .returning();
+
+    const rraPegawai = await db.query.realisasiRencanaAksiPegawai.findFirst({
+      where: eq(
+        realisasiRencanaAksiPegawai.rencanaAksiPegawaiId,
+        parseInt(raPegawaiId),
+      ),
+    });
+    if (!rraPegawai)
+      throw new Error(
+        'realisasiRencanaAksiPegawai not found for this rencanaAksiPegawaiId',
+      );
+
+    await db.insert(realisasiRencanaAksiSubkegiatanTarget).values({
+      rencanaAksiSubKegiatanTargetId: newRecord[0].id,
+      realisasiRencanaAksiPegawaiId: rraPegawai.id,
+    });
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error(
