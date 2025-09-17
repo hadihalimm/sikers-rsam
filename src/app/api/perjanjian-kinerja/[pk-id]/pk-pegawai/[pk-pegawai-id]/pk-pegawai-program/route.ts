@@ -80,6 +80,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         eq(perjanjianKinerjaPegawaiProgram.sasaranId, parseInt(sasaranId)),
       ),
     });
+    if (record && !subKegiatanId) NextResponse.json({ status: 201 });
     if (record) {
       const newRecord = await db
         .insert(perjanjianKinerjaPegawaiProgram)
@@ -92,17 +93,18 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         })
         .returning();
       return NextResponse.json(newRecord[0], { status: 201 });
+    } else {
+      const newRecord = await db
+        .insert(perjanjianKinerjaPegawaiProgram)
+        .values({
+          sasaranId,
+          anggaran,
+          perjanjianKinerjaPegawaiSasaranId: parseInt(pkPegawaiSasaranId),
+          perjanjianKinerjaPegawaiId: parseInt(pkPegawaiId),
+        })
+        .returning();
+      return NextResponse.json(newRecord[0], { status: 201 });
     }
-    const newRecord = await db
-      .insert(perjanjianKinerjaPegawaiProgram)
-      .values({
-        sasaranId,
-        anggaran,
-        perjanjianKinerjaPegawaiSasaranId: parseInt(pkPegawaiSasaranId),
-        perjanjianKinerjaPegawaiId: parseInt(pkPegawaiId),
-      })
-      .returning();
-    return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error(
       "Error creating 'perjanjian_kinerja_pegawai_program' record: ",
