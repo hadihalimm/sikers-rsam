@@ -6,6 +6,7 @@ import {
   refProgram,
   refSubKegiatan,
   rencanaAksiSubKegiatanTarget,
+  satuan,
 } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -24,6 +25,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .select({
         realisasiRencanaAksiSubkegiatanTarget,
         rencanaAksiSubKegiatanTarget,
+        satuan,
         perjanjianKinerjaPegawaiProgram,
         refProgram,
         refKegiatan,
@@ -43,6 +45,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           rencanaAksiSubKegiatanTarget.id,
         ),
       )
+      .innerJoin(satuan, eq(rencanaAksiSubKegiatanTarget.satuanId, satuan.id))
       .innerJoin(
         perjanjianKinerjaPegawaiProgram,
         eq(
