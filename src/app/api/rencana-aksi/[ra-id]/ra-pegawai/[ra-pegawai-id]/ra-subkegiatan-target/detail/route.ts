@@ -2,7 +2,6 @@ import db from '@/db';
 import {
   perjanjianKinerjaPegawai,
   perjanjianKinerjaPegawaiProgram,
-  perjanjianKinerjaPegawaiSasaran,
   refKegiatan,
   refProgram,
   refSubKegiatan,
@@ -26,7 +25,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const records = await db
       .select({
         perjanjianKinerjaPegawaiProgram,
-        perjanjianKinerjaPegawaiSasaran,
         satuan,
         refSubKegiatan,
         refKegiatan,
@@ -34,13 +32,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         rencanaAksiSubKegiatanTarget,
       })
       .from(perjanjianKinerjaPegawaiProgram)
-      .innerJoin(
-        perjanjianKinerjaPegawaiSasaran,
-        eq(
-          perjanjianKinerjaPegawaiProgram.perjanjianKinerjaPegawaiSasaranId,
-          perjanjianKinerjaPegawaiSasaran.id,
-        ),
-      )
       .innerJoin(
         refSubKegiatan,
         eq(perjanjianKinerjaPegawaiProgram.subKegiatanId, refSubKegiatan.id),
