@@ -1,5 +1,5 @@
 import db from '@/db';
-import { realisasiRencanaAksiTarget } from '@/db/schema';
+import { realisasiRencanaAksiTarget, rencanaAksiTarget } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -40,7 +40,29 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'rra-target-id': rraTargetId } = await params;
     const body = await request.json();
-    const { realisasi, capaian, tindakLanjut, hambatan } = body;
+    const { realisasi, tindakLanjut, hambatan } = body;
+
+    const rraTarget = await db.query.realisasiRencanaAksiTarget.findFirst({
+      where: eq(realisasiRencanaAksiTarget.id, parseInt(rraTargetId)),
+    });
+    if (!rraTarget)
+      throw new Error("'realisasi_rencana_aksi_target' not found");
+    const raTarget = await db.query.rencanaAksiTarget.findFirst({
+      where: eq(rencanaAksiTarget.id, rraTarget.rencanaAksiTargetId),
+      with: {
+        perjanjianKinerjaPegawaiSasaran: true,
+      },
+    });
+    if (!raTarget)
+      throw new Error(
+        "'rencana_aksi_target' not found for given 'realisasi_rencana_aksi_target'",
+      );
+
+    const capaian = calculateCapaian(
+      raTarget.target,
+      Number(realisasi),
+      raTarget.perjanjianKinerjaPegawaiSasaran.modelCapaian,
+    );
 
     const updatedRecord = await db
       .update(realisasiRencanaAksiTarget)
@@ -94,3 +116,18 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+const calculateCapaian = (
+  target: number | null,
+  realisasi: number | null,
+  modelCapaian: number,
+) => {
+  if (target === null || realisasi === null) return null;
+  let capaian = 0;
+  if (modelCapaian === 1) {
+    capaian = (realisasi / target) * 100;
+  } else {
+    capaian = (target / realisasi) * 100;
+  }
+  return capaian;
+};
