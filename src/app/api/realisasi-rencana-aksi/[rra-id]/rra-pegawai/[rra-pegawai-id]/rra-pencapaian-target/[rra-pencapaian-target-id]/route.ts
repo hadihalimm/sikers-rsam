@@ -50,8 +50,25 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'rra-pencapaian-target-id': rraPencapaianTargetId } = await params;
     const body = await request.json();
-    const { realisasi, capaian } = body;
+    const { realisasi } = body;
 
+    const rraPencapaianTarget =
+      await db.query.realisasiRencanaAksiPencapaianTarget.findFirst({
+        where: eq(
+          realisasiRencanaAksiPencapaianTarget.id,
+          parseInt(rraPencapaianTargetId),
+        ),
+        with: {
+          rencanaAksiPencapaianTarget: true,
+        },
+      });
+    if (!rraPencapaianTarget)
+      throw new Error("'realisasi_pencapaian_target' not found");
+
+    const capaian = calculateCapaian(
+      rraPencapaianTarget.rencanaAksiPencapaianTarget.target,
+      realisasi,
+    );
     const updatedRecord = await db
       .update(realisasiRencanaAksiPencapaianTarget)
       .set({ realisasi, capaian })
@@ -125,3 +142,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     );
   }
 }
+
+const calculateCapaian = (target: number | null, realisasi: number | null) => {
+  if (target === null || realisasi === null) return null;
+  return (realisasi / target) * 100;
+};
