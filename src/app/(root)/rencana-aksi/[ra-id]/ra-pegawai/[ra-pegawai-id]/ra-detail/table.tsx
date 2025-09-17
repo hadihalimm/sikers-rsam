@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/table';
 import { useGetRaPegawaiDetail } from '@/hooks/query/rencana-aksi/ra-pegawai';
 import {
+  PerjanjianKinerjaPegawaiProgram,
   RencanaAksiPegawaiDetail,
   RencanaAksiPencapaianDetail,
   RencanaAksiSubKegiatanTarget,
@@ -55,6 +56,8 @@ const RencanaAksiPegawaiDetailTable = () => {
   );
   const [selectedRaPegawaiDetail, setSelectedRaPegawaiDetail] =
     useState<RencanaAksiPegawaiDetail>();
+  const [selectedPkPegawaiProgram, setSelectedPkPegawaiProgram] =
+    useState<PerjanjianKinerjaPegawaiProgram>();
 
   const [updateRaTargetDialog, setUpdateRaTargetDialog] = useState(false);
   const [selectedRaTarget, setSelectedRaTarget] = useState<RencanaAksiTarget[]>(
@@ -187,17 +190,18 @@ const RencanaAksiPegawaiDetailTable = () => {
     columnHelper.accessor((row) => row, {
       id: 'outputKegiatan',
       header: 'Indikator Output Kegiatan',
-      size: 80,
+      size: 115,
       cell: ({ row }) => (
         <RencanaAksiSubkegiatanTargetColumn
           data={raSubKegiatanTargetList.filter((item) => {
             return (
-              item.perjanjianKinerjaPegawaiProgram.id ===
-              row.original.perjanjianKinerjaPegawaiProgram.id
+              item.perjanjianKinerjaPegawaiProgram
+                .perjanjianKinerjaPegawaiSasaranId ===
+              row.original.perjanjianKinerjaPegawaiSasaran.id
             );
           })}
-          onEdit={(data) => {
-            setSelectedRaPegawaiDetail(row.original);
+          onEdit={(data, pkPegawaiProgram) => {
+            setSelectedPkPegawaiProgram(pkPegawaiProgram);
             setSelectedRaSubkegiatanTarget(data);
             setUpdateRaSubkegiatanTargetDialog(true);
           }}
@@ -348,9 +352,7 @@ const RencanaAksiPegawaiDetailTable = () => {
           initialData={selectedRaSubkegiatanTarget}
           raId={Number(raId)}
           raPegawaiId={Number(raPegawaiId)}
-          pkPegawaiProgramId={
-            selectedRaPegawaiDetail?.perjanjianKinerjaPegawaiProgram.id
-          }
+          pkPegawaiProgramId={selectedPkPegawaiProgram?.id}
           onSuccess={() => {
             setUpdateRaSubkegiatanTargetDialog(false);
             setSelectedRaSubkegiatanTarget(undefined);
