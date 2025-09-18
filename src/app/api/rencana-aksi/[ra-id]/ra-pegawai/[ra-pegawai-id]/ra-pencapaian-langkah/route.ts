@@ -5,6 +5,7 @@ import {
   rencanaAksiPencapaianLangkah,
   rencanaAksiPencapaianTarget,
 } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { asc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -17,6 +18,9 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'ra-pegawai-id': raPegawaiId } = await params;
     const records = await db.query.rencanaAksiPencapaianLangkah.findMany({
       where: eq(
@@ -54,6 +58,9 @@ export type RencanaAksiPencapaianInput = {
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'ra-pegawai-id': raPegawaiId } = await params;
     const body = (await request.json()) as RencanaAksiPencapaianInput;
     const { nama, satuanId, targetList, pkPegawaiSasaranId } = body;

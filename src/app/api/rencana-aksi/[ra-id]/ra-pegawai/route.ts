@@ -1,5 +1,6 @@
 import db from '@/db';
 import { rencanaAksiPegawai } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -10,7 +11,11 @@ interface RouteParams {
 }
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'ra-id': raId } = await params;
+
     const records = await db.query.rencanaAksiPegawai.findMany({
       where: eq(rencanaAksiPegawai.rencanaAksiId, parseInt(raId)),
       with: {
@@ -29,6 +34,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'ra-id': raId } = await params;
     const body = await request.json();
     const { tahun, pegawaiId, perjanjianKinerjaPegawaiId } = body;

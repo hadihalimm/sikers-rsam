@@ -1,5 +1,6 @@
 import db from '@/db';
 import { rencanaAksiPegawai } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -13,6 +14,10 @@ interface RouteParams {
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'ra-pegawai-id': raPegawaiId } = await params;
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const record = await db.query.rencanaAksiPegawai.findFirst({
       where: eq(rencanaAksiPegawai.id, parseInt(raPegawaiId)),
       with: {
@@ -38,6 +43,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'ra-pegawai-id': raPegawaiId } = await params;
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const deletedRecord = await db
       .delete(rencanaAksiPegawai)

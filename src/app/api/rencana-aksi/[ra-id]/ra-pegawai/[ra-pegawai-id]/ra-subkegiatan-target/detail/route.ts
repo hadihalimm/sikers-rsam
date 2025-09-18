@@ -9,6 +9,7 @@ import {
   rencanaAksiSubKegiatanTarget,
   satuan,
 } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -21,6 +22,9 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'ra-pegawai-id': raPegawaiId } = await params;
     const records = await db
       .select({

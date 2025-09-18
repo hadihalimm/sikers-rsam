@@ -1,18 +1,15 @@
 import db from '@/db';
 import { rencanaAksi } from '@/db/schema';
-import { auth } from '@/lib/auth';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
-import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-    if (!session) {
-      return redirect('/sign-in');
-    }
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const userId = session.user.id;
     const records = await db.query.rencanaAksi.findMany({
       where: eq(rencanaAksi.userId, userId),
@@ -29,19 +26,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-    if (!session) {
-      return redirect('/sign-in');
-    }
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const body = await request.json();
     const { nama, tahun } = body;
 
     const userId = session.user.id;
     const newRecord = await db
       .insert(rencanaAksi)
-      .values({ nama, tahun, userId })
+      .values({ nama, tahun, userId, perjanjianKinerjaId: 0 })
       .returning();
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {

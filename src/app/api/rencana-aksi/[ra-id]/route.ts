@@ -1,6 +1,7 @@
 import db from '@/db';
 import { rencanaAksi } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { getCurrentSession } from '@/lib/user';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -11,9 +12,17 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'ra-id': raId } = await params;
+
     const record = await db.query.rencanaAksi.findFirst({
-      where: eq(rencanaAksi.id, parseInt(raId)),
+      where: and(
+        eq(rencanaAksi.id, parseInt(raId)),
+        eq(rencanaAksi.userId, session.user.id),
+      ),
     });
     if (!record) {
       return NextResponse.json(
@@ -33,6 +42,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'ra-id': raId } = await params;
     const body = await request.json();
     const { nama } = body;
@@ -40,7 +53,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updatedRecord = await db
       .update(rencanaAksi)
       .set({ nama })
-      .where(eq(rencanaAksi.id, parseInt(raId)))
+      .where(
+        and(
+          eq(rencanaAksi.id, parseInt(raId)),
+          eq(rencanaAksi.userId, session.user.id),
+        ),
+      )
       .returning();
     if (updatedRecord.length === 0) {
       return NextResponse.json(
@@ -61,9 +79,19 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'ra-id': raId } = await params;
+
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const deletedRecord = await db
       .delete(rencanaAksi)
-      .where(eq(rencanaAksi.id, parseInt(raId)))
+      .where(
+        and(
+          eq(rencanaAksi.id, parseInt(raId)),
+          eq(rencanaAksi.userId, session.user.id),
+        ),
+      )
       .returning();
     if (deletedRecord.length === 0) {
       return NextResponse.json(

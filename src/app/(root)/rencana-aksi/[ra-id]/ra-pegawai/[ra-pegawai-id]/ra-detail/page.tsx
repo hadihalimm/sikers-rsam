@@ -1,6 +1,10 @@
-import { RencanaAksi, RencanaAksiPegawai } from '@/types/database';
-import axios from 'axios';
 import RencanaAksiPegawaiDetailTable from './table';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
+import db from '@/db';
+import { rencanaAksi, rencanaAksiPegawai } from '@/db/schema';
+import { and, eq } from 'drizzle-orm';
 
 const RencanaAksiPegawaiDetailPage = async ({
   params,
@@ -8,24 +12,36 @@ const RencanaAksiPegawaiDetailPage = async ({
   params: Promise<{ 'ra-id': string; 'ra-pegawai-id': string }>;
 }) => {
   const { 'ra-id': raId, 'ra-pegawai-id': raPegawaiId } = await params;
-  const { data: rencanaAksi } = await axios.get<RencanaAksi>(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/rencana-aksi/${raId}`,
-  );
-  const { data: raPegawai } = await axios.get<RencanaAksiPegawai>(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/rencana-aksi/${raId}/ra-pegawai/${raPegawaiId}`,
-  );
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (!session) redirect('/sign-in');
+
+  const rencanaAksiRecord = await db.query.rencanaAksi.findFirst({
+    where: and(
+      eq(rencanaAksi.id, parseInt(raId)),
+      eq(rencanaAksi.userId, session.user.id),
+    ),
+  });
+
+  const raPegawaiRecord = await db.query.rencanaAksiPegawai.findFirst({
+    where: eq(rencanaAksiPegawai.id, parseInt(raPegawaiId)),
+    with: {
+      pegawai: true,
+    },
+  });
 
   return (
     <section className="flex flex-col gap-y-8 w-fit">
       <div>
         <h1 className="font-semibold text-foreground text-3xl">
-          {rencanaAksi.nama}
+          {rencanaAksiRecord?.nama}
         </h1>
-        <p>Tahun {rencanaAksi.tahun}</p>
+        <p>Tahun {rencanaAksiRecord?.tahun}</p>
       </div>
       <div>
-        <h2>{raPegawai.pegawai.nama}</h2>
-        <p>{raPegawai.pegawai.jabatan}</p>
+        <h2>{raPegawaiRecord?.pegawai.nama}</h2>
+        <p>{raPegawaiRecord?.pegawai.jabatan}</p>
       </div>
       <RencanaAksiPegawaiDetailTable />
     </section>
