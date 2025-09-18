@@ -1,8 +1,10 @@
 import { auth } from '@/lib/auth';
-import { RealisasiRencanaAksi } from '@/types/database';
-import axios from 'axios';
 import { headers } from 'next/headers';
 import RealisasiRencanaAksiPegawaiTable from './table';
+import db from '@/db';
+import { and, eq } from 'drizzle-orm';
+import { realisasiRencanaAksi } from '@/db/schema';
+import { redirect } from 'next/navigation';
 
 const RealisasiRencanaAksiPegawaiPage = async ({
   params,
@@ -10,11 +12,16 @@ const RealisasiRencanaAksiPegawaiPage = async ({
   params: Promise<{ 'rra-id': string }>;
 }) => {
   const { 'rra-id': rraId } = await params;
-  const { data: realisasiRencanaAksi } = await axios.get<RealisasiRencanaAksi>(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/realisasi-rencana-aksi/${rraId}`,
-  );
   const session = await auth.api.getSession({
     headers: await headers(),
+  });
+  if (!session) redirect('/sign-in');
+
+  const rraRecord = await db.query.realisasiRencanaAksi.findFirst({
+    where: and(
+      eq(realisasiRencanaAksi.id, parseInt(rraId)),
+      eq(realisasiRencanaAksi.userId, session.user.id),
+    ),
   });
 
   return (
@@ -23,9 +30,9 @@ const RealisasiRencanaAksiPegawaiPage = async ({
         Realisasi Rencana Aksi
       </h1>
       <div>
-        <h2>{realisasiRencanaAksi.nama}</h2>
+        <h2>{rraRecord?.nama}</h2>
         <p>Bagian {session?.user.name}</p>
-        <p>Tahun {realisasiRencanaAksi.tahun}</p>
+        <p>Tahun {rraRecord?.tahun}</p>
       </div>
       <RealisasiRencanaAksiPegawaiTable />
     </section>

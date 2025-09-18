@@ -1,5 +1,6 @@
 import db from '@/db';
 import { realisasiRencanaAksiPencapaianTarget } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -13,6 +14,9 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'rra-pencapaian-target-id': rraPencapaianTargetId } = await params;
     const record = await db.query.realisasiRencanaAksiPencapaianTarget.findMany(
       {
@@ -48,6 +52,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'rra-pencapaian-target-id': rraPencapaianTargetId } = await params;
     const body = await request.json();
     const { realisasi } = body;
@@ -105,6 +112,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'rra-pencapaian-target-id': rraPencapaianTargetId } = await params;
     const deletedRecord = await db
       .delete(realisasiRencanaAksiPencapaianTarget)

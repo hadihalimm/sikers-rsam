@@ -1,5 +1,6 @@
 import db from '@/db';
 import { realisasiRencanaAksiTarget, rencanaAksiTarget } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -13,6 +14,9 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'rra-target-id': rraTargetId } = await params;
     const record = await db.query.realisasiRencanaAksiTarget.findFirst({
       where: eq(realisasiRencanaAksiTarget.id, parseInt(rraTargetId)),
@@ -38,6 +42,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'rra-target-id': rraTargetId } = await params;
     const body = await request.json();
     const { realisasi, tindakLanjut, hambatan } = body;

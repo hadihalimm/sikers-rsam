@@ -1,6 +1,7 @@
 import db from '@/db';
 import { realisasiRencanaAksi } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { getCurrentSession } from '@/lib/user';
+import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -11,9 +12,15 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'rra-id': rraId } = await params;
     const record = await db.query.realisasiRencanaAksi.findFirst({
-      where: eq(realisasiRencanaAksi.id, parseInt(rraId)),
+      where: and(
+        eq(realisasiRencanaAksi.id, parseInt(rraId)),
+        eq(realisasiRencanaAksi.userId, session.user.id),
+      ),
     });
     if (!record) {
       return NextResponse.json(
@@ -33,6 +40,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'rra-id': rraId } = await params;
     const body = await request.json();
     const { nama } = body;
@@ -40,7 +50,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updatedRecord = await db
       .update(realisasiRencanaAksi)
       .set({ nama })
-      .where(eq(realisasiRencanaAksi.id, parseInt(rraId)))
+      .where(
+        and(
+          eq(realisasiRencanaAksi.id, parseInt(rraId)),
+          eq(realisasiRencanaAksi.userId, session.user.id),
+        ),
+      )
       .returning();
     if (updatedRecord.length === 0) {
       return NextResponse.json(
@@ -60,10 +75,18 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'rra-id': rraId } = await params;
     const deletedRecord = await db
       .delete(realisasiRencanaAksi)
-      .where(eq(realisasiRencanaAksi.id, parseInt(rraId)))
+      .where(
+        and(
+          eq(realisasiRencanaAksi.id, parseInt(rraId)),
+          eq(realisasiRencanaAksi.userId, session.user.id),
+        ),
+      )
       .returning();
     if (deletedRecord.length === 0) {
       return NextResponse.json(

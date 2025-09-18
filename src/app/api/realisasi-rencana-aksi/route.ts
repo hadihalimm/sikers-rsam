@@ -1,18 +1,15 @@
 import db from '@/db';
 import { realisasiRencanaAksi } from '@/db/schema';
-import { auth } from '@/lib/auth';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
-import { redirect } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-    if (!session) {
-      return redirect('/sign-in');
-    }
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const userId = session.user.id;
     const records = await db.query.realisasiRencanaAksi.findMany({
       where: eq(realisasiRencanaAksi.userId, userId),
@@ -29,12 +26,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-    if (!session) {
-      return redirect('/sign-in');
-    }
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const body = await request.json();
     const { nama, tahun, rencanaAksiId } = body;
 
