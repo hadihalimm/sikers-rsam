@@ -82,6 +82,24 @@ export type RencanaAksiSubKegiatanTarget = InferSelectModel<
 >;
 export type Satuan = InferSelectModel<typeof schema.satuan>;
 
+export type RealisasiRencanaAksi = InferSelectModel<
+  typeof schema.realisasiRencanaAksi
+>;
+export type RealisasiRencanaAksiPegawai = InferSelectModel<
+  typeof schema.realisasiRencanaAksiPegawai
+> & {
+  pegawai: Pegawai;
+};
+export type RealisasiRencanaAksiTarget = InferSelectModel<
+  typeof schema.realisasiRencanaAksiTarget
+>;
+export type RealisasiRencanaAksiPencapaianTarget = InferSelectModel<
+  typeof schema.realisasiRencanaAksiPencapaianTarget
+>;
+export type RealisasiRencanaAksiSubkegiatanTarget = InferSelectModel<
+  typeof schema.realisasiRencanaAksiSubkegiatanTarget
+>;
+
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };
@@ -141,6 +159,7 @@ export type PerjanjianKinerjaPegawaiSasaranDetail = {
 
 export type PerjanjianKinerjaPegawaiProgramDetail = {
   pkPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
+  pkPegawaiSasaran: PerjanjianKinerjaPegawaiSasaran;
   sasaran: Sasaran;
   program: RefProgram;
   kegiatan: RefKegiatan;
@@ -151,7 +170,6 @@ export type RencanaAksiPegawaiDetail = {
   rencanaAksiPegawai: RencanaAksiPegawai;
   perjanjianKinerjaPegawai: PerjanjianKinerjaPegawai;
   perjanjianKinerjaPegawaiSasaran: PerjanjianKinerjaPegawaiSasaran;
-  perjanjianKinerjaPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
   indikatorSasaran: IndikatorSasaran;
   sasaran: Sasaran;
 };
@@ -165,8 +183,41 @@ export type RencanaAksiPencapaianDetail = RencanaAksiPencapaianLangkah & {
 export type RencanaAksiSubkegiatanTargetDetail = {
   rencanaAksiSubKegiatanTarget: RencanaAksiSubKegiatanTarget;
   perjanjianKinerjaPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
+  satuan: Satuan;
+  refProgram: RefProgram;
+  refKegiatan: RefKegiatan;
+  refSubKegiatan: RefSubKegiatan;
+};
+
+export type RealisasiRencanaAksiPegawaiDetail = {
+  realisasiRencanaAksiPegawai: RealisasiRencanaAksiPegawai;
+  rencanaAksiPegawai: RencanaAksiPegawai;
+  perjanjianKinerjaPegawai: PerjanjianKinerjaPegawai;
+  perjanjianKinerjaPegawaiSasaran: PerjanjianKinerjaPegawaiSasaran;
+  perjanjianKinerjaPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
+  indikatorSasaran: IndikatorSasaran;
+  sasaran: Sasaran;
+};
+
+export type RealisasiRencanaAksiTargetDetail = {
+  realisasiRencanaAksiTarget: RealisasiRencanaAksiTarget;
+  rencanaAksiTarget: RencanaAksiTarget;
   perjanjianKinerjaPegawaiSasaran: PerjanjianKinerjaPegawaiSasaran;
   satuan: Satuan;
+};
+
+export type RealisasiRencanaAksiPencapaianTargetDetail = {
+  realisasiRencanaAksiPencapaianTarget: RealisasiRencanaAksiPencapaianTarget;
+  rencanaAksiPencapaianTarget: RencanaAksiPencapaianTarget;
+  rencanaAksiPencapaianLangkah: RencanaAksiPencapaianLangkah;
+  satuan: Satuan;
+};
+
+export type RealisasiRencanaAksiSubkegiatanTargetDetail = {
+  realisasiRencanaAksiSubkegiatanTarget: RealisasiRencanaAksiSubkegiatanTarget;
+  rencanaAksiSubKegiatanTarget: RencanaAksiSubKegiatanTarget;
+  satuan: Satuan;
+  perjanjianKinerjaPegawaiProgram: PerjanjianKinerjaPegawaiProgram;
   refProgram: RefProgram;
   refKegiatan: RefKegiatan;
   refSubKegiatan: RefSubKegiatan;
