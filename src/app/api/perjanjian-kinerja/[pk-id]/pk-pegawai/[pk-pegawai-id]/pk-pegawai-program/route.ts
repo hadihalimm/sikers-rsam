@@ -89,7 +89,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         eq(perjanjianKinerjaPegawaiProgram.sasaranId, parseInt(sasaranId)),
       ),
     });
-    if (record && !subKegiatanId) NextResponse.json({ status: 201 });
+    if (record && !subKegiatanId) return NextResponse.json({ status: 201 });
     if (record) {
       const newRecord = await db
         .insert(perjanjianKinerjaPegawaiProgram)
