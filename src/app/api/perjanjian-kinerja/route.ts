@@ -4,14 +4,18 @@ import {
   realisasiRencanaAksi,
   rencanaAksi,
 } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = request.nextUrl.searchParams.get('userId');
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const records = await db.query.perjanjianKinerja.findMany({
-      where: userId ? eq(perjanjianKinerja.userId, userId!) : undefined,
+      where: eq(perjanjianKinerja.userId, session.user.id),
     });
     return NextResponse.json(records);
   } catch (error) {
@@ -25,6 +29,10 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const body = await request.json();
     const { nama, tahun, userId } = body;
     const newRecord = await db

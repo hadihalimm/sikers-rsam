@@ -1,8 +1,7 @@
-import { auth } from '@/lib/auth';
 import PerjanjianKinerjaPegawaiTable from './table';
-import { PerjanjianKinerja } from '@/types/database';
-import axios from 'axios';
-import { headers } from 'next/headers';
+import db from '@/db';
+import { perjanjianKinerja } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 const PerjanjianKinerjaPegawaiPage = async ({
   params,
@@ -10,11 +9,11 @@ const PerjanjianKinerjaPegawaiPage = async ({
   params: Promise<{ 'pk-id': string }>;
 }) => {
   const { 'pk-id': pkId } = await params;
-  const { data: perjanjianKinerja } = await axios.get<PerjanjianKinerja>(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/perjanjian-kinerja/${pkId}`,
-  );
-  const session = await auth.api.getSession({
-    headers: await headers(),
+  const perjanjianKinerjaRecord = await db.query.perjanjianKinerja.findFirst({
+    where: eq(perjanjianKinerja.id, parseInt(pkId)),
+    with: {
+      user: true,
+    },
   });
   return (
     <section className="flex flex-col gap-y-8 w-fit">
@@ -22,11 +21,13 @@ const PerjanjianKinerjaPegawaiPage = async ({
         Perjanjian Kinerja
       </h1>
       <div>
-        <h2>{perjanjianKinerja.nama}</h2>
-        <p>Bagian {session?.user.name}</p>
-        <p>Tahun {perjanjianKinerja.tahun}</p>
+        <h2>{perjanjianKinerjaRecord?.nama}</h2>
+        <p>Bagian {perjanjianKinerjaRecord?.user.name}</p>
+        <p>Tahun {perjanjianKinerjaRecord?.tahun}</p>
       </div>
-      <PerjanjianKinerjaPegawaiTable perjanjianKinerja={perjanjianKinerja} />
+      <PerjanjianKinerjaPegawaiTable
+        perjanjianKinerja={perjanjianKinerjaRecord!}
+      />
     </section>
   );
 };
