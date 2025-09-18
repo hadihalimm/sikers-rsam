@@ -14,6 +14,7 @@ import { useGetAllRraTarget } from '@/hooks/query/realisasi-rencana-aksi/rra-tar
 import {
   RealisasiRencanaAksiPegawaiDetail,
   RealisasiRencanaAksiPencapaianTargetDetail,
+  RealisasiRencanaAksiSubkegiatanTargetDetail,
   RealisasiRencanaAksiTargetDetail,
 } from '@/types/database';
 import {
@@ -30,6 +31,9 @@ import RealisasiRencanaAksiTargetForm from './rra-target-form';
 import { useGetAllRraPencapaianTarget } from '@/hooks/query/realisasi-rencana-aksi/rra-pencapaian-target';
 import RealisasiRencanaAksiPencapaianTargetColumn from './rra-pencapaian-target-column';
 import RealisasiRencanaAksiPencapaianTargetForm from './rra-pencapaian-target-form';
+import { useGetAllRraSubkegiatanTarget } from '@/hooks/query/realisasi-rencana-aksi/rra-subkegiatan-target';
+import RealisasiRencanaAksiSubkegiatanTargetColumn from './rra-subkegiatan-target-column';
+import RealisasiRencanaAksiSubkegiatanTargetForm from './rra-subkegiatan-target-form';
 
 type ProcessedRowData = RealisasiRencanaAksiPegawaiDetail & {
   sasaranRowSpan: number;
@@ -52,6 +56,11 @@ const RealisasiRencanaAksiDetailTable = () => {
     useState(false);
   const [selectedRraPencapaianTarget, setSelectedRraPencapaianTarget] =
     useState<RealisasiRencanaAksiPencapaianTargetDetail>();
+
+  const [editRraSubkegiatanTarget, setEditRraSubkegiatanTarget] =
+    useState(false);
+  const [selectedRraSubkegiatanTarget, setSelectedRraSubkegiatanTarget] =
+    useState<RealisasiRencanaAksiSubkegiatanTargetDetail>();
 
   const processedData = useMemo(() => {
     const grouped = data.reduce((acc, item) => {
@@ -89,6 +98,11 @@ const RealisasiRencanaAksiDetailTable = () => {
   );
 
   const { data: rraPencapaianTargetList = [] } = useGetAllRraPencapaianTarget(
+    Number(rraId),
+    Number(rraPegawaiId),
+  );
+
+  const { data: rraSubkegiatanTargetList = [] } = useGetAllRraSubkegiatanTarget(
     Number(rraId),
     Number(rraPegawaiId),
   );
@@ -153,7 +167,20 @@ const RealisasiRencanaAksiDetailTable = () => {
       id: 'realisasiIndikatorOutputKegiatan',
       header: 'Realisasi Indikator Output Kegiatan',
       size: 160,
-      cell: ({ row }) => row.original.rencanaAksiPegawai.id,
+      cell: ({ row }) => (
+        <RealisasiRencanaAksiSubkegiatanTargetColumn
+          data={rraSubkegiatanTargetList.filter(
+            (item) =>
+              item.perjanjianKinerjaPegawaiProgram
+                .perjanjianKinerjaPegawaiSasaranId ===
+              row.original.perjanjianKinerjaPegawaiSasaran.id,
+          )}
+          onEdit={(data) => {
+            setSelectedRraSubkegiatanTarget(data);
+            setEditRraSubkegiatanTarget(true);
+          }}
+        />
+      ),
     }),
   ];
 
@@ -262,6 +289,24 @@ const RealisasiRencanaAksiDetailTable = () => {
           rraPegawaiId={Number(rraPegawaiId)}
           onSuccess={() => {
             setEditRraPencapaianTargetDialog(false);
+            // setSelectedRraPencapaianTarget(undefined);
+          }}
+        />
+      </FormDialog>
+
+      <FormDialog
+        title="Edit Realisasi Indikator Output Kegiatan"
+        description={
+          selectedRraSubkegiatanTarget?.rencanaAksiSubKegiatanTarget.nama
+        }
+        open={editRraSubkegiatanTarget}
+        onOpenChange={setEditRraSubkegiatanTarget}>
+        <RealisasiRencanaAksiSubkegiatanTargetForm
+          initialData={selectedRraSubkegiatanTarget!}
+          rraId={Number(rraId)}
+          rraPegawaiId={Number(rraPegawaiId)}
+          onSuccess={() => {
+            setEditRraSubkegiatanTarget(false);
             // setSelectedRraPencapaianTarget(undefined);
           }}
         />
