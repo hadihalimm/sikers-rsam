@@ -16,7 +16,7 @@ export const useGetAllTujuan = (cascadingId: number) => {
 
 export const useGetTujuan = (tujuanId: number, cascadingId: number) => {
   return useQuery<Tujuan>({
-    queryKey: ['tujuan', tujuanId],
+    queryKey: ['tujuan', cascadingId, tujuanId],
     queryFn: async () => {
       const { data } = await api.get(
         `/cascading/${cascadingId}/tujuan/${tujuanId}`,
