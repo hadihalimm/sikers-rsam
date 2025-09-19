@@ -27,7 +27,7 @@ export const auth = betterAuth({
       return {
         user: {
           ...user,
-          roles: roles,
+          roles: roles?.role,
         },
         session,
       };
