@@ -4,11 +4,16 @@ import {
   indikatorKinerjaUtama,
   indikatorKinerjaUtamaDetail,
 } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const records = await db.query.indikatorKinerjaUtama.findMany({
       with: {
         cascading: true,
@@ -26,6 +31,10 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const body = await request.json();
     const { nama, cascadingId } = body;
 

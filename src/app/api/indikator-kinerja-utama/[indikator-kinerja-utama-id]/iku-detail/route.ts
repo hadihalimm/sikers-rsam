@@ -4,6 +4,7 @@ import {
   indikatorSasaran,
   sasaran,
 } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -15,6 +16,10 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'indikator-kinerja-utama-id': indikatorKinerjaUtamaId } =
       await params;
     const records = await db

@@ -1,5 +1,6 @@
 import db from '@/db';
 import { kegiatan, program, programSasaran, subKegiatan } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -10,6 +11,9 @@ interface RouteParams {
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { 'renstra-id': renstraId } = await params;
     const body = await request.json();
     const {

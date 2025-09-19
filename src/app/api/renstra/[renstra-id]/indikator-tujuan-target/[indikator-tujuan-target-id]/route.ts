@@ -1,5 +1,6 @@
 import db from '@/db';
 import { indikatorTujuanTarget } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -11,6 +12,10 @@ interface RouteParams {
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
+  const session = await getCurrentSession(request.headers);
+  if (!session || !session.user.roles?.includes('admin'))
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   try {
     const { 'indikator-tujuan-target-id': indikatorTujuanTargetId } =
       await params;

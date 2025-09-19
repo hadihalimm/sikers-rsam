@@ -1,5 +1,6 @@
 import db from '@/db';
 import { refSubKegiatan, renstra, tujuan } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { RefSubKegiatan, SubKegiatan } from '@/types/database';
 import { eq, inArray } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -12,6 +13,10 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'renstra-id': renstraId } = await params;
     const cascadingRecord = await db.query.renstra.findFirst({
       columns: {
@@ -116,6 +121,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'renstra-id': renstraId } = await params;
     if (isNaN(parseInt(renstraId))) {
       return NextResponse.json(
@@ -150,6 +159,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'renstra-id': renstraId } = await params;
     if (isNaN(parseInt(renstraId))) {
       return NextResponse.json(

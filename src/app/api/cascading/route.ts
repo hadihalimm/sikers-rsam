@@ -1,9 +1,14 @@
 import db from '@/db';
 import { cascading } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const records = await db.select().from(cascading);
     return NextResponse.json(records);
   } catch (error) {
@@ -17,6 +22,10 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const body = await request.json();
     const { judul, tahunMulai, tahunBerakhir } = body;
     const newRecord = await db

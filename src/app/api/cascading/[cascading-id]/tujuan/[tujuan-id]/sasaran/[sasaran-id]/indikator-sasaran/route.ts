@@ -1,5 +1,6 @@
 import db from '@/db';
 import { indikatorSasaran } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,6 +13,10 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'sasaran-id': sasaranId } = await params;
     const records = await db.query.indikatorSasaran.findMany({
       where: eq(indikatorSasaran.sasaranId, parseInt(sasaranId)),
@@ -29,6 +34,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'sasaran-id': sasaranId } = await params;
     const body = await request.json();
     const { nama } = body;

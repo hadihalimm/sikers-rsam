@@ -1,10 +1,15 @@
 import db from '@/db';
 import { cascading, sasaran, tujuan } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { and, eq, gte, lte } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const tahun = request.nextUrl.searchParams.get('tahun');
     const records = await db
       .select({

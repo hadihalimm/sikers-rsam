@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import db from '@/db';
 import { indikatorSasaranTarget } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { getCurrentSession } from '@/lib/user';
 
 interface RouteParams {
   params: Promise<{
@@ -12,6 +13,10 @@ interface RouteParams {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'indikator-sasaran-target-id': indikatorSasaranTargetId } =
       await params;
     const body = await request.json();

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import db from '@/db';
 import { cascading } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 
 interface RouteParams {
   params: Promise<{
@@ -11,6 +12,10 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session)
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'cascading-id': cascadingId } = await params;
 
     const record = await db
@@ -36,6 +41,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'cascading-id': cascadingId } = await params;
     const recordId = parseInt(cascadingId);
     const body = await request.json();
@@ -70,6 +79,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'cascading-id': cascadingId } = await params;
     const recordId = parseInt(cascadingId);
 
