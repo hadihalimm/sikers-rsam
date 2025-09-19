@@ -1,5 +1,6 @@
 import db from '@/db';
 import { rencanaKinerjaTahunanDetail } from '@/db/schema';
+import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -12,6 +13,10 @@ interface RouteParams {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'rkt-detail-id': rktDetailId } = await params;
     const body = await request.json();
     const { target } = body;
@@ -42,6 +47,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const session = await getCurrentSession(request.headers);
+    if (!session || !session.user.roles?.includes('admin'))
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
     const { 'rkt-detail-id': rktDetailId } = await params;
     const deletedRecord = await db
       .delete(rencanaKinerjaTahunanDetail)
