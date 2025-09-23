@@ -30,6 +30,7 @@ const RencanaAksiSubkegiatanTargetColumn = ({
   onDelete,
 }: RencanaAksiSubkegiatanTargetColumnProps) => {
   const grouped = groupBy(data, (item) => item.refSubKegiatan.id);
+  console.log(grouped);
   return (
     <div className="flex flex-col gap-y-8">
       {Object.values(grouped).map((items) => {
@@ -53,34 +54,38 @@ const RencanaAksiSubkegiatanTargetColumn = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {items.map((item) => (
-                    <TableRow
-                      key={`sub-${item.refSubKegiatan?.id}-target-${item.rencanaAksiSubKegiatanTarget?.id}`}>
-                      <TableCell>
-                        {item.rencanaAksiSubKegiatanTarget?.nama}
-                      </TableCell>
-                      <TableCell>
-                        {item.rencanaAksiSubKegiatanTarget?.target}
-                      </TableCell>
-                      <TableCell className="flex flex-col gap-y-1">
-                        <Button
-                          className="w-7 h-6"
-                          onClick={() => {
-                            onEdit(item.rencanaAksiSubKegiatanTarget);
-                          }}>
-                          <Edit />
-                        </Button>
-                        <Button
-                          className="w-7 h-6"
-                          variant="destructive"
-                          onClick={() => {
-                            onDelete(item.rencanaAksiSubKegiatanTarget);
-                          }}>
-                          <Trash />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {items.map(
+                    (item) =>
+                      item.rencanaAksiSubKegiatanTarget && (
+                        <TableRow
+                          key={`sub-${item.refSubKegiatan?.id}-target-${item.rencanaAksiSubKegiatanTarget?.id}`}>
+                          <TableCell>
+                            {item.rencanaAksiSubKegiatanTarget?.nama}
+                          </TableCell>
+                          <TableCell>
+                            {item.rencanaAksiSubKegiatanTarget?.target}{' '}
+                            {item.satuan?.nama}
+                          </TableCell>
+                          <TableCell className="flex flex-col gap-y-1">
+                            <Button
+                              className="w-7 h-6"
+                              onClick={() => {
+                                onEdit(item.rencanaAksiSubKegiatanTarget);
+                              }}>
+                              <Edit />
+                            </Button>
+                            <Button
+                              className="w-7 h-6"
+                              variant="destructive"
+                              onClick={() => {
+                                onDelete(item.rencanaAksiSubKegiatanTarget);
+                              }}>
+                              <Trash />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ),
+                  )}
                 </TableBody>
               </Table>
               <Button
