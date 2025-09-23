@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { authClient } from '@/lib/auth-client';
 import {
   IndikatorSasaran,
   IndikatorSasaranTarget,
@@ -51,6 +52,9 @@ const IndikatorSasaranColumn = ({
   onAddProgram,
   onDeleteProgram,
 }: IndikatorSasaranColumnProps) => {
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
+
   return (
     <div className="flex flex-col gap-y-6">
       {sasaranList.map((sasaran, index) => (
@@ -93,29 +97,33 @@ const IndikatorSasaranColumn = ({
                       </TableRow>
                     </TableBody>
                   </Table>
-                  <Button
-                    size="sm"
-                    className="w-10 h-5 text-xs"
-                    onClick={() =>
-                      onEditTarget(indikator.indikatorSasaranTargetList)
-                    }>
-                    Edit
-                  </Button>
+                  {isAdmin && (
+                    <Button
+                      size="sm"
+                      className="w-10 h-5 text-xs"
+                      onClick={() =>
+                        onEditTarget(indikator.indikatorSasaranTargetList)
+                      }>
+                      Edit
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}
           </div>
 
           <div className="flex flex-col gap-y-1">
-            <div className="flex justify-end">
-              <Button
-                className="w-fit h-6 text-xs"
-                size="sm"
-                onClick={() => onAddProgram(sasaran)}>
-                <Plus />
-                <p>Program</p>
-              </Button>
-            </div>
+            {isAdmin && (
+              <div className="flex justify-end">
+                <Button
+                  className="w-fit h-6 text-xs"
+                  size="sm"
+                  onClick={() => onAddProgram(sasaran)}>
+                  <Plus />
+                  <p>Program</p>
+                </Button>
+              </div>
+            )}
 
             {sasaran.programSasaranList.map((ps, index) => (
               <div
@@ -125,15 +133,17 @@ const IndikatorSasaranColumn = ({
                   <p className="font-medium">
                     Program {index + 1} : {ps.program.refProgram.nama}
                   </p>
-                  <Button
-                    className="w-6 h-6 text-xs"
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => {
-                      onDeleteProgram(ps);
-                    }}>
-                    <Trash />
-                  </Button>
+                  {isAdmin && (
+                    <Button
+                      className="w-6 h-6 text-xs"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => {
+                        onDeleteProgram(ps);
+                      }}>
+                      <Trash />
+                    </Button>
+                  )}
                 </div>
                 <div className="ml-2">
                   <p>Kegiatan: {ps.program.kegiatan.refKegiatan.nama}</p>

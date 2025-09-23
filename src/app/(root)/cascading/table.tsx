@@ -34,11 +34,14 @@ import {
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import { Cascading } from '@/types/database';
 import Link from 'next/link';
+import { authClient } from '@/lib/auth-client';
 
 const CascadingTable = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Cascading>();
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
 
   const columnHelper = createColumnHelper<Cascading>();
   const columns = [
@@ -105,6 +108,11 @@ const CascadingTable = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: {
+        actions: isAdmin ?? false,
+      },
+    },
   });
   return (
     <div className="flex flex-col gap-y-4">
@@ -113,27 +121,29 @@ const CascadingTable = () => {
           <p className="font-semibold ml-1">Search</p>
           <Input id="search" className="w-[300px]" />
         </Label>
-        <FormDialog
-          title={editingItem ? 'Edit cascading' : 'Tambah cascading'}
-          trigger={
-            <Button>
-              <Plus />
-              Tambah Cascading
-            </Button>
-          }
-          open={dialogOpen}
-          onOpenChange={(open) => {
-            setDialogOpen(open);
-            if (!open) setEditingItem(undefined);
-          }}>
-          <CreateOrUpdateCascadingForm
-            initialData={editingItem}
-            onSuccess={() => {
-              setEditingItem(undefined);
-              setDialogOpen(false);
-            }}
-          />
-        </FormDialog>
+        {isAdmin && (
+          <FormDialog
+            title={editingItem ? 'Edit cascading' : 'Tambah cascading'}
+            trigger={
+              <Button>
+                <Plus />
+                Tambah Cascading
+              </Button>
+            }
+            open={dialogOpen}
+            onOpenChange={(open) => {
+              setDialogOpen(open);
+              if (!open) setEditingItem(undefined);
+            }}>
+            <CreateOrUpdateCascadingForm
+              initialData={editingItem}
+              onSuccess={() => {
+                setEditingItem(undefined);
+                setDialogOpen(false);
+              }}
+            />
+          </FormDialog>
+        )}
       </div>
 
       <div className="border rounded-md overflow-hidden">

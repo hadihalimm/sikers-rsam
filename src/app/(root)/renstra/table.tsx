@@ -36,12 +36,16 @@ import Link from 'next/link';
 import { useState } from 'react';
 import CreateOrUpdateRenstraForm from './form';
 import { toast } from 'sonner';
+import { authClient } from '@/lib/auth-client';
 
 const RenstraTable = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Renstra>();
+
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
 
   const columnHelper = createColumnHelper<RenstraWithCascading>();
   const columns = [
@@ -110,6 +114,11 @@ const RenstraTable = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: {
+        actions: isAdmin ?? false,
+      },
+    },
   });
   return (
     <div className="flex flex-col gap-y-4">

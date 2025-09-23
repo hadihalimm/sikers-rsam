@@ -18,6 +18,7 @@ import CreateOrUpdateSasaranForm from './sasaran-form';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import IndikatorSasaranTable from './indikator-sasaran-table';
 import SasaranItem from './sasaran-item';
+import { authClient } from '@/lib/auth-client';
 
 interface SasaranTableProps {
   tujuanId: number;
@@ -36,17 +37,22 @@ const SasaranTable = ({ tujuanId, cascadingId }: SasaranTableProps) => {
     useState<Sasaran>();
   const deleteSasaran = useDeleteSasaran(tujuanId, cascadingId);
 
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
+
   return (
     <div className="flex flex-col gap-y-4">
-      <Button
-        className="w-fit"
-        onClick={() => {
-          setSelectedSasaran(undefined);
-          setCreateDialogOpen(true);
-        }}>
-        <Plus />
-        Sasaran baru
-      </Button>
+      {isAdmin && (
+        <Button
+          className="w-fit"
+          onClick={() => {
+            setSelectedSasaran(undefined);
+            setCreateDialogOpen(true);
+          }}>
+          <Plus />
+          Sasaran baru
+        </Button>
+      )}
 
       <div className="flex gap-x-4">
         <div className="border rounded-lg w-2/3 h-fit">

@@ -23,6 +23,7 @@ import { MoreHorizontal, Plus } from 'lucide-react';
 import { useState } from 'react';
 import CreateOrUpdateIndikatorSasaranForm from './indikator-sasaran-form';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
+import { authClient } from '@/lib/auth-client';
 
 interface IndikatorSasaranTableProps {
   sasaran: Sasaran | undefined;
@@ -51,6 +52,9 @@ const IndikatorSasaranTable = ({
     tujuanId,
     cascadingId,
   );
+
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
 
   if (sasaranId === 0) {
     return (
@@ -81,16 +85,18 @@ const IndikatorSasaranTable = ({
         <h1 className="font-semibold text-lg">Daftar Indikator Sasaran</h1>
         <p>{sasaran?.judul}</p>
       </div>
-      <Button
-        size="sm"
-        className="w-fit"
-        onClick={() => {
-          setSelectedIndikator(undefined);
-          setCreateDialogOpen(true);
-        }}>
-        <Plus />
-        Indikator sasaran
-      </Button>
+      {isAdmin && (
+        <Button
+          size="sm"
+          className="w-fit"
+          onClick={() => {
+            setSelectedIndikator(undefined);
+            setCreateDialogOpen(true);
+          }}>
+          <Plus />
+          Indikator sasaran
+        </Button>
+      )}
       <Table className="table-fixed">
         <TableHeader>
           <TableRow>
@@ -103,32 +109,34 @@ const IndikatorSasaranTable = ({
             indikatorSasaranList.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.nama}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedIndikator(item);
-                          setUpdateDialogOpen(true);
-                        }}>
-                        Update
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setSelectedIndikator(item);
-                          setDeleteDialogOpen(true);
-                        }}>
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+                {isAdmin && (
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <span className="sr-only">Open menu</span>
+                          <MoreHorizontal />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="start">
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedIndikator(item);
+                            setUpdateDialogOpen(true);
+                          }}>
+                          Update
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setSelectedIndikator(item);
+                            setDeleteDialogOpen(true);
+                          }}>
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                )}
               </TableRow>
             ))
           ) : (

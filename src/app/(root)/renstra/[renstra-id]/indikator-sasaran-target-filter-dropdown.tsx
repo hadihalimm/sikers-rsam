@@ -39,6 +39,7 @@ const IndikatorSasaranTargetFilterDropdown = ({
   const [sasaranLevels, setSasaranLevels] = useState<number[]>(() => {
     return selectedLevels || levelOptions.map((option) => option.value);
   });
+
   return (
     <DropdownMenu
       onOpenChange={(open) => {

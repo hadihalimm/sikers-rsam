@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useGetAllIkuDetail } from '@/hooks/query/indikator-kinerja-utama/iku-detail';
+import { authClient } from '@/lib/auth-client';
 import { IndikatorKinerjaUtamaDetailWithSasaran } from '@/types/database';
 import {
   createColumnHelper,
@@ -34,6 +35,9 @@ type ProcessedRowData = IndikatorKinerjaUtamaDetailWithSasaran & {
 };
 
 const IndikatorKinerjaUtamaDetailTable = () => {
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
+
   const params = useParams();
   const { data = [] } = useGetAllIkuDetail(
     Number(params['indikator-kinerja-utama-id']),
@@ -125,7 +129,7 @@ const IndikatorKinerjaUtamaDetailTable = () => {
       ),
     }),
     columnHelper.display({
-      id: 'action',
+      id: 'actions',
       header: 'Actions',
       size: 20,
       cell: ({ row }) => (
@@ -143,6 +147,11 @@ const IndikatorKinerjaUtamaDetailTable = () => {
     data: processedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: {
+        actions: isAdmin ?? false,
+      },
+    },
   });
 
   return (

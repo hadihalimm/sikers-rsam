@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TableCell, TableRow } from '@/components/ui/table';
+import { authClient } from '@/lib/auth-client';
 import { Sasaran } from '@/types/database';
 import { ChevronRightIcon, MoreHorizontal, Plus } from 'lucide-react';
 import { useState } from 'react';
@@ -32,6 +33,9 @@ const SasaranItem = ({
   const hasChildren = children.length > 0;
   const indentationStyle = { marginLeft: `${level * 40}px` };
   const [isOpen, setIsOpen] = useState(false);
+
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
 
   if (hasChildren) {
     return (
@@ -61,38 +65,40 @@ const SasaranItem = ({
             {' '}
             <p className="whitespace-normal break-words">{sasaran.pengampu}</p>
           </TableCell>
-          <TableCell>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => {
-                    onCreateSubSasaran(sasaran);
-                    setIsOpen(true);
-                  }}>
-                  <Plus />
-                  Sub-sasaran
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    onUpdateSasaran(sasaran);
-                  }}>
-                  Update
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    onDeleteSasaran(sasaran);
-                  }}>
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </TableCell>
+          {isAdmin && (
+            <TableCell>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onCreateSubSasaran(sasaran);
+                      setIsOpen(true);
+                    }}>
+                    <Plus />
+                    Sub-sasaran
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onUpdateSasaran(sasaran);
+                    }}>
+                    Update
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onDeleteSasaran(sasaran);
+                    }}>
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TableCell>
+          )}
         </TableRow>
 
         {isOpen &&
@@ -127,38 +133,40 @@ const SasaranItem = ({
         <TableCell>
           <p className="whitespace-normal break-words">{sasaran.pengampu}</p>
         </TableCell>
-        <TableCell>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem
-                onClick={() => {
-                  onCreateSubSasaran(sasaran);
-                  setIsOpen(true);
-                }}>
-                <Plus />
-                Sub-sasaran
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  onUpdateSasaran(sasaran);
-                }}>
-                Update
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  onDeleteSasaran(sasaran);
-                }}>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </TableCell>
+        {isAdmin && (
+          <TableCell>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem
+                  onClick={() => {
+                    onCreateSubSasaran(sasaran);
+                    setIsOpen(true);
+                  }}>
+                  <Plus />
+                  Sub-sasaran
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    onUpdateSasaran(sasaran);
+                  }}>
+                  Update
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    onDeleteSasaran(sasaran);
+                  }}>
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TableCell>
+        )}
       </TableRow>
 
       {isOpen &&

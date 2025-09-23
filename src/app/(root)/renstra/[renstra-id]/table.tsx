@@ -52,7 +52,7 @@ const RenstraDetailTable = () => {
         ),
       ).sort((a, b) => a - b);
 
-      setSelectedSasaranLevels(levels);
+      setSelectedSasaranLevels(levels.filter((val) => val === 1));
     }
   }, [renstra]);
 

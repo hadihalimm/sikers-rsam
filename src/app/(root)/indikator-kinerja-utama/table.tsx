@@ -39,8 +39,12 @@ import { useState } from 'react';
 import CreateOrUpdateIKUForm from './form';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import { toast } from 'sonner';
+import { authClient } from '@/lib/auth-client';
 
 const IndikatorKinerjaUtamaTable = () => {
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
+
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -113,6 +117,11 @@ const IndikatorKinerjaUtamaTable = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: {
+        actions: isAdmin ?? false,
+      },
+    },
   });
 
   return (
@@ -122,24 +131,26 @@ const IndikatorKinerjaUtamaTable = () => {
           <p className="font-semibold ml-1">Search</p>
           <Input id="search" className="w-[300px]" />
         </Label>
-        <FormDialog
-          title="Tambah Indikator Kinerja Utama"
-          trigger={
-            <Button>
-              <Plus />
-              Tambah IKU
-            </Button>
-          }
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}>
-          <CreateOrUpdateIKUForm
-            cascadingList={cascadingList}
-            onSuccess={() => {
-              setEditingItem(undefined);
-              setCreateDialogOpen(false);
-            }}
-          />
-        </FormDialog>
+        {isAdmin && (
+          <FormDialog
+            title="Tambah Indikator Kinerja Utama"
+            trigger={
+              <Button>
+                <Plus />
+                Tambah IKU
+              </Button>
+            }
+            open={createDialogOpen}
+            onOpenChange={setCreateDialogOpen}>
+            <CreateOrUpdateIKUForm
+              cascadingList={cascadingList}
+              onSuccess={() => {
+                setEditingItem(undefined);
+                setCreateDialogOpen(false);
+              }}
+            />
+          </FormDialog>
+        )}
       </div>
 
       <div className="border rounded-md overflow-hidden">

@@ -39,6 +39,7 @@ import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import RencanaKinerjaTahunanDetailForm from './form';
+import { authClient } from '@/lib/auth-client';
 
 type ProcessedRowData = RencanaKinerjaTahunanDetailWithSasaran & {
   sasaranRowSpan: number;
@@ -47,6 +48,9 @@ type ProcessedRowData = RencanaKinerjaTahunanDetailWithSasaran & {
 };
 
 const RencanaKinerjaTahunanDetailTable = () => {
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
+
   const params = useParams();
   const { data = [] } = useGetAllRencanaKinerjaTahunanDetail(
     Number(params['rencana-kinerja-tahunan-id']),
@@ -157,6 +161,11 @@ const RencanaKinerjaTahunanDetailTable = () => {
     data: processedData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: {
+        actions: isAdmin ?? false,
+      },
+    },
   });
 
   return (
@@ -166,23 +175,25 @@ const RencanaKinerjaTahunanDetailTable = () => {
           <p className="font-semibold ml-1">Search</p>
           <Input id="search" className="w-[300px]" />
         </Label>
-        <FormDialog
-          title="Tambah Rencana Kinerja Tahunan"
-          trigger={
-            <Button>
-              <Plus />
-              Tambah RKT Detail
-            </Button>
-          }
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}>
-          <RencanaKinerjaTahunanDetailForm
-            onSuccess={() => {
-              setEditingItem(undefined);
-              setCreateDialogOpen(false);
-            }}
-          />
-        </FormDialog>
+        {isAdmin && (
+          <FormDialog
+            title="Tambah Rencana Kinerja Tahunan"
+            trigger={
+              <Button>
+                <Plus />
+                Tambah RKT Detail
+              </Button>
+            }
+            open={createDialogOpen}
+            onOpenChange={setCreateDialogOpen}>
+            <RencanaKinerjaTahunanDetailForm
+              onSuccess={() => {
+                setEditingItem(undefined);
+                setCreateDialogOpen(false);
+              }}
+            />
+          </FormDialog>
+        )}
       </div>
 
       <div className="border rounded-md overflow-hidden">

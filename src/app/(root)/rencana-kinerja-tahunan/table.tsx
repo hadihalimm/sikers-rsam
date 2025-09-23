@@ -36,8 +36,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import CreateOrUpdateRKTForm from './form';
+import { authClient } from '@/lib/auth-client';
 
 const RencanaKinerjaTahunanTable = () => {
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
+
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -105,6 +109,11 @@ const RencanaKinerjaTahunanTable = () => {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility: {
+        actions: isAdmin ?? false,
+      },
+    },
   });
 
   return (
@@ -114,24 +123,26 @@ const RencanaKinerjaTahunanTable = () => {
           <p className="font-semibold ml-1">Search</p>
           <Input id="search" className="w-[300px]" />
         </Label>
-        <FormDialog
-          title="Tambah Rencana Kinerja Tahunan"
-          trigger={
-            <Button>
-              <Plus />
-              Tambah RKT
-            </Button>
-          }
-          open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}>
-          <CreateOrUpdateRKTForm
-            cascadingList={cascadingList}
-            onSuccess={() => {
-              setEditingItem(undefined);
-              setCreateDialogOpen(false);
-            }}
-          />
-        </FormDialog>
+        {isAdmin && (
+          <FormDialog
+            title="Tambah Rencana Kinerja Tahunan"
+            trigger={
+              <Button>
+                <Plus />
+                Tambah RKT
+              </Button>
+            }
+            open={createDialogOpen}
+            onOpenChange={setCreateDialogOpen}>
+            <CreateOrUpdateRKTForm
+              cascadingList={cascadingList}
+              onSuccess={() => {
+                setEditingItem(undefined);
+                setCreateDialogOpen(false);
+              }}
+            />
+          </FormDialog>
+        )}
       </div>
 
       <div className="border rounded-md overflow-hidden">

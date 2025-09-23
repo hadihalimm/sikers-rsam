@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { authClient } from '@/lib/auth-client';
 
 interface IndikatorTujuanColumnProps {
   tujuanId: number;
@@ -27,31 +28,35 @@ const IndikatorTujuanColumn = ({
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-
   const deleteIndikatorTujuan = useDeleteIndikatorTujuan(tujuanId, cascadingId);
+
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
   return (
-    <div className="flex flex-col gap-y-6">
+    <div className="flex flex-col gap-y-3">
       {data.map((item) => (
         <div key={item.id} className="flex items-center justify-between mr-8">
           <p className="whitespace-normal break-words">{item.nama}</p>
-          <div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                <DropdownMenuItem onClick={() => setUpdateDialogOpen(true)}>
-                  Update
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
-                  Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {isAdmin && (
+            <div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <span className="sr-only">Open menu</span>
+                    <MoreHorizontal />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onClick={() => setUpdateDialogOpen(true)}>
+                    Update
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
           <FormDialog
             title="Edit Indikator Tujuan"
             open={updateDialogOpen}
