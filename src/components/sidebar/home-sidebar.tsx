@@ -54,11 +54,11 @@ export const aplikasiGroup = [
 export const dokumenGroup = [
   {
     title: 'Evaluasi',
-    url: '#',
+    url: '/dokumen-evaluasi',
   },
   {
     title: 'LAKIP',
-    url: '#',
+    url: '/dokumen-lakip',
   },
 ];
 

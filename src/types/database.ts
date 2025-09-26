@@ -100,6 +100,9 @@ export type RealisasiRencanaAksiSubkegiatanTarget = InferSelectModel<
   typeof schema.realisasiRencanaAksiSubkegiatanTarget
 >;
 
+export type DokumenEvaluasi = InferSelectModel<typeof schema.dokumenEvaluasi>;
+export type DokumenLakip = InferSelectModel<typeof schema.dokumenLakip>;
+
 export type TujuanWithIndikator = Tujuan & {
   indikatorTujuanList: IndikatorTujuan[];
 };

@@ -8,3 +8,4 @@ export * from './perjanjian-kinerja';
 export * from './rencana-aksi';
 export * from './satuan';
 export * from './realisasi-rencana-aksi';
+export * from './dokumen';

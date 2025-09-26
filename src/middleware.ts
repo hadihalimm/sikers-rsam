@@ -14,7 +14,6 @@ export async function middleware(request: NextRequest) {
       },
     },
   );
-
   if (!session) {
     return NextResponse.redirect(new URL('/sign-in', request.url));
   }
@@ -29,5 +28,9 @@ export const config = {
     '/indikator-kinerja-utama/:path*',
     '/rencana-kinerja-tahunan/:path*',
     '/perjanjian-kinerja/:path*',
+    '/rencana-aksi/:path*',
+    '/realisasi-rencana-aksi/:path*',
+    '/dokumen-evaluasi/:path*',
+    '/dokumen-lakip/:path*',
   ], // Apply middleware to specific routes
 };
