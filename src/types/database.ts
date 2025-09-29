@@ -45,7 +45,9 @@ export type RencanaKinerjaTahunanDetail = InferSelectModel<
 export type Pegawai = InferSelectModel<typeof schema.pegawai>;
 export type PerjanjianKinerja = InferSelectModel<
   typeof schema.perjanjianKinerja
->;
+> & {
+  user: User;
+};
 export type PerjanjianKinerjaPegawai = InferSelectModel<
   typeof schema.perjanjianKinerjaPegawai
 > & {
@@ -58,7 +60,9 @@ export type PerjanjianKinerjaPegawaiProgram = InferSelectModel<
   typeof schema.perjanjianKinerjaPegawaiProgram
 >;
 
-export type RencanaAksi = InferSelectModel<typeof schema.rencanaAksi>;
+export type RencanaAksi = InferSelectModel<typeof schema.rencanaAksi> & {
+  user: User;
+};
 export type RencanaAksiPegawai = InferSelectModel<
   typeof schema.rencanaAksiPegawai
 > & {
@@ -84,7 +88,9 @@ export type Satuan = InferSelectModel<typeof schema.satuan>;
 
 export type RealisasiRencanaAksi = InferSelectModel<
   typeof schema.realisasiRencanaAksi
->;
+> & {
+  user: User;
+};
 export type RealisasiRencanaAksiPegawai = InferSelectModel<
   typeof schema.realisasiRencanaAksiPegawai
 > & {
