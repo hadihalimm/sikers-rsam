@@ -23,6 +23,7 @@ import { useGetAllPegawai } from '@/hooks/query/pegawai/pegawai';
 import {
   useDeletePkPegawai,
   useGetAllPkPegawai,
+  useVerifyPkPegawai,
 } from '@/hooks/query/perjanjian-kinerja/pk-pegawai';
 import { PerjanjianKinerja, PerjanjianKinerjaPegawai } from '@/types/database';
 import {
@@ -31,12 +32,20 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Plus, SquarePen } from 'lucide-react';
+import { CircleCheck, CircleEllipsis, Plus, SquarePen } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import PerjanjianKinerjaPegawaiForm from './form';
 import { toast } from 'sonner';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { authClient } from '@/lib/auth-client';
 
 interface PerjanjianKinerjaPegawaiTableProps {
   perjanjianKinerja: PerjanjianKinerja;
@@ -46,14 +55,20 @@ const PerjanjianKinerjaPegawaiTable = ({
   perjanjianKinerja,
 }: PerjanjianKinerjaPegawaiTableProps) => {
   const params = useParams();
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
+
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<PerjanjianKinerjaPegawai>();
+  const verifyPkPegawai = useVerifyPkPegawai(Number(params['pk-id']));
+
   const columnHelper = createColumnHelper<PerjanjianKinerjaPegawai>();
   const columns = [
     columnHelper.accessor('pegawai.nama', {
       id: 'pegawaiNama',
       header: 'Nama pegawai',
+      size: 100,
       cell: (info) => (
         <Link
           href={`/perjanjian-kinerja/${params['pk-id']}/pk-pegawai/${info.row.original.id}/pk-detail`}
@@ -65,16 +80,64 @@ const PerjanjianKinerjaPegawaiTable = ({
     columnHelper.accessor('pegawai.jabatan', {
       id: 'pegawaiJabatan',
       header: 'Jabatan',
+      size: 100,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('tahun', {
       id: 'tahun',
       header: 'Tahun',
+      size: 50,
       cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor((row) => row, {
+      id: 'status',
+      header: 'Status',
+      size: 100,
+      cell: ({ row }) => {
+        if (isAdmin)
+          return (
+            <Select
+              value={String(row.original.status)}
+              onValueChange={async (value) => {
+                await verifyPkPegawai.mutateAsync({
+                  id: row.original.id,
+                  status: value === 'true' ? true : false,
+                });
+                return value;
+              }}>
+              <SelectTrigger className="w-fit !h-auto whitespace-normal break-words">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="false">
+                  <CircleEllipsis className="text-orange-400" />
+                  <p>Belum diverifikasi</p>
+                </SelectItem>
+                <SelectItem value="true">
+                  <CircleCheck className="text-green-400" />
+                  <p>Sudah diverifikasi</p>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          );
+
+        return row.original.status ? (
+          <div className="flex gap-x-2 items-center">
+            <CircleEllipsis className="text-orange-400 size-5" />
+            <p>Belum diverifikasi</p>
+          </div>
+        ) : (
+          <div className="flex gap-x-2 items-center">
+            <CircleCheck className="text-green-400 size-5" />
+            <p>Sudah diverifikasi</p>
+          </div>
+        );
+      },
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
+      size: 30,
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -139,7 +202,13 @@ const PerjanjianKinerjaPegawaiTable = ({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),

@@ -3,6 +3,13 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Table,
   TableBody,
   TableCell,
@@ -10,7 +17,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { useGetAllRaPegawai } from '@/hooks/query/rencana-aksi/ra-pegawai';
+import {
+  useGetAllRaPegawai,
+  useVerifyRaPegawai,
+} from '@/hooks/query/rencana-aksi/ra-pegawai';
+import { authClient } from '@/lib/auth-client';
 import { RencanaAksiPegawai } from '@/types/database';
 import {
   createColumnHelper,
@@ -18,17 +29,23 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { CircleCheck, CircleEllipsis } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 const RencanaAksiPegawaiTable = () => {
   const params = useParams();
+  const { data: session } = authClient.useSession();
+  const isAdmin = session?.user.roles?.includes('admin');
+
+  const verifyRaPegawai = useVerifyRaPegawai(Number(params['ra-id']));
 
   const columnHelper = createColumnHelper<RencanaAksiPegawai>();
   const columns = [
     columnHelper.accessor('pegawai.nama', {
       id: 'pegawaiNama',
       header: 'Nama pegawai',
+      size: 100,
       cell: (info) => (
         <Link
           href={`/rencana-aksi/${params['ra-id']}/ra-pegawai/${info.row.original.id}/ra-detail`}
@@ -40,15 +57,63 @@ const RencanaAksiPegawaiTable = () => {
     columnHelper.accessor('pegawai.jabatan', {
       id: 'pegawaiJabatan',
       header: 'Jabatan',
+      size: 100,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('tahun', {
       id: 'tahun',
       header: 'Tahun',
+      size: 40,
       cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor((row) => row, {
+      id: 'status',
+      header: 'Status',
+      size: 100,
+      cell: ({ row }) => {
+        if (isAdmin)
+          return (
+            <Select
+              value={String(row.original.status)}
+              onValueChange={async (value) => {
+                await verifyRaPegawai.mutateAsync({
+                  id: row.original.id,
+                  status: value === 'true' ? true : false,
+                });
+                return value;
+              }}>
+              <SelectTrigger className="w-fit !h-auto whitespace-normal break-words">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="false">
+                  <CircleEllipsis className="text-orange-400" />
+                  <p>Belum diverifikasi</p>
+                </SelectItem>
+                <SelectItem value="true">
+                  <CircleCheck className="text-green-400" />
+                  <p>Sudah diverifikasi</p>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          );
+
+        return row.original.status ? (
+          <div className="flex gap-x-2 items-center">
+            <CircleEllipsis className="text-orange-400 size-5" />
+            <p>Belum diverifikasi</p>
+          </div>
+        ) : (
+          <div className="flex gap-x-2 items-center">
+            <CircleCheck className="text-green-400 size-5" />
+            <p>Sudah diverifikasi</p>
+          </div>
+        );
+      },
     }),
     columnHelper.accessor('updatedAt', {
       id: 'updatedAt',
+      size: 90,
       header: 'Last updated',
       cell: (info) => info.getValue(),
     }),
@@ -76,7 +141,13 @@ const RencanaAksiPegawaiTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),

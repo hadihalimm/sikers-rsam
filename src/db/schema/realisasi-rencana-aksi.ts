@@ -1,5 +1,6 @@
 import {
   bigint,
+  boolean,
   integer,
   numeric,
   pgTable,
@@ -36,6 +37,7 @@ export const realisasiRencanaAksiPegawai = pgTable(
   {
     id: serial('id').primaryKey(),
     tahun: integer('tahun').notNull(),
+    status: boolean('status').default(false),
     pegawaiId: integer('pegawai_id')
       .notNull()
       .references(() => pegawai.id, { onDelete: 'restrict' }),

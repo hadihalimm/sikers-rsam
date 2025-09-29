@@ -84,3 +84,21 @@ export const useGetRraPegawaiDetail = (rraId: number, rraPegawaiId: number) => {
     enabled: !!rraId && !!rraPegawaiId,
   });
 };
+
+export const useVerifyRraPegawai = (rraId: number) => {
+  const queryClient = getQueryClient();
+  return useMutation({
+    mutationFn: async (validateRecord: { id: number; status: boolean }) => {
+      const { data } = await api.put(
+        `/realisasi-rencana-aksi/${rraId}/rra-pegawai/${validateRecord.id}/verifikasi`,
+        validateRecord,
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['rra-pegawai-list', rraId],
+      });
+    },
+  });
+};

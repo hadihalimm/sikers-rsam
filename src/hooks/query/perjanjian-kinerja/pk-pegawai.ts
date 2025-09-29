@@ -62,3 +62,21 @@ export const useDeletePkPegawai = (pkId: number) => {
     },
   });
 };
+
+export const useVerifyPkPegawai = (pkId: number) => {
+  const queryClient = getQueryClient();
+  return useMutation({
+    mutationFn: async (validateRecord: { id: number; status: boolean }) => {
+      const { data } = await api.put(
+        `/perjanjian-kinerja/${pkId}/pk-pegawai/${validateRecord.id}/verifikasi`,
+        validateRecord,
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['pk-pegawai', pkId],
+      });
+    },
+  });
+};
