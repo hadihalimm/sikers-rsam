@@ -19,10 +19,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const { 'ra-id': raId } = await params;
 
     const record = await db.query.rencanaAksi.findFirst({
-      where: and(
-        eq(rencanaAksi.id, parseInt(raId)),
-        eq(rencanaAksi.userId, session.user.id),
-      ),
+      where: and(eq(rencanaAksi.id, parseInt(raId))),
     });
     if (!record) {
       return NextResponse.json(
@@ -53,12 +50,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const updatedRecord = await db
       .update(rencanaAksi)
       .set({ nama })
-      .where(
-        and(
-          eq(rencanaAksi.id, parseInt(raId)),
-          eq(rencanaAksi.userId, session.user.id),
-        ),
-      )
+      .where(and(eq(rencanaAksi.id, parseInt(raId))))
       .returning();
     if (updatedRecord.length === 0) {
       return NextResponse.json(
@@ -86,12 +78,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     const deletedRecord = await db
       .delete(rencanaAksi)
-      .where(
-        and(
-          eq(rencanaAksi.id, parseInt(raId)),
-          eq(rencanaAksi.userId, session.user.id),
-        ),
-      )
+      .where(and(eq(rencanaAksi.id, parseInt(raId))))
       .returning();
     if (deletedRecord.length === 0) {
       return NextResponse.json(

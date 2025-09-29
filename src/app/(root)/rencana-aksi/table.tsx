@@ -52,6 +52,11 @@ const RencanaAksiTable = () => {
         </Link>
       ),
     }),
+    columnHelper.accessor('user.name', {
+      id: 'name',
+      header: 'Nama',
+      cell: (info) => info.getValue(),
+    }),
     columnHelper.accessor('tahun', {
       id: 'tahun',
       header: 'Tahun',

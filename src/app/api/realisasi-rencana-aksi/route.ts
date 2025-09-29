@@ -1,7 +1,7 @@
 import db from '@/db';
 import { realisasiRencanaAksi } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
-import { eq } from 'drizzle-orm';
+import { asc, desc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -9,6 +9,18 @@ export async function GET(request: NextRequest) {
     const session = await getCurrentSession(request.headers);
     if (!session)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (session.user.roles?.includes('admin')) {
+      const records = await db.query.realisasiRencanaAksi.findMany({
+        orderBy: [
+          asc(realisasiRencanaAksi.userId),
+          desc(realisasiRencanaAksi.tahun),
+        ],
+        with: {
+          user: true,
+        },
+      });
+      return NextResponse.json(records);
+    }
 
     const userId = session.user.id;
     const records = await db.query.realisasiRencanaAksi.findMany({

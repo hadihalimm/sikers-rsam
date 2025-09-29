@@ -18,10 +18,10 @@ const RealisasiRencanaAksiPegawaiPage = async ({
   if (!session) redirect('/sign-in');
 
   const rraRecord = await db.query.realisasiRencanaAksi.findFirst({
-    where: and(
-      eq(realisasiRencanaAksi.id, parseInt(rraId)),
-      eq(realisasiRencanaAksi.userId, session.user.id),
-    ),
+    where: and(eq(realisasiRencanaAksi.id, parseInt(rraId))),
+    with: {
+      user: true,
+    },
   });
 
   return (
@@ -31,7 +31,7 @@ const RealisasiRencanaAksiPegawaiPage = async ({
       </h1>
       <div>
         <h2>{rraRecord?.nama}</h2>
-        <p>Bagian {session?.user.name}</p>
+        <p>Bagian {rraRecord?.user.name}</p>
         <p>Tahun {rraRecord?.tahun}</p>
       </div>
       <RealisasiRencanaAksiPegawaiTable />

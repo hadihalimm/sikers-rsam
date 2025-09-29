@@ -18,10 +18,7 @@ const RealisasiRencanaAksiDetail = async ({
   if (!session) redirect('/sign-in');
 
   const rraRecord = await db.query.realisasiRencanaAksi.findFirst({
-    where: and(
-      eq(realisasiRencanaAksi.id, parseInt(rraId)),
-      eq(realisasiRencanaAksi.userId, session.user.id),
-    ),
+    where: and(eq(realisasiRencanaAksi.id, parseInt(rraId))),
   });
   const rraPegawaiRecord = await db.query.realisasiRencanaAksiPegawai.findFirst(
     {

@@ -18,10 +18,7 @@ const RencanaAksiPegawaiDetailPage = async ({
   if (!session) redirect('/sign-in');
 
   const rencanaAksiRecord = await db.query.rencanaAksi.findFirst({
-    where: and(
-      eq(rencanaAksi.id, parseInt(raId)),
-      eq(rencanaAksi.userId, session.user.id),
-    ),
+    where: and(eq(rencanaAksi.id, parseInt(raId))),
   });
 
   const raPegawaiRecord = await db.query.rencanaAksiPegawai.findFirst({
