@@ -32,7 +32,9 @@ const DeleteAlertDialog = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onSuccess}>
+          <AlertDialogAction
+            onClick={onSuccess}
+            className="bg-destructive hover:bg-destructive/80">
             Ya, saya yakin
           </AlertDialogAction>
         </AlertDialogFooter>
