@@ -40,6 +40,7 @@ import CreateOrUpdateIKUForm from './form';
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+import { formatDate } from '@/lib/utils';
 
 const IndikatorKinerjaUtamaTable = () => {
   const { data: session } = authClient.useSession();
@@ -55,6 +56,7 @@ const IndikatorKinerjaUtamaTable = () => {
     columnHelper.accessor('nama', {
       id: 'nama',
       header: 'Nama',
+      size: 100,
       cell: (info) => (
         <Link
           href={`/indikator-kinerja-utama/${info.row.original.id}/iku-detail`}
@@ -66,21 +68,25 @@ const IndikatorKinerjaUtamaTable = () => {
     columnHelper.accessor('cascading.tahunMulai', {
       id: 'tahunMulai',
       header: 'Tahun Mulai',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('cascading.tahunBerakhir', {
       id: 'tahunBerakhir',
       header: 'Tahun Berakhir',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('updatedAt', {
       id: 'updatedAt',
       header: 'Updated at',
-      cell: (info) => info.getValue(),
+      size: 100,
+      cell: (info) => formatDate(info.getValue()),
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
+      size: 30,
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -159,7 +165,13 @@ const IndikatorKinerjaUtamaTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),

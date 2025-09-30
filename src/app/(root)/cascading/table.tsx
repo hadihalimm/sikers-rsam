@@ -35,6 +35,7 @@ import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import { Cascading } from '@/types/database';
 import Link from 'next/link';
 import { authClient } from '@/lib/auth-client';
+import { formatDate } from '@/lib/utils';
 
 const CascadingTable = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -48,6 +49,7 @@ const CascadingTable = () => {
     columnHelper.accessor('judul', {
       id: 'judul',
       header: 'Judul',
+      size: 100,
       cell: (info) => (
         <Link
           href={`/cascading/${info.row.original.id}/tujuan`}
@@ -59,21 +61,25 @@ const CascadingTable = () => {
     columnHelper.accessor('tahunMulai', {
       id: 'tahunMulai',
       header: 'Tahun Mulai',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('tahunBerakhir', {
       id: 'tahunBerakhir',
       header: 'Tahun Berakhir',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('updatedAt', {
       id: 'updatedAt',
       header: 'Updated at',
-      cell: (info) => info.getValue(),
+      size: 100,
+      cell: (info) => formatDate(info.getValue()),
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Action',
+      size: 30,
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -152,7 +158,13 @@ const CascadingTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),

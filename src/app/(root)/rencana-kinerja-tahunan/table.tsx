@@ -37,6 +37,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import CreateOrUpdateRKTForm from './form';
 import { authClient } from '@/lib/auth-client';
+import { formatDate } from '@/lib/utils';
 
 const RencanaKinerjaTahunanTable = () => {
   const { data: session } = authClient.useSession();
@@ -52,6 +53,7 @@ const RencanaKinerjaTahunanTable = () => {
     columnHelper.accessor('nama', {
       id: 'nama',
       header: 'Nama',
+      size: 100,
       cell: (info) => (
         <Link
           href={`/rencana-kinerja-tahunan/${info.row.original.id}/rkt-detail`}
@@ -63,16 +65,19 @@ const RencanaKinerjaTahunanTable = () => {
     columnHelper.accessor('tahun', {
       id: 'tahun',
       header: 'Tahun',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('updatedAt', {
       id: 'updatedAt',
       header: 'Updated at',
-      cell: (info) => info.getValue(),
+      size: 80,
+      cell: (info) => formatDate(info.getValue()),
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
+      size: 30,
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -151,7 +156,13 @@ const RencanaKinerjaTahunanTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),

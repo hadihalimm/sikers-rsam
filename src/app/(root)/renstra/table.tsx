@@ -37,6 +37,7 @@ import { useState } from 'react';
 import CreateOrUpdateRenstraForm from './form';
 import { toast } from 'sonner';
 import { authClient } from '@/lib/auth-client';
+import { formatDate } from '@/lib/utils';
 
 const RenstraTable = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -52,6 +53,7 @@ const RenstraTable = () => {
     columnHelper.accessor('judul', {
       id: 'judul',
       header: 'Judul',
+      size: 100,
       cell: (info) => (
         <Link
           href={`/renstra/${info.row.original.id}`}
@@ -63,21 +65,25 @@ const RenstraTable = () => {
     columnHelper.accessor('cascading.tahunMulai', {
       id: 'tahunMulai',
       header: 'Tahun Mulai',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('cascading.tahunBerakhir', {
       id: 'tahunBerakhir',
       header: 'Tahun Berakhir',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('updatedAt', {
       id: 'updatedAt',
       header: 'Updated at',
-      cell: (info) => info.getValue(),
+      size: 100,
+      cell: (info) => formatDate(info.getValue()),
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
+      size: 30,
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -153,7 +159,13 @@ const RenstraTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),

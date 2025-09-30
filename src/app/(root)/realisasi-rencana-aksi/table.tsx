@@ -46,6 +46,7 @@ const RealisasiRencanaAksiTable = () => {
     columnHelper.accessor('nama', {
       id: 'nama',
       header: 'Nama',
+      size: 100,
       cell: (info) => (
         <Link
           href={`/realisasi-rencana-aksi/${info.row.original.id}/rra-pegawai`}
@@ -55,18 +56,21 @@ const RealisasiRencanaAksiTable = () => {
       ),
     }),
     columnHelper.accessor('user.name', {
-      id: 'name',
-      header: 'Nama',
+      id: 'user',
+      header: 'User',
+      size: 100,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor('tahun', {
       id: 'tahun',
       header: 'Tahun',
+      size: 50,
       cell: (info) => info.getValue(),
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
+      size: 30,
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -118,7 +122,13 @@ const RealisasiRencanaAksiTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),
@@ -133,7 +143,9 @@ const RealisasiRencanaAksiTable = () => {
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className="whitespace-normal break-words">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
