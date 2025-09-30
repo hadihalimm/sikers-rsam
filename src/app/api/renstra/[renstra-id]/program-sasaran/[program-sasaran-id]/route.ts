@@ -1,5 +1,5 @@
 import db from '@/db';
-import { programSasaran } from '@/db/schema';
+import { programSasaran, renstra } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,7 +17,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (!session || !session.user.roles?.includes('admin'))
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { 'program-sasaran-id': programSasaranId } = await params;
+    const { 'renstra-id': renstraId, 'program-sasaran-id': programSasaranId } =
+      await params;
     const deletedRecord = await db
       .delete(programSasaran)
       .where(eq(programSasaran.id, parseInt(programSasaranId)))
@@ -28,6 +29,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(renstra)
+      .set({ updatedAt: new Date() })
+      .where(eq(renstra.id, parseInt(renstraId)));
+
     return NextResponse.json({
       message: "'program_sasaran' record deleted successfully",
     });
