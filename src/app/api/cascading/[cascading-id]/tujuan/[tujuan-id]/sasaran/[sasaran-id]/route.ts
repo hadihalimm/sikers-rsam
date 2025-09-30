@@ -1,11 +1,12 @@
 import db from '@/db';
-import { sasaran } from '@/db/schema';
+import { cascading, sasaran } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
   params: Promise<{
+    'cascading-id': string;
     'tujuan-id': string;
     'sasaran-id': string;
   }>;
@@ -53,7 +54,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!session || !session.user.roles?.includes('admin'))
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { 'sasaran-id': sasaranId, 'tujuan-id': tujuanId } = await params;
+    const {
+      'cascading-id': cascadingId,
+      'sasaran-id': sasaranId,
+      'tujuan-id': tujuanId,
+    } = await params;
     if (isNaN(parseInt(sasaranId)) || isNaN(parseInt(tujuanId))) {
       return NextResponse.json(
         { error: 'Invalid ID format. IDs must be integer.' },
@@ -83,6 +88,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(cascading)
+      .set({ updatedAt: new Date() })
+      .where(eq(cascading.id, parseInt(cascadingId)));
+
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error("Error updating 'sasaran' record: ", error);

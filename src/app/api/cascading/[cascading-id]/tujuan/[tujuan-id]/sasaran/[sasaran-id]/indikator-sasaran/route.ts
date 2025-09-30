@@ -15,6 +15,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
   params: Promise<{
+    'cascading-id': string;
     'sasaran-id': string;
     'tujuan-id': string;
   }>;
@@ -47,7 +48,8 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     if (!session || !session.user.roles?.includes('admin'))
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { 'sasaran-id': sasaranId } = await params;
+    const { 'cascading-id': cascadingId, 'sasaran-id': sasaranId } =
+      await params;
     const body = await request.json();
     const { nama } = body;
 
@@ -113,6 +115,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         ),
       );
     }
+
+    await db
+      .update(cascading)
+      .set({ updatedAt: new Date() })
+      .where(eq(cascading.id, parseInt(cascadingId)));
 
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
