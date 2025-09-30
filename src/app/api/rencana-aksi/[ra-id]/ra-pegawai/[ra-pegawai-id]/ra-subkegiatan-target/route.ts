@@ -2,6 +2,7 @@ import db from '@/db';
 import {
   realisasiRencanaAksiPegawai,
   realisasiRencanaAksiSubkegiatanTarget,
+  rencanaAksiPegawai,
   rencanaAksiSubKegiatanTarget,
 } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
@@ -75,6 +76,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       rencanaAksiSubKegiatanTargetId: newRecord[0].id,
       realisasiRencanaAksiPegawaiId: rraPegawai.id,
     });
+
+    await db
+      .update(rencanaAksiPegawai)
+      .set({ updatedAt: new Date() })
+      .where(eq(rencanaAksiPegawai.id, parseInt(raPegawaiId)));
+
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error(
