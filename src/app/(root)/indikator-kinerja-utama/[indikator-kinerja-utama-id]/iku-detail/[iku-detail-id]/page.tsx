@@ -2,6 +2,7 @@
 import { useGetIkuDetail } from '@/hooks/query/indikator-kinerja-utama/iku-detail';
 import { useParams } from 'next/navigation';
 import IkuDetailUpdateForm from './form';
+import BackButton from '@/components/back-button';
 
 const IkuDetailEditPage = () => {
   const params = useParams();
@@ -13,9 +14,12 @@ const IkuDetailEditPage = () => {
   if (!data) return null;
   return (
     <section className="flex flex-col gap-y-8">
-      <h1 className="font-semibold text-foreground text-3xl">
-        Edit Detail IKU
-      </h1>
+      <div className="flex gap-x-2 items-center">
+        <BackButton />
+        <h1 className="font-semibold text-foreground text-3xl">
+          Edit Detail IKU
+        </h1>
+      </div>
       <IkuDetailUpdateForm
         data={data}
         indikatorKinerjaUtamaId={Number(params['indikator-kinerja-utama-id'])}

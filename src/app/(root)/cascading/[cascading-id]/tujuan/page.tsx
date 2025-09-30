@@ -1,21 +1,17 @@
 'use client';
 
 import { useGetCascading } from '@/hooks/query/cascading/cascading';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import TujuanTable from './table';
-import { MoveLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import BackButton from '@/components/back-button';
 
 const CascadingPage = () => {
   const params = useParams();
-  const router = useRouter();
   const { data } = useGetCascading(Number(params['cascading-id']));
   return (
     <section className="flex flex-col gap-y-8 w-fit">
       <div className="flex gap-x-2 items-center">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <MoveLeft />
-        </Button>
+        <BackButton />
         <h1 className="font-semibold text-foreground text-3xl">
           Daftar Tujuan
         </h1>

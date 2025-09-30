@@ -3,6 +3,7 @@ import PerjanjianKinerjaProgramTable from './program-table';
 import db from '@/db';
 import { perjanjianKinerja, perjanjianKinerjaPegawai } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import BackButton from '@/components/back-button';
 
 const PerjanjianKinerjaDetail = async ({
   params,
@@ -25,11 +26,14 @@ const PerjanjianKinerjaDetail = async ({
 
   return (
     <section className="flex flex-col gap-y-8 w-fit">
-      <div>
-        <h1 className="font-semibold text-foreground text-3xl">
-          {perjanjianKinerjaRecord?.nama}
-        </h1>
-        <p>Tahun {perjanjianKinerjaRecord?.tahun}</p>
+      <div className="flex gap-x-2 items-start">
+        <BackButton />
+        <div>
+          <h1 className="font-semibold text-foreground text-3xl">
+            {perjanjianKinerjaRecord?.nama}
+          </h1>
+          <p>Tahun {perjanjianKinerjaRecord?.tahun}</p>
+        </div>
       </div>
       <div>
         <h2>{pkPegawaiRecord?.pegawai.nama}</h2>

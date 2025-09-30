@@ -3,6 +3,7 @@
 import { useGetRencanaKinerjaTahunan } from '@/hooks/query/rencana-kinerja-tahunan/rencana-kinerja-tahunan';
 import { useParams } from 'next/navigation';
 import RencanaKinerjaTahunanDetailTable from './table';
+import BackButton from '@/components/back-button';
 
 const RencanaKinerjaTahunanDetailPage = () => {
   const params = useParams();
@@ -11,9 +12,12 @@ const RencanaKinerjaTahunanDetailPage = () => {
   );
   return (
     <section className="flex flex-col gap-y-8 w-fit">
-      <h1 className="font-semibold text-foreground text-3xl">
-        Detail Rencana Kinerja Tahunan
-      </h1>
+      <div className="flex gap-x-2 items-center">
+        <BackButton />
+        <h1 className="font-semibold text-foreground text-3xl">
+          Detail Rencana Kinerja Tahunan
+        </h1>
+      </div>
       <h2>{rkt?.nama}</h2>
       <RencanaKinerjaTahunanDetailTable />
     </section>

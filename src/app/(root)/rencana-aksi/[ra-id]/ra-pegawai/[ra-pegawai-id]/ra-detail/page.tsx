@@ -5,6 +5,7 @@ import { headers } from 'next/headers';
 import db from '@/db';
 import { rencanaAksi, rencanaAksiPegawai } from '@/db/schema';
 import { and, eq } from 'drizzle-orm';
+import BackButton from '@/components/back-button';
 
 const RencanaAksiPegawaiDetailPage = async ({
   params,
@@ -30,11 +31,14 @@ const RencanaAksiPegawaiDetailPage = async ({
 
   return (
     <section className="flex flex-col gap-y-8 w-fit">
-      <div>
-        <h1 className="font-semibold text-foreground text-3xl">
-          {rencanaAksiRecord?.nama}
-        </h1>
-        <p>Tahun {rencanaAksiRecord?.tahun}</p>
+      <div className="flex gap-x-2 items-start">
+        <BackButton />
+        <div>
+          <h1 className="font-semibold text-foreground text-3xl">
+            {rencanaAksiRecord?.nama}
+          </h1>
+          <p>Tahun {rencanaAksiRecord?.tahun}</p>
+        </div>
       </div>
       <div>
         <h2>{raPegawaiRecord?.pegawai.nama}</h2>

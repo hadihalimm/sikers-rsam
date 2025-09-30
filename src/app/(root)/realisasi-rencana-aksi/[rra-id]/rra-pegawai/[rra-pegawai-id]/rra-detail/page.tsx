@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import db from '@/db';
+import BackButton from '@/components/back-button';
 
 const RealisasiRencanaAksiDetail = async ({
   params,
@@ -31,11 +32,14 @@ const RealisasiRencanaAksiDetail = async ({
 
   return (
     <section className="flex flex-col gap-y-8 w-fit">
-      <div>
-        <h1 className="font-semibold text-foreground text-3xl">
-          {rraRecord?.nama}
-        </h1>
-        <p>Tahun {rraRecord?.tahun}</p>
+      <div className="flex gap-x-2 items-start">
+        <BackButton />
+        <div>
+          <h1 className="font-semibold text-foreground text-3xl">
+            {rraRecord?.nama}
+          </h1>
+          <p>Tahun {rraRecord?.tahun}</p>
+        </div>
       </div>
       <div>
         <h2>{rraPegawaiRecord?.pegawai.nama}</h2>
