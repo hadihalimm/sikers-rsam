@@ -1,0 +1,224 @@
+import {
+  boolean,
+  integer,
+  numeric,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core';
+import { user } from './user';
+import { pegawai } from './pegawai';
+import {
+  perjanjianKinerja,
+  perjanjianKinerjaPegawai,
+  perjanjianKinerjaPegawaiProgram,
+  perjanjianKinerjaPegawaiSasaran,
+} from './perjanjian-kinerja';
+import { relations } from 'drizzle-orm';
+import { satuan } from './satuan';
+
+export const rencanaAksi = pgTable('rencana_aksi', {
+  id: serial('id').primaryKey(),
+  nama: text('nama').notNull(),
+  tahun: integer('tahun').notNull(),
+  perjanjianKinerjaId: integer('perjanjian_kinerja_id')
+    .notNull()
+    .references(() => perjanjianKinerja.id, { onDelete: 'cascade' })
+    .unique(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'restrict' }),
+});
+
+export const rencanaAksiPegawai = pgTable('rencana_aksi_pegawai', {
+  id: serial('id').primaryKey(),
+  tahun: integer('tahun').notNull(),
+  status: boolean('status').default(false),
+  pegawaiId: integer('pegawai_id')
+    .notNull()
+    .references(() => pegawai.id, { onDelete: 'restrict' }),
+  rencanaAksiId: integer('rencana_aksi_id')
+    .notNull()
+    .references(() => rencanaAksi.id, { onDelete: 'restrict' }),
+  perjanjianKinerjaPegawaiId: integer('perjanjian_kinerja_pegawai_id')
+    .notNull()
+    .references(() => perjanjianKinerjaPegawai.id, { onDelete: 'cascade' })
+    .unique(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const rencanaAksiTarget = pgTable('rencana_aksi_target', {
+  id: serial('id').primaryKey(),
+  bulan: integer('bulan').notNull(),
+  target: numeric('target', { mode: 'number' }),
+  rencanaAksiPegawaiId: integer('rencana_aksi_pegawai_id')
+    .notNull()
+    .references(() => rencanaAksiPegawai.id, {
+      onDelete: 'cascade',
+    }),
+  perjanjianKinerjaPegawaiSasaranId: integer(
+    'perjanjian_kinerja_pegawai_sasaran_id',
+  )
+    .notNull()
+    .references(() => perjanjianKinerjaPegawaiSasaran.id, {
+      onDelete: 'cascade',
+    }),
+});
+
+export const rencanaAksiPencapaianLangkah = pgTable(
+  'rencana_aksi_pencapaian_langkah',
+  {
+    id: serial('id').primaryKey(),
+    nama: text('nama').notNull(),
+    rencanaAksiPegawaiId: integer('rencana_aksi_pegawai_id')
+      .notNull()
+      .references(() => rencanaAksiPegawai.id, {
+        onDelete: 'cascade',
+      }),
+    perjanjianKinerjaPegawaiSasaranId: integer(
+      'perjanjian_kinerja_pegawai_sasaran_id',
+    )
+      .notNull()
+      .references(() => perjanjianKinerjaPegawaiSasaran.id, {
+        onDelete: 'cascade',
+      }),
+  },
+);
+
+export const rencanaAksiPencapaianTarget = pgTable(
+  'rencana_aksi_pencapaian_target',
+  {
+    id: serial('id').primaryKey(),
+    bulan: integer('bulan').notNull(),
+    target: numeric('target', { mode: 'number' }),
+    satuanId: integer('satuan_id')
+      .notNull()
+      .references(() => satuan.id, { onDelete: 'restrict' }),
+    rencanaAksiPencapaianLangkahId: integer(
+      'rencana_aksi_pencapaian_langkah_id',
+    )
+      .notNull()
+      .references(() => rencanaAksiPencapaianLangkah.id, {
+        onDelete: 'cascade',
+      }),
+  },
+);
+
+export const rencanaAksiSubKegiatanTarget = pgTable(
+  'rencana_aksi_subkegiatan_target',
+  {
+    id: serial('id').primaryKey(),
+    nama: text('nama').notNull(),
+    target: numeric('target', { mode: 'number' }),
+    satuanId: integer('satuan_id')
+      .notNull()
+      .references(() => satuan.id, { onDelete: 'restrict' }),
+    rencanaAksiPegawaiId: integer('rencana_aksi_pegawai_id')
+      .notNull()
+      .references(() => rencanaAksiPegawai.id, {
+        onDelete: 'cascade',
+      }),
+    perjanjianKinerjaPegawaiProgramId: integer(
+      'perjanjian_kinerja_pegawai_program_id',
+    )
+      .notNull()
+      .references(() => perjanjianKinerjaPegawaiProgram.id, {
+        onDelete: 'cascade',
+      }),
+  },
+);
+
+export const rencanaAksiRelations = relations(rencanaAksi, ({ one, many }) => ({
+  user: one(user, {
+    fields: [rencanaAksi.userId],
+    references: [user.id],
+  }),
+  rencanaAksiPegawaiList: many(rencanaAksiPegawai),
+  perjanjianKinerja: one(perjanjianKinerja, {
+    fields: [rencanaAksi.perjanjianKinerjaId],
+    references: [perjanjianKinerja.id],
+  }),
+}));
+
+export const rencanaAksiPegawaiRelations = relations(
+  rencanaAksiPegawai,
+  ({ one, many }) => ({
+    pegawai: one(pegawai, {
+      fields: [rencanaAksiPegawai.pegawaiId],
+      references: [pegawai.id],
+    }),
+    rencanaAksi: one(rencanaAksi, {
+      fields: [rencanaAksiPegawai.rencanaAksiId],
+      references: [rencanaAksi.id],
+    }),
+    perjanjianKinerjaPegawai: one(perjanjianKinerjaPegawai, {
+      fields: [rencanaAksiPegawai.perjanjianKinerjaPegawaiId],
+      references: [perjanjianKinerjaPegawai.id],
+    }),
+    rencanaAksiTargetList: many(rencanaAksiTarget),
+    rencanaAksiPencapaianLangkahList: many(rencanaAksiPencapaianLangkah),
+  }),
+);
+
+export const rencanaAksiTargetRelations = relations(
+  rencanaAksiTarget,
+  ({ one }) => ({
+    rencanaAksiPegawai: one(rencanaAksiPegawai, {
+      fields: [rencanaAksiTarget.rencanaAksiPegawaiId],
+      references: [rencanaAksiPegawai.id],
+    }),
+    perjanjianKinerjaPegawaiSasaran: one(perjanjianKinerjaPegawaiSasaran, {
+      fields: [rencanaAksiTarget.perjanjianKinerjaPegawaiSasaranId],
+      references: [perjanjianKinerjaPegawaiSasaran.id],
+    }),
+  }),
+);
+
+export const rencanaAksiPencapaianLangkahRelations = relations(
+  rencanaAksiPencapaianLangkah,
+  ({ one, many }) => ({
+    rencanaAksiPegawai: one(rencanaAksiPegawai, {
+      fields: [rencanaAksiPencapaianLangkah.rencanaAksiPegawaiId],
+      references: [rencanaAksiPegawai.id],
+    }),
+    perjanjianKinerjaPegawaiSasaran: one(perjanjianKinerjaPegawaiSasaran, {
+      fields: [rencanaAksiPencapaianLangkah.perjanjianKinerjaPegawaiSasaranId],
+      references: [perjanjianKinerjaPegawaiSasaran.id],
+    }),
+    rencanaAksiPencapaianTargetList: many(rencanaAksiPencapaianTarget),
+  }),
+);
+
+export const rencanaAksiPencapaianTargetRelations = relations(
+  rencanaAksiPencapaianTarget,
+  ({ one }) => ({
+    rencanaAksiPencapaianLangkah: one(rencanaAksiPencapaianLangkah, {
+      fields: [rencanaAksiPencapaianTarget.rencanaAksiPencapaianLangkahId],
+      references: [rencanaAksiPencapaianLangkah.id],
+    }),
+    satuan: one(satuan, {
+      fields: [rencanaAksiPencapaianTarget.satuanId],
+      references: [satuan.id],
+    }),
+  }),
+);
+
+export const rencanaAksiSubKegiatanTargetRelations = relations(
+  rencanaAksiSubKegiatanTarget,
+  ({ one }) => ({
+    rencanaAksiPegawai: one(rencanaAksiPegawai, {
+      fields: [rencanaAksiSubKegiatanTarget.rencanaAksiPegawaiId],
+      references: [rencanaAksiPegawai.id],
+    }),
+    perjanjianKinerjaPegawaiProgram: one(perjanjianKinerjaPegawaiProgram, {
+      fields: [rencanaAksiSubKegiatanTarget.perjanjianKinerjaPegawaiProgramId],
+      references: [perjanjianKinerjaPegawaiProgram.id],
+    }),
+  }),
+);
