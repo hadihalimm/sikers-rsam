@@ -1,6 +1,7 @@
 import db from '@/db';
 import {
   indikatorSasaran,
+  rencanaKinerjaTahunan,
   rencanaKinerjaTahunanDetail,
   sasaran,
 } from '@/db/schema';
@@ -69,6 +70,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       rencanaKinerjaTahunanId: parseInt(rencanaKinerjaTahunanId),
       indikatorSasaranId,
     });
+
+    await db
+      .update(rencanaKinerjaTahunan)
+      .set({ updatedAt: new Date() })
+      .where(eq(rencanaKinerjaTahunan.id, parseInt(rencanaKinerjaTahunanId)));
+
     return NextResponse.json(newRecord);
   } catch (error) {
     console.error(
