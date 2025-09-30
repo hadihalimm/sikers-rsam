@@ -1,9 +1,18 @@
+import Image from 'next/image';
 import SignInForm from './signin-form';
 
 const SignInPage = () => {
   return (
     <div className="grid lg:grid-cols-3 min-h-svh">
-      <div className="lg:col-span-2 hidden lg:block"></div>
+      <div className="lg:col-span-2 hidden lg:flex lg:items-center">
+        <Image
+          src="/rsam.jpeg"
+          width="1500"
+          height="1500"
+          alt="rsam"
+          className="w-full h-full object-cover"
+        />
+      </div>
       <div className="flex flex-col p-6 md:p-10 lg:col-span-1">
         <div className="flex justify-center gap-2 md:justify-start">
           <p className="font-medium">Rumah Sakit Dr. Achmad Mochtar</p>
