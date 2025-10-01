@@ -1,0 +1,22 @@
+# Node modules (install inside Docker)
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+
+# Logs
+*.log
+
+# Git files
+.git
+.gitignore
+
+# Next.js build output (will be generated inside Docker)
+.next
+out
+
+# Editor/OS files
+.DS_Store
+.vscode
+.idea
+*.swp
