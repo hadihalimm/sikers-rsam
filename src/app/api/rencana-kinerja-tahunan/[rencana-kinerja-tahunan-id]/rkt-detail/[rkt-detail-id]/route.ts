@@ -1,5 +1,8 @@
 import db from '@/db';
-import { rencanaKinerjaTahunanDetail } from '@/db/schema';
+import {
+  rencanaKinerjaTahunan,
+  rencanaKinerjaTahunanDetail,
+} from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,7 +20,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!session || !session.user.roles?.includes('admin'))
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { 'rkt-detail-id': rktDetailId } = await params;
+    const {
+      'rencana-kinerja-tahunan-id': rencanaKinerjaTahunanId,
+      'rkt-detail-id': rktDetailId,
+    } = await params;
     const body = await request.json();
     const { target } = body;
 
@@ -32,6 +38,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(rencanaKinerjaTahunan)
+      .set({ updatedAt: new Date() })
+      .where(eq(rencanaKinerjaTahunan.id, parseInt(rencanaKinerjaTahunanId)));
+
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error(
@@ -51,7 +63,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     if (!session || !session.user.roles?.includes('admin'))
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { 'rkt-detail-id': rktDetailId } = await params;
+    const {
+      'rencana-kinerja-tahunan-id': rencanaKinerjaTahunanId,
+      'rkt-detail-id': rktDetailId,
+    } = await params;
     const deletedRecord = await db
       .delete(rencanaKinerjaTahunanDetail)
       .where(eq(rencanaKinerjaTahunanDetail.id, parseInt(rktDetailId)))
@@ -62,6 +77,12 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(rencanaKinerjaTahunan)
+      .set({ updatedAt: new Date() })
+      .where(eq(rencanaKinerjaTahunan.id, parseInt(rencanaKinerjaTahunanId)));
+
     return NextResponse.json({
       message: "'rencana_kinerja_tahunan_detail' record deleted successfully",
     });

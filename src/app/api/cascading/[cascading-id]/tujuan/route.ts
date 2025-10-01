@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { eq } from 'drizzle-orm';
 import db from '@/db';
-import { tujuan } from '@/db/schema';
+import { cascading, tujuan } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 
 interface RouteParams {
@@ -50,6 +50,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         cascadingId: parseInt(cascadingId),
       })
       .returning();
+
+    await db
+      .update(cascading)
+      .set({ updatedAt: new Date() })
+      .where(eq(cascading.id, parseInt(cascadingId)));
 
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {

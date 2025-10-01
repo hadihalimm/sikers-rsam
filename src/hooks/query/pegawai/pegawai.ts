@@ -5,7 +5,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllPegawai = (userId?: number) => {
   return useQuery<Pegawai[]>({
-    queryKey: ['pegawai-list', userId],
+    queryKey: ['pegawai-list'],
     queryFn: async () => {
       const { data } = await api.get(
         userId ? `/pegawai?userId=${userId}` : `/pegawai`,
@@ -28,17 +28,13 @@ export const useGetPegawai = (id: number) => {
 export const useCreatePegawai = () => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (newPegawai: {
-      nama: string;
-      jabatan: string;
-      userId: string;
-    }) => {
+    mutationFn: async (newPegawai: { nama: string; jabatan: string }) => {
       const { data } = await api.post(`/pegawai`, newPegawai);
       return data;
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['pegawai-list', variables.userId],
+        queryKey: ['pegawai-list'],
       });
     },
   });
@@ -51,14 +47,13 @@ export const useUpdatePegawai = () => {
       id: number;
       nama: string;
       jabatan: string;
-      userId: string;
     }) => {
       const { data } = await api.put(`/pegawai/${updatedItem.id}`);
       return data;
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['pegawai-list', variables.userId],
+        queryKey: ['pegawai-list'],
       });
       queryClient.invalidateQueries({
         queryKey: ['pegawai', variables.id],
@@ -74,9 +69,9 @@ export const useDeletePegawai = () => {
       const { data } = await api.delete(`/pegawai/${id}`);
       return data;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['pegawai-list', data.deletedRecord.userId],
+        queryKey: ['pegawai-list'],
       });
       queryClient.removeQueries({
         queryKey: ['pegawai', variables],

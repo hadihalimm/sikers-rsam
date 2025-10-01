@@ -50,7 +50,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const updatedRecord = await db
       .update(rencanaKinerjaTahunan)
-      .set({ nama })
+      .set({ nama, updatedAt: new Date() })
       .where(eq(rencanaKinerjaTahunan.id, parseInt(rencanaKinerjaTahunanId)))
       .returning();
     if (updatedRecord.length === 0) {

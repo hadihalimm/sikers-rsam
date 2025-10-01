@@ -1,11 +1,12 @@
 import db from '@/db';
-import { indikatorSasaran } from '@/db/schema';
+import { cascading, indikatorSasaran } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
   params: Promise<{
+    'cascading-id': string;
     'sasaran-id': string;
     'indikator-sasaran-id': string;
   }>;
@@ -58,6 +59,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const {
+      'cascading-id': cascadingId,
       'sasaran-id': sasaranId,
       'indikator-sasaran-id': indikatorSasaranId,
     } = await params;
@@ -88,6 +90,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+    await db
+      .update(cascading)
+      .set({ updatedAt: new Date() })
+      .where(eq(cascading.id, parseInt(cascadingId)));
+
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error("Error updating 'indikator_sasaran' record: ", error);

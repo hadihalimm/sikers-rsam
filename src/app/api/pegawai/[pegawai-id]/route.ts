@@ -35,11 +35,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const { 'pegawai-id': pegawaiId } = await params;
     const body = await request.json();
-    const { nama, jabatan, userId } = body;
+    const { nama, jabatan } = body;
 
     const updatedRecord = await db
       .update(pegawai)
-      .set({ nama, jabatan, userId })
+      .set({ nama, jabatan })
       .where(eq(pegawai.id, parseInt(pegawaiId)))
       .returning();
 

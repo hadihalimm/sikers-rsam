@@ -1,5 +1,8 @@
 import db from '@/db';
-import { indikatorKinerjaUtamaDetail } from '@/db/schema';
+import {
+  indikatorKinerjaUtama,
+  indikatorKinerjaUtamaDetail,
+} from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -49,7 +52,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (!session || !session.user.roles?.includes('admin'))
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { 'iku-detail-id': indikatorKinerjaUtamaDetailId } = await params;
+    const {
+      'indikator-kinerja-utama-id': indikatorKinerjaUtamaId,
+      'iku-detail-id': indikatorKinerjaUtamaDetailId,
+    } = await params;
     const body = await request.json();
     const { baseline, penjelasan, penanggungJawab } = body;
 
@@ -69,6 +75,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(indikatorKinerjaUtama)
+      .set({ updatedAt: new Date() })
+      .where(eq(indikatorKinerjaUtama.id, parseInt(indikatorKinerjaUtamaId)));
+
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error(

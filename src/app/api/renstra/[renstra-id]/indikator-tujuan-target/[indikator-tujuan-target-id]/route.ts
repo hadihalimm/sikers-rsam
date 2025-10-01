@@ -1,5 +1,5 @@
 import db from '@/db';
-import { indikatorTujuanTarget } from '@/db/schema';
+import { indikatorTujuanTarget, renstra } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -17,8 +17,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
-    const { 'indikator-tujuan-target-id': indikatorTujuanTargetId } =
-      await params;
+    const {
+      'renstra-id': renstraId,
+      'indikator-tujuan-target-id': indikatorTujuanTargetId,
+    } = await params;
     const body = await request.json();
     const { target } = body;
 
@@ -33,6 +35,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(renstra)
+      .set({ updatedAt: new Date() })
+      .where(eq(renstra.id, parseInt(renstraId)));
+
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error("Error updating 'indikator-tujuan-target' record: ", error);

@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { cn } from '@/lib/utils';
+import { cn, formatRupiah } from '@/lib/utils';
 import { RealisasiRencanaAksiSubkegiatanTargetDetail } from '@/types/database';
 import {
   createColumnHelper,
@@ -86,9 +86,11 @@ const RealisasiRencanaAksiSubkegiatanTargetColumnDetail = ({
       header: 'Realisasi Anggaran',
       size: 80,
       cell: ({ row }) => {
-        const realisasi =
+        const realisasiAnggaran =
           row.original.realisasiRencanaAksiSubkegiatanTarget.realisasiAnggaran;
-        return realisasi != null ? `${realisasi}` : '';
+        return realisasiAnggaran != null
+          ? `${formatRupiah(realisasiAnggaran)}`
+          : '';
       },
     }),
   ];
@@ -109,7 +111,10 @@ const RealisasiRencanaAksiSubkegiatanTargetColumnDetail = ({
       </div>
 
       <div>
-        <p>Anggaran: {first.perjanjianKinerjaPegawaiProgram.anggaran}</p>
+        <p>
+          Anggaran:{' '}
+          {formatRupiah(first.perjanjianKinerjaPegawaiProgram.anggaran)}
+        </p>
         <Table className="table-fixed text-xs">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

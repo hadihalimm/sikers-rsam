@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(value: string | Date) {
-  if (!value) return '-';
+  if (!value) return '';
   const date = new Date(value);
   if (isNaN(date.getTime())) return '-';
 
@@ -14,4 +14,13 @@ export function formatDate(value: string | Date) {
     dateStyle: 'long',
     timeStyle: 'short',
   }).format(date);
+}
+
+export function formatRupiah(value: number | null) {
+  if (!value) return '-';
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+  }).format(value);
 }

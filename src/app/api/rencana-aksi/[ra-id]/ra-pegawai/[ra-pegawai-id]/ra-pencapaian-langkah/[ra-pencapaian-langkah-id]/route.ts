@@ -1,5 +1,6 @@
 import db from '@/db';
 import {
+  rencanaAksiPegawai,
   rencanaAksiPencapaianLangkah,
   rencanaAksiPencapaianTarget,
 } from '@/db/schema';
@@ -52,7 +53,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const session = await getCurrentSession(request.headers);
     if (!session)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { 'ra-pencapaian-langkah-id': raPencapaianLangkahId } = await params;
+    const {
+      'ra-pegawai-id': raPegawaiId,
+      'ra-pencapaian-langkah-id': raPencapaianLangkahId,
+    } = await params;
     const body = (await request.json()) as RencanaAksiPencapaianInput;
     const { nama, satuanId, targetList } = body;
     console.log(targetList);
@@ -79,6 +83,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           .where(eq(rencanaAksiPencapaianTarget.id, item.id)),
       ),
     );
+
+    await db
+      .update(rencanaAksiPegawai)
+      .set({ updatedAt: new Date() })
+      .where(eq(rencanaAksiPegawai.id, parseInt(raPegawaiId)));
+
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error(

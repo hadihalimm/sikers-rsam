@@ -1,14 +1,18 @@
 import { HomeSidebar } from '@/components/sidebar/home-sidebar';
 import { Separator } from '@/components/ui/separator';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { getCurrentSession } from '@/lib/user';
+import { headers } from 'next/headers';
 
-export default function HomeLayout({
+export default async function HomeLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const session = await getCurrentSession(await headers());
+
   return (
     <SidebarProvider>
       <div className="flex w-full">
-        <HomeSidebar />
+        <HomeSidebar session={session} />
         <main className="w-full rounded-lg px-4 py-2 border m-2">
           <div className="flex gap-x-2 items-center h-[35px] border-b mb-4 py-1">
             <SidebarTrigger />

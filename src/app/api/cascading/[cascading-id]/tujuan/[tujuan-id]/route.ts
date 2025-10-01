@@ -1,5 +1,5 @@
 import db from '@/db';
-import { tujuan } from '@/db/schema';
+import { cascading, tujuan } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { and, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -84,6 +84,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(cascading)
+      .set({ updatedAt: new Date() })
+      .where(eq(cascading.id, parseInt(cascadingId)));
+
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error("Error updating 'tujuan' record: ", error);

@@ -36,6 +36,7 @@ import { useParams } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import PerjanjianKinerjaSasaranForm from './sasaran-form';
 import { toast } from 'sonner';
+import { formatDate } from '@/lib/utils';
 
 type ProcessedRowData = PerjanjianKinerjaPegawaiSasaranDetail & {
   sasaranRowSpan: number;
@@ -100,6 +101,7 @@ const PerjanjianKinerjaSasaranTable = () => {
     columnHelper.accessor('sasaran.judul', {
       id: 'sasaran',
       header: 'Sasaran',
+      size: 100,
       cell: (info) => {
         if (!info.row.original.showSasaran) {
           return null;
@@ -110,17 +112,20 @@ const PerjanjianKinerjaSasaranTable = () => {
     columnHelper.accessor('indikatorSasaran.nama', {
       id: 'indikatorSasaran',
       header: 'Indikator Sasaran',
+      size: 100,
       cell: (info) => info.getValue(),
     }),
     columnHelper.accessor((row) => row, {
       id: 'target',
       header: 'Target',
+      size: 70,
       cell: ({ row }) =>
         row.original.detail.target + ' ' + row.original.satuan.nama,
     }),
     columnHelper.accessor('detail.modelCapaian', {
       id: 'modelCapaian',
       header: 'Model capaian',
+      size: 100,
       cell: (info) =>
         modelCapaian.find((model) => Number(model.value) === info.getValue())
           ?.label,
@@ -128,11 +133,13 @@ const PerjanjianKinerjaSasaranTable = () => {
     columnHelper.accessor('detail.updatedAt', {
       id: 'updatedAt',
       header: 'Updated at',
-      cell: (info) => info.getValue(),
+      size: 80,
+      cell: (info) => formatDate(info.getValue()),
     }),
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
+      size: 35,
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -200,7 +207,13 @@ const PerjanjianKinerjaSasaranTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      width: `${header.getSize()}px`,
+                      minWidth: `${header.getSize()}px`,
+                      maxWidth: `${header.getSize()}px`,
+                    }}>
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),

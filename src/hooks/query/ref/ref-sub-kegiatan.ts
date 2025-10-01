@@ -28,6 +28,38 @@ export const useCreateRefSubKegiatan = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ref-sub-kegiatan'] });
+      queryClient.invalidateQueries({ queryKey: ['ref-program-detail'] });
+    },
+  });
+};
+
+export const useUpdateRefSubKegiatan = () => {
+  const queryClient = getQueryClient();
+  return useMutation({
+    mutationFn: async (updatedRecord: { id: number; nama: string }) => {
+      const { data } = await api.put(
+        `/ref/sub-kegiatan/${updatedRecord.id}`,
+        updatedRecord,
+      );
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ref-sub-kegiatan'] });
+      queryClient.invalidateQueries({ queryKey: ['ref-program-detail'] });
+    },
+  });
+};
+
+export const useDeleteRefSubKegiatan = () => {
+  const queryClient = getQueryClient();
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const { data } = await api.delete(`/ref/sub-kegiatan/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ref-sub-kegiatan'] });
+      queryClient.invalidateQueries({ queryKey: ['ref-program-detail'] });
     },
   });
 };

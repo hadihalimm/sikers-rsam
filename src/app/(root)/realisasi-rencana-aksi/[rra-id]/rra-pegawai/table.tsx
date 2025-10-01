@@ -22,6 +22,7 @@ import {
   useVerifyRraPegawai,
 } from '@/hooks/query/realisasi-rencana-aksi/rra-pegawai';
 import { authClient } from '@/lib/auth-client';
+import { formatDate } from '@/lib/utils';
 import { RealisasiRencanaAksiPegawai } from '@/types/database';
 import {
   createColumnHelper,
@@ -114,8 +115,8 @@ const RealisasiRencanaAksiPegawaiTable = () => {
     columnHelper.accessor('updatedAt', {
       id: 'updatedAt',
       header: 'Last updated',
-      size: 90,
-      cell: (info) => info.getValue(),
+      size: 100,
+      cell: (info) => formatDate(info.getValue()),
     }),
   ];
 

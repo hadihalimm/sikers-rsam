@@ -1,5 +1,8 @@
 import db from '@/db';
-import { realisasiRencanaAksiPencapaianTarget } from '@/db/schema';
+import {
+  realisasiRencanaAksiPegawai,
+  realisasiRencanaAksiPencapaianTarget,
+} from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -55,7 +58,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const session = await getCurrentSession(request.headers);
     if (!session)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { 'rra-pencapaian-target-id': rraPencapaianTargetId } = await params;
+    const {
+      'rra-pegawai-id': rraPegawaiId,
+      'rra-pencapaian-target-id': rraPencapaianTargetId,
+    } = await params;
     const body = await request.json();
     const { realisasi } = body;
 
@@ -94,6 +100,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(realisasiRencanaAksiPegawai)
+      .set({ updatedAt: new Date() })
+      .where(eq(realisasiRencanaAksiPegawai.id, parseInt(rraPegawaiId)));
+
     return NextResponse.json(updatedRecord[0]);
   } catch (error) {
     console.error(

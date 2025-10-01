@@ -2,6 +2,7 @@ import db from '@/db';
 import {
   realisasiRencanaAksiPegawai,
   realisasiRencanaAksiPencapaianTarget,
+  rencanaAksiPegawai,
   rencanaAksiPencapaianLangkah,
   rencanaAksiPencapaianTarget,
 } from '@/db/schema';
@@ -106,6 +107,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         realisasiRencanaAksiPegawaiId: rraPegawaiRecord.id,
       })),
     );
+
+    await db
+      .update(rencanaAksiPegawai)
+      .set({ updatedAt: new Date() })
+      .where(eq(rencanaAksiPegawai.id, parseInt(raPegawaiId)));
 
     return NextResponse.json(newLangkah[0], { status: 201 });
   } catch (error) {

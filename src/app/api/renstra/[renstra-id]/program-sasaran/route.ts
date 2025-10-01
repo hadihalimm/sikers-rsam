@@ -1,6 +1,13 @@
 import db from '@/db';
-import { kegiatan, program, programSasaran, subKegiatan } from '@/db/schema';
+import {
+  kegiatan,
+  program,
+  programSasaran,
+  renstra,
+  subKegiatan,
+} from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
+import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
@@ -49,6 +56,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         .insert(subKegiatan)
         .values({ refSubKegiatanId: id, kegiatanId: newKegiatan[0].id });
     });
+
+    await db
+      .update(renstra)
+      .set({ updatedAt: new Date() })
+      .where(eq(renstra.id, parseInt(renstraId)));
+
     return NextResponse.json(newProgram[0], { status: 201 });
   } catch (error) {
     console.error("Error creating 'program_sasaran' record: ", error);

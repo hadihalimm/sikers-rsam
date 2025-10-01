@@ -1,6 +1,7 @@
 import db from '@/db';
 import {
   perjanjianKinerjaPegawaiSasaran,
+  realisasiRencanaAksiPegawai,
   realisasiRencanaAksiTarget,
   rencanaAksiTarget,
   satuan,
@@ -96,6 +97,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         realisasiRencanaAksiPegawaiId: parseInt(rraPegawaiId),
       })
       .returning();
+
+    await db
+      .update(realisasiRencanaAksiPegawai)
+      .set({ updatedAt: new Date() })
+      .where(eq(realisasiRencanaAksiPegawai.id, parseInt(rraPegawaiId)));
+
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error(

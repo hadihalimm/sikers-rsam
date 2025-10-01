@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { formatRupiah } from '@/lib/utils';
 import {
   PerjanjianKinerjaPegawaiProgram,
   RencanaAksiSubKegiatanTarget,
@@ -43,7 +44,10 @@ const RencanaAksiSubkegiatanTargetColumn = ({
               <p>Sub-kegiatan: {first.refSubKegiatan?.nama}</p>
             </div>
             <div className="flex flex-col gap-y-2">
-              <p>Anggaran: {first.perjanjianKinerjaPegawaiProgram.anggaran}</p>
+              <p>
+                Anggaran:{' '}
+                {formatRupiah(first.perjanjianKinerjaPegawaiProgram.anggaran)}
+              </p>
               <Table className="table-fixed">
                 <TableHeader>
                   <TableRow>

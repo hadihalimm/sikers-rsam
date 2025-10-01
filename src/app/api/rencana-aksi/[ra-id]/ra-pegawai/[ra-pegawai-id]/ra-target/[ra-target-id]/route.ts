@@ -1,5 +1,5 @@
 import db from '@/db';
-import { rencanaAksiTarget } from '@/db/schema';
+import { rencanaAksiPegawai, rencanaAksiTarget } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -18,7 +18,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     if (!session)
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { 'ra-target-id': raTargetId } = await params;
+    const { 'ra-pegawai-id': raPegawaiId, 'ra-target-id': raTargetId } =
+      await params;
     const record = await db.query.rencanaAksiTarget.findFirst({
       where: eq(rencanaAksiTarget.id, parseInt(raTargetId)),
     });
@@ -28,6 +29,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         { status: 404 },
       );
     }
+
+    await db
+      .update(rencanaAksiPegawai)
+      .set({ updatedAt: new Date() })
+      .where(eq(rencanaAksiPegawai.id, parseInt(raPegawaiId)));
+
     return NextResponse.json(record);
   } catch (error) {
     console.error("Error fetching 'rencana_aksi_target' record: ", error);

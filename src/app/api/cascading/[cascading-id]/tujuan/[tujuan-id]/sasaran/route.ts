@@ -1,11 +1,12 @@
 import db from '@/db';
-import { sasaran } from '@/db/schema';
+import { cascading, sasaran } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface RouteParams {
   params: Promise<{
+    'cascading-id': string;
     'tujuan-id': string;
   }>;
 }
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     if (!session || !session.user.roles?.includes('admin'))
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { 'tujuan-id': tujuanId } = await params;
+    const { 'cascading-id': cascadingId, 'tujuan-id': tujuanId } = await params;
     const body = await request.json();
     const { judul, pengampu, level, parentId } = body;
 
@@ -54,6 +55,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         parentId: parentId ? parseInt(parentId) : null,
       })
       .returning();
+
+    await db
+      .update(cascading)
+      .set({ updatedAt: new Date() })
+      .where(eq(cascading.id, parseInt(cascadingId)));
 
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {

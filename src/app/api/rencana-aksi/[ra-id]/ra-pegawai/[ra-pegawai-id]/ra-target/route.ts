@@ -1,5 +1,5 @@
 import db from '@/db';
-import { rencanaAksiTarget } from '@/db/schema';
+import { rencanaAksiPegawai, rencanaAksiTarget } from '@/db/schema';
 import { getCurrentSession } from '@/lib/user';
 import { asc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
@@ -58,6 +58,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         rencanaAksiPegawaiId: parseInt(raPegawaiId),
       })
       .returning();
+
+    await db
+      .update(rencanaAksiPegawai)
+      .set({ updatedAt: new Date() })
+      .where(eq(rencanaAksiPegawai.id, parseInt(raPegawaiId)));
+
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
     console.error("Error creating 'rencana_aksi_target' record: ", error);

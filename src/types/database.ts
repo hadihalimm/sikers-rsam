@@ -231,3 +231,9 @@ export type RealisasiRencanaAksiSubkegiatanTargetDetail = {
   refKegiatan: RefKegiatan;
   refSubKegiatan: RefSubKegiatan;
 };
+
+export type RefProgramDetail = RefProgram & {
+  refKegiatanList: (RefKegiatan & {
+    refSubKegiatanList: RefSubKegiatan[];
+  })[];
+};
