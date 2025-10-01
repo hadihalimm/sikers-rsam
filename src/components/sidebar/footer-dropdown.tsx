@@ -9,10 +9,14 @@ import {
 } from '../ui/dropdown-menu';
 import { SidebarMenuButton } from '../ui/sidebar';
 import { authClient } from '@/lib/auth-client';
+import { auth } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 
-const FooterDropdown = () => {
-  const session = authClient.useSession();
+interface FooterDropdownProps {
+  session: Awaited<ReturnType<typeof auth.api.getSession>>;
+}
+
+const FooterDropdown = ({ session }: FooterDropdownProps) => {
   const router = useRouter();
   return (
     <DropdownMenu>
@@ -20,7 +24,7 @@ const FooterDropdown = () => {
         <SidebarMenuButton className="flex justify-between">
           <div className="flex gap-x-2 items-center">
             <User2 className="size-4" />
-            <p className="font-semibold">{session.data?.user.name}</p>
+            <p className="font-semibold">{session?.user.name}</p>
           </div>
           <ChevronUp />
         </SidebarMenuButton>
