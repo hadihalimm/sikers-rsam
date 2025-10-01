@@ -1,14 +1,10 @@
 import db from '@/db';
 import { pegawai } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const userId = request.nextUrl.searchParams.get('userId');
-    const records = await db.query.pegawai.findMany({
-      where: userId ? eq(pegawai.userId, userId!) : undefined,
-    });
+    const records = await db.query.pegawai.findMany({});
     return NextResponse.json(records);
   } catch (error) {
     console.error("Error fetching 'pegawai' records: ", error);
@@ -22,10 +18,10 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nama, jabatan, userId } = body;
+    const { nama, jabatan } = body;
     const newRecord = await db
       .insert(pegawai)
-      .values({ nama, jabatan, userId })
+      .values({ nama, jabatan })
       .returning();
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {
