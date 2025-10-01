@@ -1,9 +1,6 @@
 import api from '@/lib/axios';
 import { getQueryClient } from '@/lib/get-query-client';
-import {
-  PerjanjianKinerjaPegawaiProgramDetail,
-  PerjanjianKinerjaPegawaiProgramDetailFlat,
-} from '@/types/database';
+import { PerjanjianKinerjaPegawaiProgramDetail } from '@/types/database';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 export const useGetAllPkPegawaiProgramDetail = (
@@ -11,7 +8,7 @@ export const useGetAllPkPegawaiProgramDetail = (
   pkPegawaiId: number,
   pkPegawaiProgramId: number,
 ) => {
-  return useQuery<PerjanjianKinerjaPegawaiProgramDetailFlat[]>({
+  return useQuery<PerjanjianKinerjaPegawaiProgramDetail[]>({
     queryKey: ['pk-pegawai-program-detail', pkPegawaiProgramId],
     queryFn: async () => {
       const { data } = await api.get(
