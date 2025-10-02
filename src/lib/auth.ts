@@ -14,6 +14,8 @@ export const auth = betterAuth({
     enabled: true,
     disableSignUp: true,
   },
+  trustedOrigins: ["http://localhost:3000", "http://192.168.2.17"],
+
   plugins: [
     username(),
     admin(),
