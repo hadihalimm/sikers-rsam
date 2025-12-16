@@ -41,9 +41,20 @@ const RealisasiRencanaAksiDetail = async ({
           <p>Tahun {rraRecord?.tahun}</p>
         </div>
       </div>
-      <div>
+      <div className="text-sm">
         <h2>{rraPegawaiRecord?.pegawai.nama}</h2>
-        <p>{rraPegawaiRecord?.pegawai.jabatan}</p>
+        {rraPegawaiRecord?.pegawai.nip && (
+          <p>NIP: {rraPegawaiRecord?.pegawai.nip}</p>
+        )}
+        {rraPegawaiRecord?.pegawai.jabatan && (
+          <p>Jabatan: {rraPegawaiRecord?.pegawai.jabatan}</p>
+        )}
+        {rraPegawaiRecord?.pegawai.profesi && (
+          <p>Profesi: {rraPegawaiRecord?.pegawai.profesi}</p>
+        )}
+        {rraPegawaiRecord?.pegawai.penempatan && (
+          <p>Penempatan: {rraPegawaiRecord?.pegawai.penempatan}</p>
+        )}
       </div>
       <RealisasiRencanaAksiDetailTable />
     </section>

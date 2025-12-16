@@ -40,9 +40,20 @@ const RencanaAksiPegawaiDetailPage = async ({
           <p>Tahun {rencanaAksiRecord?.tahun}</p>
         </div>
       </div>
-      <div>
+      <div className="text-sm">
         <h2>{raPegawaiRecord?.pegawai.nama}</h2>
-        <p>{raPegawaiRecord?.pegawai.jabatan}</p>
+        {raPegawaiRecord?.pegawai.nip && (
+          <p>NIP: {raPegawaiRecord?.pegawai.nip}</p>
+        )}
+        {raPegawaiRecord?.pegawai.jabatan && (
+          <p>Jabatan: {raPegawaiRecord?.pegawai.jabatan}</p>
+        )}
+        {raPegawaiRecord?.pegawai.profesi && (
+          <p>Profesi: {raPegawaiRecord?.pegawai.profesi}</p>
+        )}
+        {raPegawaiRecord?.pegawai.penempatan && (
+          <p>Penempatan: {raPegawaiRecord?.pegawai.penempatan}</p>
+        )}
       </div>
       <RencanaAksiPegawaiDetailTable />
     </section>
