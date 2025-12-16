@@ -5,10 +5,10 @@ import { pgTable, serial, text } from 'drizzle-orm/pg-core';
 export const pegawai = pgTable('pegawai', {
   id: serial('id').primaryKey(),
   nama: text('nama').notNull(),
-  jabatan: text('jabatan').notNull(),
-  // userId: text('user_id')
-  //   .notNull()
-  //   .references(() => user.id, { onDelete: 'restrict' }),
+  nip: text('nip'),
+  jabatan: text('jabatan'),
+  profesi: text('profesi'),
+  penempatan: text('penempatan'),
 });
 
 // export const pegawaiRelations = relations(pegawai, ({ one }) => ({

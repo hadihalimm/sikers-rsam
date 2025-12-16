@@ -28,7 +28,13 @@ export const useGetPegawai = (id: number) => {
 export const useCreatePegawai = () => {
   const queryClient = getQueryClient();
   return useMutation({
-    mutationFn: async (newPegawai: { nama: string; jabatan: string }) => {
+    mutationFn: async (newPegawai: {
+      nama: string;
+      nip: string;
+      jabatan: string;
+      profesi: string;
+      penempatan: string;
+    }) => {
       const { data } = await api.post(`/pegawai`, newPegawai);
       return data;
     },
@@ -46,9 +52,12 @@ export const useUpdatePegawai = () => {
     mutationFn: async (updatedItem: {
       id: number;
       nama: string;
+      nip: string;
       jabatan: string;
+      profesi: string;
+      penempatan: string;
     }) => {
-      const { data } = await api.put(`/pegawai/${updatedItem.id}`);
+      const { data } = await api.put(`/pegawai/${updatedItem.id}`, updatedItem);
       return data;
     },
     onSuccess: (_data, variables) => {

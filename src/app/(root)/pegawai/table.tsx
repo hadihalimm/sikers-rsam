@@ -48,9 +48,27 @@ const PegawaiTable = () => {
       size: 100,
       cell: (info) => info.getValue(),
     }),
+    columnHelper.accessor('nip', {
+      id: 'nip',
+      header: 'NIP',
+      size: 100,
+      cell: (info) => info.getValue(),
+    }),
     columnHelper.accessor('jabatan', {
       id: 'jabatan',
       header: 'Jabatan',
+      size: 100,
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('profesi', {
+      id: 'profesi',
+      header: 'Profesi',
+      size: 100,
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor('penempatan', {
+      id: 'penemaptan',
+      header: 'Penempatan',
       size: 100,
       cell: (info) => info.getValue(),
     }),
@@ -71,14 +89,16 @@ const PegawaiTable = () => {
               onClick={() => {
                 setEditingItem(row.original);
                 setUpdateDialogOpen(true);
-              }}>
+              }}
+            >
               Edit
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 setEditingItem(row.original);
                 setDeleteDialogOpen(true);
-              }}>
+              }}
+            >
               Hapus
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -111,7 +131,8 @@ const PegawaiTable = () => {
             </Button>
           }
           open={createDialogOpen}
-          onOpenChange={setCreateDialogOpen}>
+          onOpenChange={setCreateDialogOpen}
+        >
           <PegawaiForm
             onSuccess={() => {
               setCreateDialogOpen(false);
@@ -132,7 +153,8 @@ const PegawaiTable = () => {
                       width: `${header.getSize()}px`,
                       minWidth: `${header.getSize()}px`,
                       maxWidth: `${header.getSize()}px`,
-                    }}>
+                    }}
+                  >
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),
@@ -149,7 +171,8 @@ const PegawaiTable = () => {
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="whitespace-normal break-words">
+                      className="whitespace-normal break-words"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),
@@ -162,7 +185,8 @@ const PegawaiTable = () => {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center">
+                  className="h-24 text-center"
+                >
                   Tidak ada data
                 </TableCell>
               </TableRow>
@@ -174,7 +198,8 @@ const PegawaiTable = () => {
       <FormDialog
         title="Edit Data Pegawai"
         open={updateDialogOpen}
-        onOpenChange={setUpdateDialogOpen}>
+        onOpenChange={setUpdateDialogOpen}
+      >
         <PegawaiForm
           initialData={editingItem}
           onSuccess={() => {
