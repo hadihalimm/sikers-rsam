@@ -23,6 +23,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/',
     '/cascading/:path*',
     '/renstra/:path*',
     '/indikator-kinerja-utama/:path*',
