@@ -18,10 +18,10 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nama, jabatan } = body;
+    const { nama, nip, jabatan, profesi, penempatan } = body;
     const newRecord = await db
       .insert(pegawai)
-      .values({ nama, jabatan })
+      .values({ nama, nip, jabatan, profesi, penempatan })
       .returning();
     return NextResponse.json(newRecord[0], { status: 201 });
   } catch (error) {

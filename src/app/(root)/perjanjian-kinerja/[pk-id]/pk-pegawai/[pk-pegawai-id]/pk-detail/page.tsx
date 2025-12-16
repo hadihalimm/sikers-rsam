@@ -35,9 +35,20 @@ const PerjanjianKinerjaDetail = async ({
           <p>Tahun {perjanjianKinerjaRecord?.tahun}</p>
         </div>
       </div>
-      <div>
+      <div className="text-sm">
         <h2>{pkPegawaiRecord?.pegawai.nama}</h2>
-        <p>{pkPegawaiRecord?.pegawai.jabatan}</p>
+        {pkPegawaiRecord?.pegawai.nip && (
+          <p>NIP: {pkPegawaiRecord?.pegawai.nip}</p>
+        )}
+        {pkPegawaiRecord?.pegawai.jabatan && (
+          <p>Jabatan: {pkPegawaiRecord?.pegawai.jabatan}</p>
+        )}
+        {pkPegawaiRecord?.pegawai.profesi && (
+          <p>Profesi: {pkPegawaiRecord?.pegawai.profesi}</p>
+        )}
+        {pkPegawaiRecord?.pegawai.penempatan && (
+          <p>Penempatan: {pkPegawaiRecord?.pegawai.penempatan}</p>
+        )}
       </div>
       <PerjanjianKinerjaSasaranTable />
       <PerjanjianKinerjaProgramTable />
